@@ -6,7 +6,6 @@ use toml::value::Array;
 #[derive(Clone)]
 pub(crate) struct Config {
     pub(crate) remote: String,
-    pub(crate) remote_backup_path: String,
     pub(crate) folders_to_backup: Array,
 }
 
