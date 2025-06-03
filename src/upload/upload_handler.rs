@@ -1,0 +1,32 @@
+use std::path::Path;
+use url::Url;
+
+pub(crate) enum UploadMode {
+    SFTP,
+    NFS
+}
+
+
+
+pub(crate) fn get_upload_mode(
+    remote_str: String
+) -> UploadMode {
+    let url = Url::parse(&remote_str).expect("Could not parse remote URL!");
+    match url.scheme() {
+        "sftp" => UploadMode::SFTP,
+        "nfs" => todo!("No NFS support yet!"),
+        _ => panic!("Unknown upload mode! {}", url.scheme())
+    }
+}
+
+pub(crate) fn upload_file(
+    file_path: Box<Path>,
+    remote_str: String,
+    upload_mode: UploadMode
+) {
+    match upload_mode {
+        UploadMode::SFTP => todo!(),
+        UploadMode::NFS => todo!(),
+    }
+}
+
