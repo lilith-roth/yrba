@@ -6,9 +6,11 @@ edition = "2024"
 [dependencies]
 clap = { version = "4.5.39", features = ["derive"] }
 clap-verbosity-flag = { version = "3.0.3", features = ["tracing", "log", "default"] }
+dirs = "6.0.0"
 env_logger = "0.11.8"
 flate2 = "1.1.1"
 log = "0.4.27"
+serde = { version = "1.0.219", features = ["derive"] }
 ssh2 = "0.9.5"
-tar = "0.4.44"
-toml = "0.8.22"
+tar = { git = "https://github.com/yet-another-aligator/tar-rs.git", branch = "skip_unsupported_special"}
+toml = { version = "0.8.22", features = ["parse"] }
