@@ -1,6 +1,8 @@
 use std::path::Path;
 use url::Url;
 
+use super::sftp::upload_sftp;
+
 pub(crate) enum UploadMode {
     SFTP,
     NFS
@@ -25,8 +27,8 @@ pub(crate) fn upload_file(
     upload_mode: UploadMode
 ) {
     match upload_mode {
-        UploadMode::SFTP => todo!(),
-        UploadMode::NFS => todo!(),
+        UploadMode::SFTP => upload_sftp(file_path, remote_str),
+        UploadMode::NFS => todo!("No NFS support yet!"),
     }
 }
 
