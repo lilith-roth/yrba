@@ -17,8 +17,7 @@ pub(crate) fn create_tarball(path_to_backup: Box<&Path>) -> Result<PathBuf, std:
     let tar_gz = File::create(backup_archive_temp_file_path.clone()).expect("Could not generate filepath for temporary file!");
     let enc = GzEncoder::new(tar_gz, Compression::default());
     let mut tar = tar::Builder::new(enc);
-    tar.skip_unsupported_file_types(true);
-    tar.follow_symlinks(true);
+    tar.follow_symlinks(false);
 
     let mut final_path_to_backup = path_to_backup.clone();
     let binding = dirs::home_dir().expect("Could not retrieve home directory!");

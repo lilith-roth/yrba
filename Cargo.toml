@@ -12,5 +12,5 @@ flate2 = "1.1.1"
 log = "0.4.27"
 serde = { version = "1.0.219", features = ["derive"] }
 ssh2 = "0.9.5"
-tar = { git = "https://github.com/yet-another-aligator/tar-rs.git", branch = "skip_unsupported_special"}
+tar = "0.4.44"
 toml = { version = "0.8.22", features = ["parse"] }
