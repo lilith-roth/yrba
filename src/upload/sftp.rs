@@ -22,6 +22,7 @@ pub(crate) fn upload_sftp(
     if username == "" {
         username = system_username;
     }
+    let remote_path = remote_url.path();
 
     // Connect to SSH
     let tcp = TcpStream::connect(format!("{host}:{port}")).expect("Could not connect to SSH server!");
@@ -29,5 +30,14 @@ pub(crate) fn upload_sftp(
     session.set_tcp_stream(tcp);
     session.handshake().expect("Could not handshake SSH server!");
     session.userauth_agent(username).expect("Could not authenticate with remote server!");
+
+    // Write file to remote
+    let mut remote_file = session.scp_send(
+        Path::new(remote_path),
+        0o644,
+        10,
+        None
+    );
+    todo!("define file & start upload!");
 }
 
