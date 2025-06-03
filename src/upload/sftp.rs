@@ -1,4 +1,4 @@
-use std::{net::TcpStream, path::Path};
+use std::{fs::{self, File}, io::{BufReader, Read, Write}, net::TcpStream, path::Path};
 
 use ssh2::Session;
 use url::Url;
@@ -13,13 +13,10 @@ pub(crate) fn upload_sftp(
     let remote_url = Url::parse(&remote_str).expect("Could not parse remote URL!");
     let host = remote_url.host_str().expect("Could not retrieve remote host from URL!");
     let port_raw = remote_url.port();
-    let port = match port_raw {
-        Some(port) => port,
-        None => 21,
-    };
+    let port = port_raw.unwrap_or(21);
     let mut username = remote_url.username();
     let system_username = &whoami::username();
-    if username == "" {
+    if username.is_empty() {
         username = system_username;
     }
     let remote_path = remote_url.path();
@@ -31,13 +28,21 @@ pub(crate) fn upload_sftp(
     session.handshake().expect("Could not handshake SSH server!");
     session.userauth_agent(username).expect("Could not authenticate with remote server!");
 
+    // read file
+    let file_size = fs::metadata(file_path.clone()).expect("Could not get temp file metadata!").len() as usize;
+    let file = File::open(file_path).expect("Failed to open file!");
+    let mut buf_reader = BufReader::new(file);
+
+    let mut buffer: Vec<u8> = Vec::with_capacity(file_size);
+    buf_reader.read_to_end(&mut buffer).expect("Failed to read file!");
+
     // Write file to remote
     let mut remote_file = session.scp_send(
         Path::new(remote_path),
         0o644,
-        10,
+        file_size as u64,
         None
-    );
-    todo!("define file & start upload!");
+    ).expect("Could not start upload!");
+    remote_file.write_all(buffer.as_mut_slice()).expect("Could not write file to remote host!");
 }
 

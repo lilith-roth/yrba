@@ -26,9 +26,11 @@ pub(crate) fn upload_file(
     remote_str: String,
     upload_mode: UploadMode
 ) {
+    log::info!("Starting upload...");
     match upload_mode {
         UploadMode::SFTP => upload_sftp(file_path, remote_str),
         UploadMode::NFS => todo!("No NFS support yet!"),
     }
+    log::info!("Upload finished!");
 }
 

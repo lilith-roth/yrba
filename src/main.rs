@@ -3,15 +3,17 @@ mod archive;
 
 mod config;
 mod args;
+mod intro;
 
 use archive::tar::create_tarball;
 use config::{load_config, Config};
+use intro::write_welcome_message;
 
 
 use crate::args::{Args, setup_logging};
 
 fn main() {
-    println!("Hello, world!");
+    write_welcome_message();
     // parse application args
     let args: Args = setup_logging();
 
