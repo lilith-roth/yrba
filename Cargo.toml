@@ -15,3 +15,4 @@ ssh2 = "0.9.5"
 tar = "0.4.44"
 toml = { version = "0.8.22", features = ["parse"] }
 url = "2.5.4"
+whoami = "1.6.0"

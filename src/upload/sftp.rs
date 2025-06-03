@@ -17,10 +17,17 @@ pub(crate) fn upload_sftp(
         Some(port) => port,
         None => 21,
     };
-
+    let mut username = remote_url.username();
+    let system_username = &whoami::username();
+    if username == "" {
+        username = system_username;
+    }
 
     // Connect to SSH
-    let tcp = TcpStream::connect(format!("{host}:{port}"));
+    let tcp = TcpStream::connect(format!("{host}:{port}")).expect("Could not connect to SSH server!");
     let mut session = Session::new().expect("Could not create SSH session!");
+    session.set_tcp_stream(tcp);
+    session.handshake().expect("Could not handshake SSH server!");
+    session.userauth_agent(username).expect("Could not authenticate with remote server!");
 }
 
