@@ -1,8 +1,9 @@
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use url::Url;
 
 use super::sftp::upload_sftp;
 
+#[derive(Clone)]
 pub(crate) enum UploadMode {
     SFTP,
     NFS
@@ -22,7 +23,7 @@ pub(crate) fn get_upload_mode(
 }
 
 pub(crate) fn upload_file(
-    file_path: Box<Path>,
+    file_path: PathBuf,
     remote_str: String,
     upload_mode: UploadMode
 ) {

@@ -1,4 +1,4 @@
-use std::{fs::{self, File}, io::{BufReader, Read, Write}, net::TcpStream, path::Path};
+use std::{fs::{self, File}, io::{BufReader, Read, Write}, net::TcpStream, path::{Path, PathBuf}};
 
 use ssh2::Session;
 use url::Url;
@@ -6,14 +6,14 @@ use url::Url;
 
 
 pub(crate) fn upload_sftp(
-    file_path: Box<Path>,
+    file_path: PathBuf,
     remote_str: String
 ) {
     // Parsing remote information from provided remote_str
     let remote_url = Url::parse(&remote_str).expect("Could not parse remote URL!");
     let host = remote_url.host_str().expect("Could not retrieve remote host from URL!");
     let port_raw = remote_url.port();
-    let port = port_raw.unwrap_or(21);
+    let port = port_raw.unwrap_or(22);
     let mut username = remote_url.username();
     let system_username = &whoami::username();
     if username.is_empty() {
@@ -44,5 +44,10 @@ pub(crate) fn upload_sftp(
         None
     ).expect("Could not start upload!");
     remote_file.write_all(buffer.as_mut_slice()).expect("Could not write file to remote host!");
+    // Closing channel
+    remote_file.send_eof().expect("Error sending EOF!");
+    remote_file.wait_eof().expect("Error waiting for EOF!");
+    remote_file.close().expect("Error closing channel!");
+    remote_file.wait_close().expect("Error waiting for channel closing!");
 }
 

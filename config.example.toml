@@ -1,3 +1,13 @@
+# Remote address for uploading backups
+# SFTP: "sftp://root@192.168.178.3/mnt/user/backup/yrba"
+# NFS: "sftp://root@192.168.178.3/mnt/user/backup/yrba"
 remote = "sftp://root@192.168.178.3/mnt/user/backup/yrba"
 
+# SFTP Settings
+# if both public key path & password is defined, only the public key will be used!
+sftp_pubkey_path = ""
+sftp_password = ""
+
+# Path to folders to back up, supports relative paths
 folders_to_backup = ["~/Desktop", "~/.config"]
+

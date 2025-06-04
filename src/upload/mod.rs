@@ -1,3 +1,3 @@
-mod upload_handler;
+pub(crate) mod upload_handler;
 mod sftp;
 

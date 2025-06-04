@@ -5,7 +5,16 @@ use toml::value::Array;
 #[derive(serde::Deserialize)]
 #[derive(Clone)]
 pub(crate) struct Config {
+    // Remote URL
     pub(crate) remote: String,
+
+    // SFTP Settings
+    // SFTP public key path
+    pub(crate) sftp_pubkey_path: String,
+    // SFTP password
+    pub(crate) sftp_password: String,
+
+    // Path to folders to back up
     pub(crate) folders_to_backup: Array,
 }
 
