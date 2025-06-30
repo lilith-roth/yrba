@@ -1,5 +1,6 @@
 use std::{fs::{self, File}, io::{BufReader, Read, Write}, net::TcpStream, path::{Path, PathBuf}};
 
+use log::error;
 use ssh2::Session;
 use url::Url;
 
@@ -62,15 +63,29 @@ pub(crate) fn upload_sftp(
     };
     if !ssh_config_accepted {
         match config.sftp_password {
-            None => todo!("Password auth not implemented yet!"),
-            Some(_) => todo!("Password auth not implemented yet!")
+            None => {
+                log::error!("No SFTP authentication provided!");
+                panic!("No SFTP authentication accepted! No password provided.");
+            },
+            Some(sftp_password) => {
+                let password_auth_result = session.userauth_password(username, &sftp_password);
+                if password_auth_result.is_err() {
+                    log::error!("SFTP: Password authentication failed!");
+                    panic!("Could not authenticate with SFTP server!");
+                }
+            }
         }
     }
-    // let sftp_privkey_path = if config.sftp_privkey_password == "" {
-    //     None
-    // } else {
-    //     Path::new(&config.sftp_privkey_path)
-    // };
+
+    // Create remote path if it does not exist
+    let mut channel = session.channel_session().unwrap();
+    match channel.exec(&format!("mkdir -p {}", remote_path)) {
+        Ok(remote_path_creation_result) => log::info!("Remote path created successfully!"),
+        Err(err) => {
+            log::error!("Could not create remote path!");
+            panic!("Error creating remote path!")
+        }
+    };
 
     // read file
     let file_size = fs::metadata(file_path.clone()).expect("Could not get temp file metadata!").len() as usize;
