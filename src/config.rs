@@ -2,8 +2,7 @@ use std::fs;
 
 use toml::value::Array;
 
-#[derive(serde::Deserialize)]
-#[derive(Clone)]
+#[derive(serde::Deserialize, Clone)]
 pub(crate) struct Config {
     // Remote URL
     pub(crate) remote: String,
@@ -19,7 +18,6 @@ pub(crate) struct Config {
     // Path to folders to back up
     pub(crate) folders_to_backup: Array,
 }
-
 
 pub(crate) fn load_config(config_path: &str) -> Config {
     if fs::exists(config_path).is_err() {
@@ -39,4 +37,3 @@ fn check_config(config: Config) -> Config {
     }
     config
 }
-

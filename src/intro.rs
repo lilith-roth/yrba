@@ -19,4 +19,3 @@ pub(crate) fn write_welcome_message() {
         Emoji("⚧️ 💜", "")
     );
 }
-
