@@ -83,21 +83,22 @@ pub(crate) fn upload_sftp(
         Ok(remote_path_creation_result) => log::info!("Remote path created successfully!"),
         Err(err) => {
             log::error!("Could not create remote path!");
-            panic!("Error creating remote path!")
+            panic!("Error creating remote path! {err}")
         }
     };
 
     // read file
     let file_size = fs::metadata(file_path.clone()).expect("Could not get temp file metadata!").len() as usize;
-    let file = File::open(file_path).expect("Failed to open file!");
+    let file = File::open(file_path.clone()).expect("Failed to open file!");
     let mut buf_reader = BufReader::new(file);
 
     let mut buffer: Vec<u8> = Vec::with_capacity(file_size);
     buf_reader.read_to_end(&mut buffer).expect("Failed to read file!");
 
     // Write file to remote
+    let remote_file_path = Path::join(Path::new(remote_path), file_path.file_name().expect("Could not retrieve file name!"));
     let mut remote_file = session.scp_send(
-        Path::new(remote_path),
+        &remote_file_path,
         0o644,
         file_size as u64,
         None
