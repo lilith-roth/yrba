@@ -28,16 +28,22 @@ pub(crate) fn upload_sftp(
     let mut session = Session::new().expect("Could not create SSH session!");
     session.set_tcp_stream(tcp);
     session.handshake().expect("Could not handshake SSH server!");
-    
+
     // ToDo: Relative paths don't work for pubkey!
     match config.sftp_pubkey_path {
-        Some(pubkey_path) =>
+        Some(pubkey_path) => {
+            let sftp_privkey_password = if (config.sftp_privkey_password.clone().is_some() && config.sftp_privkey_password.clone().unwrap() == "") || config.sftp_privkey_password.clone().is_none(){
+                None
+            } else {
+                Some(config.sftp_privkey_password.unwrap())
+            };
             session.userauth_pubkey_file(
                 username,
                 Some(Path::new(&pubkey_path)),
                 config.sftp_privkey_path.as_ref(),
-                config.sftp_privkey_password.as_deref()
-            ).expect("Could not connect to SFTP server!"),
+                sftp_privkey_password.as_deref()
+            ).expect("Could not connect to SFTP server!");
+        }
         None => (),
     };
     // let sftp_privkey_path = if config.sftp_privkey_password == "" {
