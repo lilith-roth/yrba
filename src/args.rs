@@ -6,7 +6,7 @@ pub(crate) struct Args {
     #[command(flatten)]
     verbose: clap_verbosity_flag::Verbosity<clap_verbosity_flag::InfoLevel>,
 
-    #[arg(short = 'c', long, default_value = "~/.config/yrba/config.toml")]
+    #[arg(short = 'c', long = "config", default_value = "~/.config/yrba/config.toml")]
     pub(crate) config_file_path: String,
 }
 

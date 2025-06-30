@@ -33,26 +33,37 @@ pub(crate) fn upload_sftp(
     let mut ssh_config_accepted = match config.sftp_pubkey_path {
         Some(pubkey_path) => {
             let mut privkey_provided = false;
-            let sftp_privkey_path =  if (config.sftp_privkey_password.clone().is_some() && config.sftp_privkey_password.clone().unwrap() == "") || config.sftp_privkey_password.clone().is_none(){
-                None
-            }
-            let sftp_privkey_password = if (config.sftp_privkey_password.clone().is_some() && config.sftp_privkey_password.clone().unwrap() == "") || config.sftp_privkey_password.clone().is_none(){
-                None
+            privkey_provided =  if (config.sftp_privkey_path.clone().is_some() && config.sftp_privkey_path.clone().unwrap() != "") {
+                true
             } else {
-                Some(config.sftp_privkey_password.unwrap())
+                false
             };
-            let auth_success = session.userauth_pubkey_file(
-                username,
-                Some(Path::new(&pubkey_path)),
-                config.sftp_privkey_path.as_ref(),
-                sftp_privkey_password.as_deref()
-            );
-            auth_success.is_ok()
+            let mut success = false;
+            success = match privkey_provided {
+                true => {
+                    let sftp_privkey_password = if (config.sftp_privkey_password.clone().is_some() && config.sftp_privkey_password.clone().unwrap() == "") || config.sftp_privkey_password.clone().is_none() {
+                        None
+                    } else {
+                        Some(config.sftp_privkey_password.unwrap())
+                    };
+                    let auth_success = session.userauth_pubkey_file(
+                        username,
+                        Some(Path::new(&pubkey_path)),
+                        config.sftp_privkey_path.unwrap().as_ref(),
+                        sftp_privkey_password.as_deref()
+                    );
+                    auth_success.is_ok()
+                },
+                false => false
+            };
+            success
         }
         None => false,
     };
     if !ssh_config_accepted {
         match config.sftp_password {
+            None => todo!("Password auth not implemented yet!"),
+            Some(_) => todo!("Password auth not implemented yet!")
         }
     }
     // let sftp_privkey_path = if config.sftp_privkey_password == "" {
