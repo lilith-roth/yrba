@@ -85,8 +85,16 @@ pub(crate) fn upload_sftp(file_path: PathBuf, config: Config) {
     }
 
     // Create remote path if it does not exist
-    let mut channel = session.channel_session().unwrap();
-    match channel.exec(&format!("mkdir -p {}", remote_path)) {
+    let backup_name =
+        file_path
+            .clone()
+            .file_stem()
+            .unwrap()
+            .to_str()
+            .unwrap()
+            .replace(".tar", "");
+    let mut mkdir_cmd_channel = session.channel_session().unwrap();
+    match mkdir_cmd_channel.exec(&format!("mkdir -p {}", remote_path)) {
         Ok(_remote_path_creation_result) => log::info!("Remote path created successfully!"),
         Err(err) => {
             log::error!("Could not create remote path!");
@@ -107,16 +115,9 @@ pub(crate) fn upload_sftp(file_path: PathBuf, config: Config) {
         .expect("Failed to read file!");
 
     // Write file to remote
-    // ToDo: Does not yet support other file extensions
     let remote_file_name = format!(
         "{}--{}.tar.gz",
-        file_path
-            .clone()
-            .file_stem()
-            .unwrap()
-            .to_str()
-            .unwrap()
-            .replace(".tar", ""),
+        backup_name,
         chrono::offset::Local::now().format("%Y-%m-%d_%H-%M")
     );
     let remote_file_path = Path::join(Path::new(remote_path), remote_file_name);
@@ -126,6 +127,20 @@ pub(crate) fn upload_sftp(file_path: PathBuf, config: Config) {
     remote_file
         .write_all(buffer.as_mut_slice())
         .expect("Could not write file to remote host!");
+
+    // Delete older backups than N
+    // ToDo: move amount of backups to keep to config file!
+    // doesn't work for some weird reason, the cmd works in a terminal session though
+    let n_backups_to_keep = 5 + 1;
+    let mut rm_cmd_channel = session.channel_session().unwrap();
+    let delete_cmd =  &format!("ls -A1t {} | tail -n +{} | grep {} | xargs rm", remote_path, n_backups_to_keep, backup_name);
+    match rm_cmd_channel.exec(delete_cmd) {
+        Ok(_) => (),
+        Err(err) => log::error!("Could not delete older backups! {:?}", err)
+    };
+    let mut s = String::new();
+    rm_cmd_channel.read_to_string(&mut s).unwrap();
+
     // Closing channel
     remote_file.send_eof().expect("Error sending EOF!");
     remote_file.wait_eof().expect("Error waiting for EOF!");
