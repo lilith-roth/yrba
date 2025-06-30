@@ -30,22 +30,31 @@ pub(crate) fn upload_sftp(
     session.handshake().expect("Could not handshake SSH server!");
 
     // ToDo: Relative paths don't work for pubkey!
-    match config.sftp_pubkey_path {
+    let mut ssh_config_accepted = match config.sftp_pubkey_path {
         Some(pubkey_path) => {
+            let mut privkey_provided = false;
+            let sftp_privkey_path =  if (config.sftp_privkey_password.clone().is_some() && config.sftp_privkey_password.clone().unwrap() == "") || config.sftp_privkey_password.clone().is_none(){
+                None
+            }
             let sftp_privkey_password = if (config.sftp_privkey_password.clone().is_some() && config.sftp_privkey_password.clone().unwrap() == "") || config.sftp_privkey_password.clone().is_none(){
                 None
             } else {
                 Some(config.sftp_privkey_password.unwrap())
             };
-            session.userauth_pubkey_file(
+            let auth_success = session.userauth_pubkey_file(
                 username,
                 Some(Path::new(&pubkey_path)),
                 config.sftp_privkey_path.as_ref(),
                 sftp_privkey_password.as_deref()
-            ).expect("Could not connect to SFTP server!");
+            );
+            auth_success.is_ok()
         }
-        None => (),
+        None => false,
     };
+    if !ssh_config_accepted {
+        match config.sftp_password {
+        }
+    }
     // let sftp_privkey_path = if config.sftp_privkey_password == "" {
     //     None
     // } else {
