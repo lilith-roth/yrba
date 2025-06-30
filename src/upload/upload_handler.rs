@@ -1,6 +1,6 @@
 use super::sftp::upload_sftp;
 use crate::config::Config;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 use url::Url;
 
 #[derive(Clone)]

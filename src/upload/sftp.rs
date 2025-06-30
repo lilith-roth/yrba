@@ -5,7 +5,6 @@ use std::{
     path::{Path, PathBuf},
 };
 
-use log::error;
 use ssh2::Session;
 use url::Url;
 
@@ -36,18 +35,16 @@ pub(crate) fn upload_sftp(file_path: PathBuf, config: Config) {
         .expect("Could not handshake SSH server!");
 
     // ToDo: Relative paths don't work for pubkey!
-    let mut ssh_config_accepted = match config.sftp_pubkey_path {
+    let ssh_config_accepted = match config.sftp_pubkey_path {
         Some(pubkey_path) => {
-            let mut privkey_provided = false;
-            privkey_provided = if (config.sftp_privkey_path.clone().is_some()
-                && config.sftp_privkey_path.clone().unwrap() != "")
+            let privkey_provided = if config.sftp_privkey_path.clone().is_some()
+                && config.sftp_privkey_path.clone().unwrap() != ""
             {
                 true
             } else {
                 false
             };
-            let mut success = false;
-            success = match privkey_provided {
+            let success = match privkey_provided {
                 true => {
                     let sftp_privkey_password = if (config.sftp_privkey_password.clone().is_some()
                         && config.sftp_privkey_password.clone().unwrap() == "")
@@ -90,7 +87,7 @@ pub(crate) fn upload_sftp(file_path: PathBuf, config: Config) {
     // Create remote path if it does not exist
     let mut channel = session.channel_session().unwrap();
     match channel.exec(&format!("mkdir -p {}", remote_path)) {
-        Ok(remote_path_creation_result) => log::info!("Remote path created successfully!"),
+        Ok(_remote_path_creation_result) => log::info!("Remote path created successfully!"),
         Err(err) => {
             log::error!("Could not create remote path!");
             panic!("Error creating remote path! {err}")
