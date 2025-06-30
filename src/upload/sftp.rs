@@ -96,7 +96,13 @@ pub(crate) fn upload_sftp(
     buf_reader.read_to_end(&mut buffer).expect("Failed to read file!");
 
     // Write file to remote
-    let remote_file_path = Path::join(Path::new(remote_path), file_path.file_name().expect("Could not retrieve file name!"));
+    // ToDo: Does not yet support other file extensions
+    let remote_file_name = format!(
+        "{}--{}.tar.gz",
+        file_path.clone().file_stem().unwrap().to_str().unwrap().replace(".tar", ""),
+        chrono::offset::Local::now().format("%Y-%m-%d_%H-%M")
+    );
+    let remote_file_path = Path::join(Path::new(remote_path), remote_file_name);
     let mut remote_file = session.scp_send(
         &remote_file_path,
         0o644,
