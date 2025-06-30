@@ -3,14 +3,16 @@ use std::{fs::{self, File}, io::{BufReader, Read, Write}, net::TcpStream, path::
 use ssh2::Session;
 use url::Url;
 
+use crate::Config;
+
 
 
 pub(crate) fn upload_sftp(
     file_path: PathBuf,
-    remote_str: String
+    config: Config
 ) {
     // Parsing remote information from provided remote_str
-    let remote_url = Url::parse(&remote_str).expect("Could not parse remote URL!");
+    let remote_url = Url::parse(&config.remote).expect("Could not parse remote URL!");
     let host = remote_url.host_str().expect("Could not retrieve remote host from URL!");
     let port_raw = remote_url.port();
     let port = port_raw.unwrap_or(22);
@@ -26,7 +28,23 @@ pub(crate) fn upload_sftp(
     let mut session = Session::new().expect("Could not create SSH session!");
     session.set_tcp_stream(tcp);
     session.handshake().expect("Could not handshake SSH server!");
-    session.userauth_agent(username).expect("Could not authenticate with remote server!");
+    
+    // ToDo: Relative paths don't work for pubkey!
+    match config.sftp_pubkey_path {
+        Some(pubkey_path) =>
+            session.userauth_pubkey_file(
+                username,
+                Some(Path::new(&pubkey_path)),
+                config.sftp_privkey_path.as_ref(),
+                config.sftp_privkey_password.as_deref()
+            ).expect("Could not connect to SFTP server!"),
+        None => (),
+    };
+    // let sftp_privkey_path = if config.sftp_privkey_password == "" {
+    //     None
+    // } else {
+    //     Path::new(&config.sftp_privkey_path)
+    // };
 
     // read file
     let file_size = fs::metadata(file_path.clone()).expect("Could not get temp file metadata!").len() as usize;

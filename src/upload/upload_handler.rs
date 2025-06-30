@@ -1,6 +1,6 @@
 use std::path::{Path, PathBuf};
 use url::Url;
-
+use crate::config::Config;
 use super::sftp::upload_sftp;
 
 #[derive(Clone)]
@@ -24,12 +24,12 @@ pub(crate) fn get_upload_mode(
 
 pub(crate) fn upload_file(
     file_path: PathBuf,
-    remote_str: String,
-    upload_mode: UploadMode
+    upload_mode: UploadMode,
+    config: Config
 ) {
     log::info!("Starting upload...");
     match upload_mode {
-        UploadMode::SFTP => upload_sftp(file_path, remote_str),
+        UploadMode::SFTP => upload_sftp(file_path, config),
         UploadMode::NFS => todo!("No NFS support yet!"),
     }
     log::info!("Upload finished!");

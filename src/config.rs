@@ -10,7 +10,9 @@ pub(crate) struct Config {
 
     // SFTP Settings
     // SFTP public key path
-    pub(crate) sftp_pubkey_path: String,
+    pub(crate) sftp_pubkey_path: Option<String>,
+    pub(crate) sftp_privkey_path: String,
+    pub(crate) sftp_privkey_password: Option<String>,
     // SFTP password
     pub(crate) sftp_password: String,
 

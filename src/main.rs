@@ -21,7 +21,7 @@ fn main() {
     // load config file
     let config: Config = load_config(&args.config_file_path);
 
-    let folders_to_backup: Vec<toml::Value> = config.folders_to_backup;
+    let folders_to_backup: Vec<toml::Value> = config.folders_to_backup.clone();
     let upload_mode = get_upload_mode(config.remote.clone());
 
     for folder_raw in folders_to_backup {
@@ -42,6 +42,6 @@ fn main() {
         };
 
         // Uploading
-        upload_file(temp_archive_path, config.remote.clone(), upload_mode.clone());
+        upload_file(temp_archive_path, upload_mode.clone(), config.clone());
     }
 }
