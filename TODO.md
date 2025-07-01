@@ -2,8 +2,9 @@
 
 The following features, and additions are planned to be added to YRBA in the future.
 
-### Todo
+### ToDo
 
+- [ ] Automatic releases using release-plz
 - [ ] Additional backup upload options
   - [ ] NFS upload
   - [ ] Local file copy
