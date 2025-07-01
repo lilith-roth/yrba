@@ -8,10 +8,10 @@ pub(crate) fn create_tarball(path_to_backup: Box<&Path>) -> Result<PathBuf, std:
     let mut backup_archive_temp_file_path = cache_dir.join(
         path_to_backup
             .file_name()
-            .expect("Could not generate backup name!"),
+            .expect("Could not generate backup name!")
     );
     backup_archive_temp_file_path.set_extension("tar.gz");
-    log::info!("{:?}", backup_archive_temp_file_path);
+    log::debug!("Creating archive: {:?}", backup_archive_temp_file_path);
     std::fs::create_dir_all(cache_dir).expect("Could not create temporary folder for archives!");
     let tar_gz = File::create(backup_archive_temp_file_path.clone())
         .expect("Could not generate filepath for temporary file!");
@@ -32,12 +32,10 @@ pub(crate) fn create_tarball(path_to_backup: Box<&Path>) -> Result<PathBuf, std:
     if path_to_backup.starts_with("~") {
         final_path_to_backup = Box::from(Path::new(replace_dir));
     }
-
-    log::info!("{:?}", final_path_to_backup);
-    let archivation_result = tar.append_dir_all("", final_path_to_backup.as_os_str())?;
-    // if archivation_result.is_err() {
-    //     log::error!("Error adding files to archive: {:?}\nError: {:?}", backup_archive_temp_file_path, archivation_result.err());
-    // }
+    let archivation_result = tar.append_dir_all("", final_path_to_backup.as_os_str());
+    if archivation_result.is_err() {
+        log::error!("Error adding files to archive: {:?}\nError: {:?}", backup_archive_temp_file_path, archivation_result.err());
+    }
     match tar.finish() {
         Ok(_) => Ok(backup_archive_temp_file_path),
         Err(err) => {

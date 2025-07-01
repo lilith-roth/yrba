@@ -13,9 +13,10 @@ use upload::upload_handler::{get_upload_mode, upload_file};
 use crate::args::{Args, setup_logging};
 
 fn main() {
-    write_welcome_message();
     // parse application args
     let args: Args = setup_logging();
+    
+    write_welcome_message();
 
     // load config file
     let config: Config = load_config(&args.config_file_path);
@@ -25,7 +26,7 @@ fn main() {
 
     for folder_raw in folders_to_backup {
         // Archiving
-        println!("Archiving: {:?}", folder_raw);
+        log::info!("Archiving: {}", folder_raw);
         let folder = std::path::Path::new(
             folder_raw
                 .as_str()

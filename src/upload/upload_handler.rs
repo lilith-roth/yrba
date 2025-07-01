@@ -6,7 +6,6 @@ use url::Url;
 #[derive(Clone)]
 pub(crate) enum UploadMode {
     SFTP,
-    NFS,
 }
 
 pub(crate) fn get_upload_mode(remote_str: String) -> UploadMode {
@@ -22,7 +21,6 @@ pub(crate) fn upload_file(file_path: PathBuf, upload_mode: UploadMode, config: C
     log::info!("Starting upload...");
     match upload_mode {
         UploadMode::SFTP => upload_sftp(file_path, config),
-        UploadMode::NFS => todo!("No NFS support yet!"),
     }
     log::info!("Upload finished!");
 }

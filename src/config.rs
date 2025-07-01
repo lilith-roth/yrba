@@ -7,6 +7,9 @@ pub(crate) struct Config {
     // Remote URL
     pub(crate) remote: String,
 
+    // Amount of backups to keep
+    pub(crate) amount_of_backups_to_keep: u16,
+
     // SFTP Settings
     // SFTP public key path
     pub(crate) sftp_pubkey_path: Option<String>,
