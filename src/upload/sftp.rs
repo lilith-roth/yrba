@@ -47,7 +47,10 @@ fn delete_old_backups(remote_path: &str, backup_name: String, session: Session, 
         let mut rm_cmd_channel = session.channel_session().unwrap();
         let delete_cmd = &format!(
             "cd {} && ls -A1t {} | grep {} | tail -n +{} | xargs rm",
-            remote_path, remote_path, backup_name, config.amount_of_backups_to_keep+1
+            remote_path,
+            remote_path,
+            backup_name,
+            config.amount_of_backups_to_keep + 1
         );
         match rm_cmd_channel.exec(delete_cmd) {
             Ok(_) => log::debug!("Delete cmd for older backups successful!"),
@@ -114,32 +117,38 @@ fn create_remote_directory(remote_path: &str, session: Session) {
 }
 
 fn authenticate_ssh(username: &str, session: Session, config: Config) {
-    // ToDo: Relative paths don't work for pubkey!
     let settings_config = config.clone();
     let ssh_config_accepted = match settings_config.sftp_pubkey_path {
         Some(pubkey_path) => {
-            let privkey_provided = if settings_config.sftp_privkey_path.clone().is_some()
-                && settings_config.sftp_privkey_path.clone().unwrap() != ""
-            {
-                true
-            } else {
-                false
-            };
+            let privkey_provided = settings_config.sftp_privkey_path.clone().is_some() && settings_config.sftp_privkey_path.clone().unwrap() != "";
+            // Making relative paths work, because they didn't for some reason
+            let binding = dirs::home_dir().expect("Could not retrieve home directory!");
+            let home_dir = binding
+                .to_str()
+                .expect("Could not convert home directory path object to str!");
+            let sftp_pubkey_path = pubkey_path.as_str().replace("~", home_dir);
+            let sftp_privkey_path = settings_config
+                .sftp_privkey_path
+                .unwrap()
+                .as_str()
+                .replace("~", home_dir);
+
             let success = match privkey_provided {
                 true => {
                     log::info!("Trying SFTP private key authentication...");
-                    let sftp_privkey_password = if (settings_config.sftp_privkey_password.clone().is_some()
-                        && settings_config.sftp_privkey_password.clone().unwrap() == "")
-                        || settings_config.sftp_privkey_password.clone().is_none()
-                    {
-                        None
-                    } else {
-                        Some(settings_config.sftp_privkey_password.unwrap())
-                    };
+                    let sftp_privkey_password =
+                        if (settings_config.sftp_privkey_password.clone().is_some()
+                            && settings_config.sftp_privkey_password.clone().unwrap() == "")
+                            || settings_config.sftp_privkey_password.clone().is_none()
+                        {
+                            None
+                        } else {
+                            Some(settings_config.sftp_privkey_password.unwrap())
+                        };
                     let auth_success = session.userauth_pubkey_file(
                         username,
-                        Some(Path::new(&pubkey_path)),
-                        settings_config.sftp_privkey_path.unwrap().as_ref(),
+                        Some(Path::new(&sftp_pubkey_path)),
+                        sftp_privkey_path.as_ref(),
                         sftp_privkey_password.as_deref(),
                     );
                     auth_success.is_ok()

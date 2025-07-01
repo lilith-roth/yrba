@@ -15,7 +15,7 @@ use crate::args::{Args, setup_logging};
 fn main() {
     // parse application args
     let args: Args = setup_logging();
-    
+
     write_welcome_message();
 
     // load config file
@@ -32,7 +32,7 @@ fn main() {
                 .as_str()
                 .expect("`folders_to_backup` is checked during loading of config file"),
         );
-        let temp_archive_path = match create_tarball(Box::new(folder)) {
+        let temp_archive_path = match create_tarball(folder) {
             Ok(temp_archive_path) => {
                 log::info!("Created archive {:?}", temp_archive_path);
                 temp_archive_path
