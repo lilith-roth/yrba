@@ -16,8 +16,7 @@ pub(crate) fn upload_sftp(file_path: PathBuf, config: Config) {
     let host = remote_url
         .host_str()
         .expect("Could not retrieve remote host from URL!");
-    let port_raw = remote_url.port();
-    let port = port_raw.unwrap_or(22);
+    let port = remote_url.port().unwrap_or(22);
     let mut username = remote_url.username();
     let system_username = &whoami::username();
     if username.is_empty() {
@@ -120,7 +119,8 @@ fn authenticate_ssh(username: &str, session: Session, config: Config) {
     let settings_config = config.clone();
     let ssh_config_accepted = match settings_config.sftp_pubkey_path {
         Some(pubkey_path) => {
-            let privkey_provided = settings_config.sftp_privkey_path.clone().is_some() && settings_config.sftp_privkey_path.clone().unwrap() != "";
+            let privkey_provided = settings_config.sftp_privkey_path.clone().is_some()
+                && settings_config.sftp_privkey_path.clone().unwrap() != "";
             // Making relative paths work, because they didn't for some reason
             let binding = dirs::home_dir().expect("Could not retrieve home directory!");
             let home_dir = binding
