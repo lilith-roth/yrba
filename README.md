@@ -1,1 +1,70 @@
-# yrba
+# YRBA - Your Remote Backup Assistant
+
+YRBA makes backing up your systems easy, by automating incremental backups of defined folders, and uploading them to a server of your choice.
+
+## Features
+
+- Archives your backup as .tar.gz
+- Incremental backups automatically keeps the last N backups
+- Can back up directories on any OS
+- - GNU/Linux
+- - macOS
+- - Windows (untested)
+- Automatic uploads with SFTP (NFS & file copy are planned)
+- Can upload backups to Unix systems
+- - GNU/Linux
+- - macOS
+
+
+## Installation
+
+### Usage
+```
+Usage: yrba [OPTIONS]
+
+Options:
+  -v, --verbose...                 Increase logging verbosity
+  -q, --quiet...                   Decrease logging verbosity
+  -c, --config <CONFIG_FILE_PATH>  [default: ~/.config/yrba/config.toml]
+  -h, --help                       Print help
+  -V, --version                    Print version
+```
+
+### Native binary 
+1. Download the latest release from the GitHub release page.
+2. Copy `config.example.toml` to `config.toml`, and adjust with your remote backup path, and the folders you want to backup
+3. Run software
+
+### Note
+Make sure the system you're uploading your backups to has the following shell commands available:
+- tail
+- ls
+- grep
+- xargs
+- cd
+
+
+## Contributing
+Any kind of support is appreciated.
+
+This can range from suggesting new features, to finding bugs, to coding on the project itself.
+
+To suggest new features or report bugs, please leave a GitHub issue on this project.
+
+### Set up development environment
+
+1. Clone repository
+2. Install dependencies & build project
+```bash 
+cargo build
+```
+3. A formatting and lint check is automatically run on every pull request.
+To check this locally, and reformat your code use:
+```bash
+cargo clippy --verbose -- WADF
+cargo fmt 
+```
+
+
+## License
+[GPL-3.0](LICENSE)

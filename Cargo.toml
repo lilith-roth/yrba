@@ -1,0 +1,20 @@
+[package]
+name = "yrba"
+version = "1.0.0"
+edition = "2024"
+
+[dependencies]
+chrono = "0.4.41"
+clap = { version = "4.5.39", features = ["derive"] }
+clap-verbosity-flag = { version = "3.0.3", features = ["tracing", "log", "default"] }
+console = "0.15.11"
+dirs = "6.0.0"
+env_logger = "0.11.8"
+flate2 = "1.1.1"
+log = "0.4.27"
+serde = { version = "1.0.219", features = ["derive"] }
+ssh2 = "0.9.5"
+tar = "0.4.44"
+toml = { version = "0.8.22", features = ["parse"] }
+url = "2.5.4"
+whoami = "1.6.0"
