@@ -34,7 +34,8 @@ pub(crate) fn load_config(config_path: &str) -> Config {
     if fs::exists(config_path_final).is_err() {
         panic!("Could not find config path!");
     }
-    let config_content = fs::read_to_string(config_path_final).expect("Could not read config file!");
+    let config_content =
+        fs::read_to_string(config_path_final).expect("Could not read config file!");
     let mut config = toml::from_str(&config_content).expect("Could not parse config file!");
     config = check_config(config);
     config
