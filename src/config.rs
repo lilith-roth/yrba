@@ -1,5 +1,4 @@
 use std::fs;
-
 use toml::value::Array;
 
 #[derive(serde::Deserialize, Clone)]
@@ -23,10 +22,20 @@ pub(crate) struct Config {
 }
 
 pub(crate) fn load_config(config_path: &str) -> Config {
-    if fs::exists(config_path).is_err() {
+    let config_path_final: &str = if config_path.starts_with("~") {
+        let home_directory_raw = dirs::home_dir().expect("Could not retrieve home directory!");
+        let home_dir = home_directory_raw
+            .to_str()
+            .expect("Could not convert home directory path object to str!");
+        &config_path.replace("~", home_dir)
+    } else {
+        config_path
+    };
+    if fs::exists(config_path_final).is_err() {
         panic!("Could not find config path!");
     }
-    let config_content = fs::read_to_string(config_path).expect("Could not read config file!");
+    let config_content =
+        fs::read_to_string(config_path_final).expect("Could not read config file!");
     let mut config = toml::from_str(&config_content).expect("Could not parse config file!");
     config = check_config(config);
     config
