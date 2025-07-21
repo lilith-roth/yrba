@@ -8,8 +8,6 @@ The following features, and additions are planned to be added to YRBA in the fut
 - [ ] Additional backup upload options
   - [ ] NFS upload
   - [ ] Local file copy
-- [ ] Docker setup
-  - [ ] Additional docker setup with automated cronjob
 
 
 ### In Progress
