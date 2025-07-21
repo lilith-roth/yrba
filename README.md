@@ -34,7 +34,7 @@ While the other option runs based on a cron job to automatically make backups on
 - Run the setup using `docker compose up`
 ### Automated cron job setup
 Per default this runs once a week, to adjust the schedule, modify the `CRON_SCHEDULE` variable in the [docker-compose-cron.yml](docker-compose-cron.yml) file.
-- Run the setup using `docker compose -d -f up docker-compose-cron.yml`
+- Run the setup using `docker compose -d -f docker-compose-cron.yml up`
 
 
 
