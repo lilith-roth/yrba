@@ -12,8 +12,7 @@ COPY . ./
 RUN cargo build --release --target-dir /app &&  \
     cp /build/cron_start.sh /app/ &&  \
     chmod +x /app/cron_start.sh && \
-    rm -rf /build
-
-RUN apk del $BUILD_DEPS
+    rm -rf /build && \
+    apk del $BUILD_DEPS
 
 CMD ["/app/release/yrba", "-c", "/app/config.toml"]

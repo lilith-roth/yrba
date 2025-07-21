@@ -1,8 +1,6 @@
 name: Publish Docker image
 
 on:
-  push:
-    branches: ['docker-deploy', 'main']
   release:
     types: [published]
 
@@ -26,7 +24,6 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Extract metadata (tags, labels) for Docker
-        if: github.ref != 'refs/heads/main'
         id: meta
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
