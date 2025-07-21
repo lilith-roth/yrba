@@ -19,6 +19,9 @@ pub(crate) struct Config {
 
     // Path to folders to back up
     pub(crate) folders_to_backup: Array,
+
+    // Path to temporary folder
+    pub(crate) temporary_folder: Option<String>,
 }
 
 pub(crate) fn load_config(config_path: &str) -> Config {

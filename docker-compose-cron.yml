@@ -1,0 +1,16 @@
+services:
+  yrba:
+    image: 'dcpacky/yrba-official:latest'
+    environment:
+      # Adjust the cron schedule here to your requirements. Default: First day of the week at 04:00
+#      CRON_SCHEDULE: "0 4 * * 1 backup"
+      CRON_SCHEDULE: "*/2 * * * 1 /app/release/yrba -c /app/config.toml"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      # Adjust the path to the folder you want to back up
+      - ./folder-to-backup:/backup
+      - ./config.toml:/app/config.toml
+      - ~/.ssh/:/auth
+    command: ["/app/cron_start.sh"]

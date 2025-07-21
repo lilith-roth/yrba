@@ -1,0 +1,10 @@
+services:
+  yrba:
+    image: 'dcpacky/yrba-official:latest'
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./config.toml:/app/config.toml
+      - ./folder-to-backup:/backup
+      - ~/.ssh/:/auth

@@ -32,7 +32,7 @@ fn main() {
                 .as_str()
                 .expect("`folders_to_backup` is checked during loading of config file"),
         );
-        let temp_archive_path = match create_tarball(folder) {
+        let temp_archive_path = match create_tarball(folder, config.clone().temporary_folder) {
             Ok(temp_archive_path) => {
                 log::info!("Created archive {:?}", temp_archive_path);
                 temp_archive_path

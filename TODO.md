@@ -8,8 +8,7 @@ The following features, and additions are planned to be added to YRBA in the fut
 - [ ] Additional backup upload options
   - [ ] NFS upload
   - [ ] Local file copy
-- [ ] Docker setup
-  - [ ] Additional docker setup with automated cronjob
+- [ ] UNRAID Community Apps Template
 
 
 ### In Progress
@@ -21,3 +20,5 @@ The following features, and additions are planned to be added to YRBA in the fut
 - [x] Incremental backups of folders
 - [x] SFTP uploads of backups
 - [x] nix run configuration
+- [x] Docker setup
+  - [x] Additional docker setup with automated cronjob

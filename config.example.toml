@@ -9,12 +9,16 @@ amount_of_backups_to_keep = 5
 # SFTP Settings (only used if remote string above is set to sftp protocol)
 # if both public key path & password is defined, first the private key authentication is tried,
 # and if that fails the password is tried next.
-sftp_pubkey_path = "~/.ssh/id_ed25519.pub"
-sftp_privkey_path = "~/.ssh/id_ed25519"
+sftp_pubkey_path = "/auth/id_ed25519.pub"
+sftp_privkey_path = "/auth/id_ed25519"
 sftp_privkey_password = ""
 sftp_password = ""
 
 # Path to folders to back up, supports relative paths
 folders_to_backup = [
-    "~/.config"
+    "/backup"
 ]
+
+# Optional: Temporary folder to store archive before upload
+# Default: "~/.cache/yrba"
+# temporary_folder = "/tmp/yrba"

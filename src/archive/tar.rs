@@ -2,9 +2,16 @@ use flate2::{Compression, read::GzEncoder};
 use std::path::PathBuf;
 use std::{fs::File, path::Path};
 
-pub(crate) fn create_tarball(path_to_backup: &Path) -> Result<PathBuf, std::io::Error> {
-    let cache_dir_parent = dirs::cache_dir().expect("Could not get temporary directory!");
-    let cache_dir = cache_dir_parent.join("yrba/");
+pub(crate) fn create_tarball(
+    path_to_backup: &Path,
+    temporary_folder_config: Option<String>,
+) -> Result<PathBuf, std::io::Error> {
+    let cache_dir: PathBuf =
+        if let Some(temporary_folder_configuration_input) = temporary_folder_config {
+            temporary_folder_configuration_input.parse().unwrap()
+        } else {
+            get_cache_folder()
+        };
     let mut backup_archive_temp_file_path = cache_dir.join(
         path_to_backup
             .file_name()
@@ -51,4 +58,9 @@ pub(crate) fn create_tarball(path_to_backup: &Path) -> Result<PathBuf, std::io::
             Err(err)
         }
     }
+}
+
+fn get_cache_folder() -> PathBuf {
+    let cache_dir_parent = dirs::cache_dir().expect("Could not get temporary directory!");
+    cache_dir_parent.join("yrba/")
 }
