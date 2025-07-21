@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0](https://github.com/lilith-roth/yrba/compare/v1.0.1...v1.1.0) - 2025-07-21
+
+### Added
+
+- docker deployment ([#5](https://github.com/lilith-roth/yrba/pull/5))
+
 ## [1.0.1](https://github.com/lilith-roth/yrba/releases/tag/v1.0.1) - 2025-07-11
 
 ### Added
