@@ -9,9 +9,10 @@ WORKDIR /build
 
 COPY . ./
 
-RUN cargo build --release --target-dir /app
-
-RUN cp /build/cron_start.sh /app/ && rm -rf /build
+RUN cargo build --release --target-dir /app &&  \
+    cp /build/cron_start.sh /app/ &&  \
+    chmod +x /app/cron_start.sh && \
+    rm -rf /build
 RUN apk del $BUILD_DEPS
 
 RUN adduser -H -D backup
