@@ -4,7 +4,7 @@ services:
     environment:
       # Adjust the cron schedule here to your requirements. Default: First day of the week at 04:00
 #      CRON_SCHEDULE: "0 4 * * 1 backup"
-      CRON_SCHEDULE: "*/2 * * * 1 backup"
+      CRON_SCHEDULE: "*/2 * * * 1 /app/release/yrba -c /app/config.toml"
     build:
       context: .
       dockerfile: Dockerfile
@@ -13,4 +13,4 @@ services:
       - ./folder-to-backup:/backup
       - ./config.toml:/app/config.toml
       - ~/.ssh/:/auth
-    entrypoint: ["echo", "$CRON_SCHEDULE", ">", "/etc/crontabs/root", "&&", "/usr/sbin/crond", "-f"]
+    entrypoint: ["/app/cron_start.sh"]
