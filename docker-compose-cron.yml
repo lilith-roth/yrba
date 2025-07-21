@@ -13,4 +13,4 @@ services:
       - ./folder-to-backup:/backup
       - ./config.toml:/app/config.toml
       - ~/.ssh/:/auth
-    entrypoint: ["/app/cron_start.sh"]
+    command: ["/app/cron_start.sh"]

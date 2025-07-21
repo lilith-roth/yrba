@@ -18,3 +18,19 @@ Cargo.lock
 
 # GitHub workflows
 .github/
+
+# Example backup folder from docker-compose.yml file
+folder-to-backup/
+
+# Loose unnecessary files for docker build
+/TODO.md
+/release-plz.toml
+/README.md
+/LICENSE
+/flake.nix
+/flake.lock
+/Dockerfile
+/docker-compose-cron.yml
+/docker-compose.yml
+/default.nix
+/CHANGELOG.md

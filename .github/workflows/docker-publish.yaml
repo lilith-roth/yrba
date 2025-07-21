@@ -2,7 +2,7 @@ name: Publish Docker image
 
 on:
   push:
-    branches: ['docker-deploy']
+    branches: ['docker-deploy', 'main']
   release:
     types: [published]
 
@@ -26,6 +26,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Extract metadata (tags, labels) for Docker
+        if: github.ref != 'refs/heads/main'
         id: meta
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
@@ -40,6 +41,23 @@ jobs:
             type=semver,pattern={{major}}
             type=sha
             latest
+
+      - name: Extract metadata (tags, labels) for Docker
+        if: github.ref == 'refs/heads/main'
+        id: meta
+        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        with:
+          images: dcpacky/yrba-official
+          # generate Docker tags based on the following events/attributes
+          tags: |
+            type=schedule
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=sha
+            nightly
 
       - name: Build and push Docker image
         id: push
@@ -57,3 +75,10 @@ jobs:
           subject-name: index.docker.io/dcpacky/yrba-official
           subject-digest: ${{ steps.push.outputs.digest }}
           push-to-registry: true
+          
+      - name: Update repo description
+        uses: peter-evans/dockerhub-description@e98e4d1628a5f3be2be7c231e50981aee98723ae # v4.0.0
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          repository: dcpacky/yrba-official
