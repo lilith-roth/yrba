@@ -1,6 +1,8 @@
 name: Publish Docker image
 
 on:
+  push:
+    branches: ['docker-deploy', 'main']
   release:
     types: [published]
 
