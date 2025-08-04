@@ -16,5 +16,8 @@ target/
 # RustRover
 .idea/
 
+# mdbook
+docs/book/
+
 config.toml
 folder-to-backup/

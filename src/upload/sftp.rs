@@ -60,6 +60,7 @@ fn delete_old_backups(remote_path: &str, backup_name: String, session: Session, 
     }
 }
 
+/// Uploads file via SSH
 fn upload_backup(remote_path: &str, backup_name: String, file_path: PathBuf, session: Session) {
     // read file
     let file_size = fs::metadata(file_path.clone())

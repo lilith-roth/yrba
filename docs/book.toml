@@ -1,0 +1,11 @@
+[book]
+authors = ["Lilith Roth"]
+language = "en"
+src = "src"
+title = "YRBA Documentation"
+description = "Incremental remote backups made simple!"
+
+[output.html]
+default-theme = "ayu"
+site-url = "/yrba/"
+git-repository-url = "https://github.com/lilith-roth/yrba"
