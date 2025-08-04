@@ -63,6 +63,7 @@ fn delete_old_backups(remote_path: &str, backup_name: String, session: Session, 
     }
 }
 
+/// Uploads file via SSH
 fn upload_backup(remote_path: &str, backup_name: String, file_path: PathBuf, session: Session) {
     // ToDo: Read from config!
     const BUF_SIZE: usize = 128 * 1024 * 1024;
