@@ -68,11 +68,6 @@ fn upload_backup(remote_path: &str, backup_name: String, file_path: PathBuf, ses
     let file = File::open(file_path.clone()).expect("Failed to open file!");
     let mut buf_reader = BufReader::new(file);
 
-    let mut buffer: Vec<u8> = Vec::with_capacity(file_size);
-    buf_reader
-        .read_to_end(&mut buffer)
-        .expect("Failed to read file!");
-
     // Write file to remote
     let remote_file_name = format!(
         "{}--{}.tar.gz",
@@ -84,9 +79,7 @@ fn upload_backup(remote_path: &str, backup_name: String, file_path: PathBuf, ses
     let mut remote_file = session
         .scp_send(&remote_file_path, 0o644, file_size as u64, None)
         .expect("Could not start upload!");
-    remote_file
-        .write_all(buffer.as_mut_slice())
-        .expect("Could not write file to remote host!");
+    std::io::copy(&mut buf_reader, &mut remote_file).expect("Could not write file to remote host!");
 
     // Closing channel
     remote_file
