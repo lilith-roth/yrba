@@ -29,6 +29,7 @@ jobs:
           # Just add a `cd` here if you need to change to another directory.
           cd docs/
           mdbook build
+          ls -la
       - name: Setup Pages
         uses: actions/configure-pages@v4
       - name: Upload artifact
