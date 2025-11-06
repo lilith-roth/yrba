@@ -1,6 +1,6 @@
 use flate2::{Compression, read::GzEncoder};
 use std::path::PathBuf;
-use std::{fs::File, path::Path};
+use std::{fs::File, fs::create_dir_all, fs::remove_file, path::Path};
 
 pub(crate) fn create_tarball(
     path_to_backup: &Path,
@@ -19,7 +19,7 @@ pub(crate) fn create_tarball(
     );
     backup_archive_temp_file_path.set_extension("tar.gz");
     log::debug!("Creating archive: {:?}", backup_archive_temp_file_path);
-    std::fs::create_dir_all(cache_dir).expect("Could not create temporary folder for archives!");
+    create_dir_all(cache_dir).expect("Could not create temporary folder for archives!");
     let tar_gz = File::create(backup_archive_temp_file_path.clone())
         .expect("Could not generate filepath for temporary file!");
     let enc = GzEncoder::new(tar_gz, Compression::default());
@@ -55,6 +55,14 @@ pub(crate) fn create_tarball(
                 final_path_to_backup.as_os_str(),
                 err
             );
+            log::info!("Trying to delete faulty temporary archive...");
+            // Delete temporary archive
+            if remove_file(&backup_archive_temp_file_path).is_err() {
+                log::error!(
+                    "Could not delete temporary archive! Please manually remove: {:?}",
+                    backup_archive_temp_file_path
+                )
+            }
             Err(err)
         }
     }
