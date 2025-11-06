@@ -1,6 +1,7 @@
 use flate2::{Compression, read::GzEncoder};
 use std::path::PathBuf;
 use std::{fs::File, fs::create_dir_all, fs::remove_file, path::Path};
+use tar::Builder;
 
 pub(crate) fn create_tarball(
     path_to_backup: &Path,
@@ -12,26 +13,26 @@ pub(crate) fn create_tarball(
         } else {
             get_cache_folder()
         };
-    let mut backup_archive_temp_file_path = cache_dir.join(
+    let mut backup_archive_temp_file_path: PathBuf = cache_dir.join(
         path_to_backup
             .file_name()
-            .expect("Could not generate backup name!"),
+            .expect("Could not generate backup file name!"),
     );
     backup_archive_temp_file_path.set_extension("tar.gz");
     log::debug!("Creating archive: {:?}", backup_archive_temp_file_path);
     create_dir_all(cache_dir).expect("Could not create temporary folder for archives!");
-    let tar_gz = File::create(backup_archive_temp_file_path.clone())
+    let tar_gz: File = File::create(backup_archive_temp_file_path.clone())
         .expect("Could not generate filepath for temporary file!");
-    let enc = GzEncoder::new(tar_gz, Compression::default());
-    let mut tar = tar::Builder::new(enc);
+    let enc: GzEncoder<File> = GzEncoder::new(tar_gz, Compression::default());
+    let mut tar: Builder<GzEncoder<File>> = Builder::new(enc);
     tar.follow_symlinks(false);
 
-    let mut final_path_to_backup = path_to_backup;
-    let binding = dirs::home_dir().expect("Could not retrieve home directory!");
-    let home_dir = binding
+    let mut final_path_to_backup: &Path = path_to_backup;
+    let binding: PathBuf = dirs::home_dir().expect("Could not retrieve home directory!");
+    let home_dir: &str = binding
         .to_str()
         .expect("Could not convert home directory path object to str!");
-    let replace_dir = &path_to_backup
+    let replace_dir: &String = &path_to_backup
         .as_os_str()
         .to_str()
         .expect("Could not get home directory for tilde path!")
@@ -39,7 +40,7 @@ pub(crate) fn create_tarball(
     if path_to_backup.starts_with("~") {
         final_path_to_backup = Path::new(replace_dir);
     }
-    let archivation_result = tar.append_dir_all("", final_path_to_backup.as_os_str());
+    let archivation_result: std::io::Result<()> = tar.append_dir_all("", final_path_to_backup.as_os_str());
     if archivation_result.is_err() {
         log::error!(
             "Error adding files to archive: {:?}\nError: {:?}",
@@ -69,6 +70,6 @@ pub(crate) fn create_tarball(
 }
 
 fn get_cache_folder() -> PathBuf {
-    let cache_dir_parent = dirs::cache_dir().expect("Could not get temporary directory!");
+    let cache_dir_parent: PathBuf = dirs::cache_dir().expect("Could not get temporary directory!");
     cache_dir_parent.join("yrba/")
 }

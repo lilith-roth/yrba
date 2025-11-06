@@ -9,7 +9,7 @@ pub(crate) enum UploadMode {
 }
 
 pub(crate) fn get_upload_mode(remote_str: String) -> UploadMode {
-    let url = Url::parse(&remote_str).expect("Could not parse remote URL!");
+    let url: Url = Url::parse(&remote_str).expect("Could not parse remote URL!");
     match url.scheme() {
         "sftp" => UploadMode::Sftp,
         "nfs" => todo!("No NFS support yet!"),

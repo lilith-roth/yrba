@@ -1,7 +1,7 @@
 use console::{Emoji, style};
 
 pub(crate) fn write_welcome_message() {
-    let intro_logo = r#"
+    let intro_logo: &str = r#"
         
         ▖▖▄▖▄ ▄▖                                                
         ▌▌▙▘▙▘▌▌                                                
