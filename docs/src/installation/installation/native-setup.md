@@ -38,10 +38,14 @@ machine, with this simple command.
 
 Install YRBA:
 ```shell
-cargo add yrba
+cargo install yrba
 ```
 
 Afterwards, you can call YRBA just by calling `yrba` in your terminal.
 ```shell
 yrba
 ```
+
+
+---
+**Now that we installed YRBA we can continue to [configuring](../configuration) YRBA.** 

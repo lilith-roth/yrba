@@ -9,3 +9,5 @@ The native installation will be directly installed in your system via Cargo, Nix
 
 Meanwhile, the docker container allows a simple solution without a lot of setup, and is perfect for servers that are
 already utilizing Docker.
+
+After this continue to [Configuration](../configuration.md) to set up your YRBA instance.
