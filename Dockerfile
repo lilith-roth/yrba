@@ -15,4 +15,4 @@ RUN cargo build --release --target-dir /app &&  \
     rm -rf /build && \
     apk del $BUILD_DEPS
 
-CMD ["/app/release/yrba", "-c", "/app/config.toml"]
+CMD ["/app/release/yrba"]
