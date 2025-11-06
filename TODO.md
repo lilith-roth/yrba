@@ -11,6 +11,7 @@ The following features, and additions are planned to be added to YRBA in the fut
 - [ ] Arch AUR Package
 - [ ] UNRAID Community Apps Template
 - [ ] Unit Tests
+- [ ] Add functionality to test remote authentication ahead of running backups
 
 
 ### In Progress
