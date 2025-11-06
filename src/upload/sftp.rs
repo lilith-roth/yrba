@@ -52,7 +52,10 @@ fn delete_old_backups(remote_path: &str, backup_name: String, session: Session, 
             config.amount_of_backups_to_keep + 1
         );
         match rm_cmd_channel.exec(delete_cmd) {
-            Ok(_) => log::debug!("Deletion of older backups successful!\nCommand: `{}`", delete_cmd),
+            Ok(_) => log::debug!(
+                "Deletion of older backups successful!\nCommand: `{}`",
+                delete_cmd
+            ),
             Err(err) => log::error!("Could not delete older backups! {:?}", err),
         };
         let mut s: String = String::new();
@@ -102,7 +105,10 @@ fn create_remote_directory(remote_path: &str, session: Session) {
     let mut mkdir_cmd_channel: Channel = session.channel_session().unwrap();
     let create_dir_cmd: String = format!("mkdir -p {}", remote_path);
     match mkdir_cmd_channel.exec(&create_dir_cmd) {
-        Ok(_remote_path_creation_result) => log::debug!("Remote path created successfully!\nCommand: {:?}", create_dir_cmd),
+        Ok(_remote_path_creation_result) => log::debug!(
+            "Remote path created successfully!\nCommand: {:?}",
+            create_dir_cmd
+        ),
         Err(err) => {
             log::error!("Could not create remote path!");
             panic!("Error creating remote path! {err}")
@@ -119,7 +125,8 @@ fn authenticate_ssh(username: &str, session: Session, config: Config) {
             let privkey_provided: bool = settings_config.sftp_privkey_path.clone().is_some()
                 && settings_config.sftp_privkey_path.clone().unwrap() != "";
             // Making relative paths work, because they didn't for some reason
-            let binding: PathBuf = dirs::home_dir().expect("Could not retrieve user home directory!");
+            let binding: PathBuf =
+                dirs::home_dir().expect("Could not retrieve user home directory!");
             let home_dir: &str = binding
                 .to_str()
                 .expect("Could not convert user home directory path object to str!");
@@ -168,7 +175,8 @@ fn authenticate_ssh(username: &str, session: Session, config: Config) {
             }
             Some(sftp_password) => {
                 log::info!("Trying SFTP password authentication...");
-                let password_auth_result: Result<(), Error> = session.userauth_password(username, &sftp_password);
+                let password_auth_result: Result<(), Error> =
+                    session.userauth_password(username, &sftp_password);
                 if password_auth_result.is_err() {
                     log::error!("SFTP: Password authentication failed!");
                     panic!("Could not authenticate with SFTP server!");

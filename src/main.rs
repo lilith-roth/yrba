@@ -5,10 +5,10 @@ mod args;
 mod config;
 mod intro;
 
-use std::path::{Path, PathBuf};
 use archive::tar::create_tarball;
 use config::{Config, load_config};
 use intro::write_welcome_message;
+use std::path::{Path, PathBuf};
 use upload::upload_handler::{get_upload_mode, upload_file};
 
 use crate::args::{Args, setup_logging};
@@ -35,16 +35,17 @@ fn main() {
                 .as_str()
                 .expect("`folders_to_backup` is checked during loading of config file"),
         );
-        let temp_archive_path: PathBuf = match create_tarball(folder, config.clone().temporary_folder) {
-            Ok(temp_archive_path) => {
-                log::info!("Created archive {:?}", temp_archive_path);
-                temp_archive_path
-            }
-            Err(err) => {
-                log::error!("Could not create archive {:?}\nError: {:?}", folder, err);
-                continue;
-            }
-        };
+        let temp_archive_path: PathBuf =
+            match create_tarball(folder, config.clone().temporary_folder) {
+                Ok(temp_archive_path) => {
+                    log::info!("Created archive {:?}", temp_archive_path);
+                    temp_archive_path
+                }
+                Err(err) => {
+                    log::error!("Could not create archive {:?}\nError: {:?}", folder, err);
+                    continue;
+                }
+            };
 
         // Uploading
         upload_file(

@@ -27,7 +27,8 @@ pub(crate) struct Config {
 
 pub(crate) fn load_config(config_path: &str) -> Config {
     let config_path_final: &str = if config_path.starts_with("~") {
-        let home_directory_raw: PathBuf = dirs::home_dir().expect("Could not retrieve user home directory!");
+        let home_directory_raw: PathBuf =
+            dirs::home_dir().expect("Could not retrieve user home directory!");
         let home_dir: &str = home_directory_raw
             .to_str()
             .expect("Could not convert user home directory path object to str!");

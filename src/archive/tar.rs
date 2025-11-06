@@ -40,7 +40,8 @@ pub(crate) fn create_tarball(
     if path_to_backup.starts_with("~") {
         final_path_to_backup = Path::new(replace_dir);
     }
-    let archivation_result: std::io::Result<()> = tar.append_dir_all("", final_path_to_backup.as_os_str());
+    let archivation_result: std::io::Result<()> =
+        tar.append_dir_all("", final_path_to_backup.as_os_str());
     if archivation_result.is_err() {
         log::error!(
             "Error adding files to archive: {:?}\nError: {:?}",
