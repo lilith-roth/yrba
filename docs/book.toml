@@ -7,5 +7,5 @@ description = "Incremental remote backups made simple!"
 
 [output.html]
 default-theme = "ayu"
-site-url = "/yrba/"
+site-url = "yrba/"
 git-repository-url = "https://github.com/lilith-roth/yrba"
