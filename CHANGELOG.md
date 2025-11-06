@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.2](https://github.com/lilith-roth/yrba/compare/v1.1.1...v1.1.2) - 2025-11-06
+
+### Fixed
+
+- temporary archives did not get deleted ([#10](https://github.com/lilith-roth/yrba/pull/10))
+
+### Other
+
+- *(gitignore)* minor gitignore update ([#13](https://github.com/lilith-roth/yrba/pull/13))
+- *(sftp upload)* minor code cleanup & impr. log msg ([#12](https://github.com/lilith-roth/yrba/pull/12))
+- *(sftp upload)* limited buffer size for SFTP uploads ([#8](https://github.com/lilith-roth/yrba/pull/8))
+- *(gitignore)* added working folders to gitignore ([#9](https://github.com/lilith-roth/yrba/pull/9))
+
 ## [1.1.1](https://github.com/lilith-roth/yrba/compare/v1.1.0...v1.1.1) - 2025-09-24
 
 ### Fixed
