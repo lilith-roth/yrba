@@ -44,6 +44,18 @@ fn main() {
         };
 
         // Uploading
-        upload_file(temp_archive_path, upload_mode.clone(), config.clone());
+        upload_file(
+            temp_archive_path.clone(),
+            upload_mode.clone(),
+            config.clone(),
+        );
+
+        // Delete temporary archive
+        if std::fs::remove_file(&temp_archive_path).is_err() {
+            log::error!(
+                "Could not delete temporary archive! Please manually remove: {:?}",
+                temp_archive_path
+            )
+        }
     }
 }
