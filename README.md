@@ -2,6 +2,9 @@
 
 YRBA makes backing up your systems easy, by automating incremental backups of defined folders, and uploading them to a server of your choice.
 
+**Documentation:** [https://lilith-roth.github.io/yrba/](https://lilith-roth.github.io/yrba/)
+
+
 ## Features
 
 - Archives your backup as .tar.gz
@@ -17,6 +20,8 @@ YRBA makes backing up your systems easy, by automating incremental backups of de
 
 
 ## Installation
+
+More detailed installation instructions can be found on the official documentation over at: [https://lilith-roth.github.io/yrba/](https://lilith-roth.github.io/yrba/)
 
 ### Docker Compose Deploy (recommended)
 
