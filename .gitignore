@@ -17,6 +17,7 @@ target/
 .idea/
 
 config.toml
+config.docker.toml
 folder-to-backup/
 /auth/
 /cache/
