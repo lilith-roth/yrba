@@ -61,12 +61,15 @@ fn delete_old_backups(remote_path: &str, backup_name: String, session: Session, 
 }
 
 fn upload_backup(remote_path: &str, backup_name: String, file_path: PathBuf, session: Session) {
+    // ToDo: Read from config!
+    const BUF_SIZE: usize = 128 * 1024 * 1024;
+
     // read file
     let file_size = fs::metadata(file_path.clone())
         .expect("Could not get temp file metadata!")
         .len() as usize;
     let file = File::open(file_path.clone()).expect("Failed to open file!");
-    let mut buf_reader = BufReader::new(file);
+    let mut buf_reader = BufReader::with_capacity(BUF_SIZE, file);
 
     // Write file to remote
     let remote_file_name = format!(
