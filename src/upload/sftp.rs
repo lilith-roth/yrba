@@ -1,6 +1,6 @@
 use std::{
     fs::{self, File},
-    io::{BufReader, Read, Write},
+    io::{BufReader, Read},
     net::TcpStream,
     path::{Path, PathBuf},
 };
@@ -152,6 +152,9 @@ fn authenticate_ssh(username: &str, session: Session, config: Config) {
                 false => false,
             };
             log::debug!("SFTP private key authentication result {:?}", success);
+            if !success {
+                log::warn!("SFTP private key authentication failed!")
+            }
             success
         }
         None => false,
