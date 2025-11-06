@@ -18,3 +18,5 @@ target/
 
 config.toml
 folder-to-backup/
+/auth/
+/cache/
