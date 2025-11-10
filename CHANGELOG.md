@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.6](https://github.com/lilith-roth/yrba/compare/v1.1.5...v1.1.6) - 2025-11-10
+
+### Fixed
+
+- *(docs)* linking of index page
+
+### Other
+
+- *(flake.nix)* allow running on aarch64-darwin
+- *(TODO.md)* update todo
+- *(TODO.md)* update todo
+- *(readme.md)* added mention of the official documentation
+
 ## [1.1.5](https://github.com/lilith-roth/yrba/compare/v1.1.4...v1.1.5) - 2025-11-06
 
 ### Other
