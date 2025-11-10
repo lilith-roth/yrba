@@ -8,6 +8,9 @@ repository = "https://github.com/lilith-roth/yrba"
 license = "GPL-3.0-only"
 keywords = ["backup", "sftp", "nfs"]
 
+[features]
+vendored-openssl = [ "openssl" ]
+
 [dependencies]
 chrono = "0.4.41"
 clap = { version = "4.5.39", features = ["derive"] }
@@ -17,6 +20,7 @@ dirs = "6.0.0"
 env_logger = "0.11.8"
 flate2 = "1.1.1"
 log = "0.4.27"
+openssl = { version = "0.10.75", features = ["vendored"], optional = true }
 serde = { version = "1.0.219", features = ["derive"] }
 ssh2 = "0.9.5"
 tar = "0.4.44"
