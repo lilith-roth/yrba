@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.7](https://github.com/lilith-roth/yrba/compare/v1.1.6...v1.1.7) - 2025-11-11
+
+### Other
+
+- fixed binary release builds
+
 ## [1.1.6](https://github.com/lilith-roth/yrba/compare/v1.1.5...v1.1.6) - 2025-11-10
 
 ### Fixed
