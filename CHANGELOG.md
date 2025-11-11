@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.8](https://github.com/lilith-roth/yrba/compare/v1.1.7...v1.1.8) - 2025-11-11
+
+### Other
+
+- fix windows binary builds
+
 ## [1.1.7](https://github.com/lilith-roth/yrba/compare/v1.1.6...v1.1.7) - 2025-11-11
 
 ### Other
