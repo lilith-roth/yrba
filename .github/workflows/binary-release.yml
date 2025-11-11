@@ -29,31 +29,14 @@ jobs:
         include:
           - target: aarch64-unknown-linux-gnu
             os: ubuntu-22.04
-            features: vendored-openssl
-          - target: aarch64-unknown-linux-musl
-            os: ubuntu-22.04
-            features: vendored-openssl
           - target: aarch64-apple-darwin
             os: macos-13
-            features: vendored-openssl
           - target: aarch64-pc-windows-msvc
             os: windows-2022
-            features: vendored-openssl
           - target: x86_64-unknown-linux-gnu
             os: ubuntu-22.04
-            features: vendored-openssl
-          - target: x86_64-unknown-linux-musl
-            os: ubuntu-22.04
-            features: vendored-openssl
-          - target: x86_64-apple-darwin
-            os: macos-13
-            features: vendored-openssl
           - target: x86_64-pc-windows-msvc
             os: windows-2022
-            features: vendored-openssl
-          - target: x86_64-unknown-freebsd
-            os: ubuntu-22.04
-            features: vendored-openssl
     timeout-minutes: 60
     steps:
       - name: Checkout repository
@@ -67,7 +50,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install -y openssl libssl-dev pkg-config
+          sudo apt install -y --no-install-recommends libc6-dev  libfindbin-libs-perl make gcc-aarch64-linux-gnu libc6-dev-arm64-cross # librust-libz-sys-dev
         if: startsWith(matrix.os, 'ubuntu')
       - uses: taiki-e/install-action@v2
         with:
@@ -81,4 +64,5 @@ jobs:
           target: ${{ matrix.target }}
           tar: all
           zip: windows
+          features: vendored-openssl
           token: ${{ secrets.GITHUB_TOKEN }}

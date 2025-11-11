@@ -19,8 +19,8 @@ target/
 # mdbook
 docs/book/
 
-config.toml
-config.docker.toml
-folder-to-backup/
+/config.toml
+/config.docker.toml
+/folder-to-backup/
 /auth/
 /cache/
