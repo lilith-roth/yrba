@@ -1,0 +1,10 @@
+[Unit]
+Description="YRBA Weekly Backups"
+
+[Timer]
+OnCalendar=weekly
+Unit=yrba.service
+Persistent=true
+
+[Install]
+WantedBy=multi-user.target
