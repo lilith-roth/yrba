@@ -2,6 +2,11 @@ use std::fs;
 use std::path::PathBuf;
 use toml::value::Array;
 
+const DEFAULT_CONFIG: &str = include_str!("../config.example.toml");
+const DEFAULT_CONFIG_FILE_PATH: &str = "~/.config/yrba/config.toml";
+#[cfg(unix)]
+const DEFAULT_ROOT_CONFIG_FILE_PATH: &str = "/etc/yrba.toml";
+
 #[derive(serde::Deserialize, Clone)]
 pub(crate) struct Config {
     // Remote URL
@@ -25,18 +30,42 @@ pub(crate) struct Config {
     pub(crate) temporary_folder: Option<String>,
 }
 
-pub(crate) fn load_config(config_path: &str) -> Config {
-    let config_path_final: &str = if config_path.starts_with("~") {
-        let home_directory_raw: PathBuf =
-            dirs::home_dir().expect("Could not retrieve user home directory!");
-        let home_dir: &str = home_directory_raw
-            .to_str()
-            .expect("Could not convert user home directory path object to str!");
-        &config_path.replace("~", home_dir)
+#[cfg(unix)]
+fn get_default_config_path() -> PathBuf {
+    let config_file_path: &str = if nix::unistd::geteuid().is_root() {
+        DEFAULT_ROOT_CONFIG_FILE_PATH
     } else {
-        config_path
+        DEFAULT_CONFIG_FILE_PATH
     };
-    if fs::exists(config_path_final).is_err() {
+    PathBuf::from(config_file_path)
+}
+
+#[cfg(windows)]
+fn get_default_config_path() -> PathBuf {
+    PathBuf::from(DEFAULT_CONFIG_FILE_PATH)
+}
+
+fn generate_default_config() -> PathBuf {
+    let config_file_path: PathBuf = get_default_config_path();
+    if !fs::exists(&config_file_path)
+        .expect("Could not check if default config file already exists!")
+    {
+        fs::write(&config_file_path, DEFAULT_CONFIG)
+            .expect("Could not create default config file!");
+    }
+    config_file_path
+}
+
+pub(crate) fn load_config(config_path: Option<&PathBuf>) -> Config {
+    let config_path: PathBuf = config_path.cloned().unwrap_or_else(generate_default_config);
+
+    let config_path_final: PathBuf = PathBuf::from(&*shellexpand::tilde(
+        &config_path
+            .to_str()
+            .expect("Could not convert config path to UTF-8!"),
+    ));
+
+    if fs::exists(&config_path_final).is_err() {
         panic!("Could not find config path!");
     }
     let config_content: String =
