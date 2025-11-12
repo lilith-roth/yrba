@@ -21,7 +21,7 @@ fn main() {
     write_welcome_message();
 
     // load config file
-    let config: Config = load_config(&args.config_file_path);
+    let config: Config = load_config(args.config_file_path.as_ref());
 
     let folders_to_backup: Vec<toml::Value> = config.folders_to_backup.clone();
     let upload_mode: UploadMode = get_upload_mode(config.remote.clone());
