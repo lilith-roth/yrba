@@ -1,0 +1,10 @@
+[Unit]
+Description="YRBA Daily Backups"
+
+[Timer]
+OnCalendar=daily
+Unit=yrba.service
+Persistent=true
+
+[Install]
+WantedBy=multi-user.target

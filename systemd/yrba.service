@@ -1,0 +1,13 @@
+[Unit]
+Description=Description of what service file do
+After=network-online.target remote-fs.target nss-lookup.target
+StartLimitIntervalSec=10min
+StartLimitBurst=2
+
+[Service]
+ExecStart=/usr/bin/yrba
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target

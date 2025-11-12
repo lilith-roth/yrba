@@ -1,0 +1,10 @@
+[Unit]
+Description="YRBA Monthly Backups"
+
+[Timer]
+OnCalendar=monthly
+Unit=yrba.service
+Persistent=true
+
+[Install]
+WantedBy=multi-user.target
