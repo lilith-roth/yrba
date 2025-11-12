@@ -4,6 +4,7 @@ use toml::value::Array;
 
 const DEFAULT_CONFIG: &str = include_str!("../config.example.toml");
 const DEFAULT_CONFIG_FILE_PATH: &str = "~/.config/yrba/config.toml";
+#[cfg(unix)]
 const DEFAULT_ROOT_CONFIG_FILE_PATH: &str = "/etc/yrba.toml";
 
 #[derive(serde::Deserialize, Clone)]
