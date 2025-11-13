@@ -42,11 +42,11 @@ pub(crate) fn create_tarball(
     }
     let archivation_result: std::io::Result<()> =
         tar.append_dir_all("", final_path_to_backup.as_os_str());
-    if archivation_result.is_err() {
+    if let Err(err) = archivation_result {
         log::error!(
             "Error adding files to archive: {:?}\nError: {:?}",
             backup_archive_temp_file_path,
-            archivation_result.err()
+            err
         );
     }
     match tar.finish() {
