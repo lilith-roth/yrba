@@ -1,8 +1,9 @@
 # YRBA - Your Remote Backup Assistant
 
-YRBA makes backing up your systems easy, by automating incremental backups of defined folders, and uploading them to a server of your choice.
+YRBA makes backing up your systems easy, by automating incremental backups of defined folders, 
+and uploading them to a server of your choice.
 
-**Documentation:** [https://lilith-roth.github.io/yrba/](https://lilith-roth.github.io/yrba/)
+**Documentation:** [https://yrba.roth.systems/](https://yrba.roth.systems/)
 
 
 ## Features
@@ -21,7 +22,8 @@ YRBA makes backing up your systems easy, by automating incremental backups of de
 
 ## Installation
 
-Detailed installation instructions can be found on the official documentation over at: [https://lilith-roth.github.io/yrba/](https://lilith-roth.github.io/yrba/)
+Detailed installation instructions can be found on the official documentation over at:
+[https://yrba.roth.systems/](https://yrba.roth.systems/)
 
 
 ### Usage
@@ -45,7 +47,7 @@ This can range from suggesting new features, to finding bugs, to coding on the p
 To suggest new features or report bugs, please leave a GitHub issue on this project.
 
 For detailed guides on how to contribute, and how to build the project check out the 
-[official documentation](https://lilith-roth.github.io/yrba/).
+[official documentation](https://yrba.roth.systems/).
 
 
 ## License
