@@ -19,7 +19,10 @@ pub(crate) fn create_tarball(
             .expect("Could not generate backup file name!"),
     );
     backup_archive_temp_file_path.set_extension("tar.gz");
-    log::debug!("Creating archive: {}", backup_archive_temp_file_path.display());
+    log::debug!(
+        "Creating archive: {}",
+        backup_archive_temp_file_path.display()
+    );
     create_dir_all(cache_dir).expect("Could not create temporary folder for archives!");
     let tar_gz: File = File::create(backup_archive_temp_file_path.clone())
         .expect("Could not generate filepath for temporary file!");

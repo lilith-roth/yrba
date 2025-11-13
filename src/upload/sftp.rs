@@ -1,10 +1,10 @@
+use ssh2::{Channel, Error, Session};
 use std::{
     fs::{self, File},
     io::{BufReader, Read},
     net::TcpStream,
     path::{Path, PathBuf},
 };
-use ssh2::{Channel, Error, Session};
 use url::Url;
 
 use crate::Config;
@@ -50,9 +50,7 @@ fn delete_old_backups(remote_path: &str, backup_name: &str, session: &Session, c
             config.amount_of_backups_to_keep + 1
         );
         match rm_cmd_channel.exec(delete_cmd) {
-            Ok(()) => log::debug!(
-                "Deletion of older backups successful!\nCommand: `{delete_cmd}`"
-            ),
+            Ok(()) => log::debug!("Deletion of older backups successful!\nCommand: `{delete_cmd}`"),
             Err(err) => log::error!("Could not delete older backups! {err:?}"),
         }
         let mut s: String = String::new();
@@ -103,9 +101,9 @@ fn create_remote_directory(remote_path: &str, session: &Session) {
     let mut mkdir_cmd_channel: Channel = session.channel_session().unwrap();
     let create_dir_cmd: String = format!("mkdir -p {remote_path}");
     match mkdir_cmd_channel.exec(&create_dir_cmd) {
-        Ok(_remote_path_creation_result) => log::debug!(
-            "Remote path created successfully!\nCommand: {create_dir_cmd:?}"
-        ),
+        Ok(_remote_path_creation_result) => {
+            log::debug!("Remote path created successfully!\nCommand: {create_dir_cmd:?}")
+        }
         Err(err) => {
             log::error!("Could not create remote path!");
             panic!("Error creating remote path! {err}")
@@ -119,8 +117,9 @@ fn authenticate_ssh(username: &str, session: &Session, config: &Config) {
     let settings_config: Config = config.clone();
     let ssh_config_accepted: bool = match settings_config.sftp_public_key_path {
         Some(public_key_path) => {
-            let private_key_provided: bool = settings_config.sftp_private_key_path.clone().is_some()
-                && settings_config.sftp_private_key_path.clone().unwrap() != "";
+            let private_key_provided: bool =
+                settings_config.sftp_private_key_path.clone().is_some()
+                    && settings_config.sftp_private_key_path.clone().unwrap() != "";
             // Making relative paths work, because they didn't for some reason
             let binding: PathBuf =
                 dirs::home_dir().expect("Could not retrieve user home directory!");
@@ -152,7 +151,9 @@ fn authenticate_ssh(username: &str, session: &Session, config: &Config) {
                     sftp_private_key_password.as_deref(),
                 );
                 auth_success.is_ok()
-            } else { false };
+            } else {
+                false
+            };
             log::debug!("SFTP private key authentication result {success:?}");
             if !success {
                 log::warn!("SFTP private key authentication failed!");

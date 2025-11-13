@@ -42,17 +42,16 @@ fn main() {
                     temp_archive_path
                 }
                 Err(err) => {
-                    log::error!("Could not create archive {}\nError: {err:?}", folder.display());
+                    log::error!(
+                        "Could not create archive {}\nError: {err:?}",
+                        folder.display()
+                    );
                     continue;
                 }
             };
 
         // Uploading
-        upload_file(
-            &temp_archive_path,
-            &upload_mode,
-            &config,
-        );
+        upload_file(&temp_archive_path, &upload_mode, &config);
 
         // Delete temporary archive
         if std::fs::remove_file(&temp_archive_path).is_err() {
