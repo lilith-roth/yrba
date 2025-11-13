@@ -24,10 +24,10 @@ fn main() {
     let config: Config = load_config(args.config_file_path.as_ref());
 
     let folders_to_backup: Vec<toml::Value> = config.folders_to_backup.clone();
-    let upload_mode: UploadMode = get_upload_mode(config.remote.clone());
+    let upload_mode: UploadMode = get_upload_mode(&config.remote.clone());
 
     for folder_raw in folders_to_backup {
-        log::info!("Backup started for: {}", folder_raw);
+        log::info!("Backup started for: {folder_raw}");
         // Archiving
         log::debug!("Archiving...");
         let folder: &Path = Path::new(
@@ -38,28 +38,27 @@ fn main() {
         let temp_archive_path: PathBuf =
             match create_tarball(folder, config.clone().temporary_folder) {
                 Ok(temp_archive_path) => {
-                    log::info!("Created archive {:?}", temp_archive_path);
+                    log::info!("Created archive {}", temp_archive_path.display());
                     temp_archive_path
                 }
                 Err(err) => {
-                    log::error!("Could not create archive {:?}\nError: {:?}", folder, err);
+                    log::error!(
+                        "Could not create archive {}\nError: {err:?}",
+                        folder.display()
+                    );
                     continue;
                 }
             };
 
         // Uploading
-        upload_file(
-            temp_archive_path.clone(),
-            upload_mode.clone(),
-            config.clone(),
-        );
+        upload_file(&temp_archive_path, &upload_mode, &config);
 
         // Delete temporary archive
         if std::fs::remove_file(&temp_archive_path).is_err() {
             log::error!(
-                "Could not delete temporary archive! Please manually remove: {:?}",
-                temp_archive_path
-            )
+                "Could not delete temporary archive! Please manually remove: {}",
+                temp_archive_path.display()
+            );
         }
     }
 }

@@ -1,4 +1,4 @@
 [workspace]
 features_always_increment_minor = true
 release_always = false
-release_commits = "^(feat|docs|fix|refactor|build|perf|revert)[(:]"
+release_commits = '^(feat|docs|fix|refactor|build|perf|revert)((\(\S+\):)|(!:)|(:)|(\(\S+\)!:))'

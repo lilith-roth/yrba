@@ -1,7 +1,7 @@
 use console::{Emoji, style};
 
 pub(crate) fn write_welcome_message() {
-    let intro_logo: &str = r#"
+    let intro_logo: &str = r"
         
         ▖▖▄▖▄ ▄▖                                                
         ▌▌▙▘▙▘▌▌                                                
@@ -11,7 +11,7 @@ pub(crate) fn write_welcome_message() {
         ▌▌▛▌▌▌▛▘  ▙▘█▌▛▛▌▛▌▜▘█▌  ▙▘▀▌▛▘▙▘▌▌▛▌  ▌▌▛▘▛▘▌▛▘▜▘▀▌▛▌▜▘
         ▐ ▙▌▙▌▌   ▌▌▙▖▌▌▌▙▌▐▖▙▖  ▙▘█▌▙▖▛▖▙▌▙▌  ▛▌▄▌▄▌▌▄▌▐▖█▌▌▌▐▖
 
-        "#;
+        ";
     log::info!(
         "{}\n\t\t{}{}\n\n",
         style(intro_logo).green(),

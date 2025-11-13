@@ -8,6 +8,9 @@ repository = "https://github.com/lilith-roth/yrba"
 license = "GPL-3.0-only"
 keywords = ["backup", "sftp", "nfs"]
 
+[lints.clippy]
+pedantic = "warn"
+
 [features]
 vendored-openssl = [ "openssl" ]
 

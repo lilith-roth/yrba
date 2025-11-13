@@ -17,9 +17,9 @@ pub(crate) struct Config {
 
     // SFTP Settings
     // SFTP public key path
-    pub(crate) sftp_pubkey_path: Option<String>,
-    pub(crate) sftp_privkey_path: Option<String>,
-    pub(crate) sftp_privkey_password: Option<String>,
+    pub(crate) sftp_public_key_path: Option<String>,
+    pub(crate) sftp_private_key_path: Option<String>,
+    pub(crate) sftp_private_key_password: Option<String>,
     // SFTP password
     pub(crate) sftp_password: Option<String>,
 
@@ -65,9 +65,10 @@ pub(crate) fn load_config(config_path: Option<&PathBuf>) -> Config {
             .expect("Could not convert config path to UTF-8!"),
     ));
 
-    if fs::exists(&config_path_final).is_err() {
-        panic!("Could not find config path!");
-    }
+    assert!(
+        fs::exists(&config_path_final).is_ok(),
+        "Could not find config path!"
+    );
     let config_content: String =
         fs::read_to_string(config_path_final).expect("Could not read config file!");
     let mut config: Config = toml::from_str(&config_content).expect("Could not parse config file!");
@@ -77,9 +78,10 @@ pub(crate) fn load_config(config_path: Option<&PathBuf>) -> Config {
 
 fn check_config(config: Config) -> Config {
     for folder in config.clone().folders_to_backup {
-        if folder.as_str().is_none() {
-            panic!("Could not parse folder to backup: {:?}", folder);
-        }
+        assert!(
+            folder.as_str().is_some(),
+            "Could not parse folder to backup: {folder:?}"
+        );
     }
     config
 }
