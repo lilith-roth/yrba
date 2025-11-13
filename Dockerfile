@@ -1,4 +1,4 @@
-FROM rust:1.88-alpine3.22
+FROM rust:1.91-alpine3.22
 
 ARG BUILD_DEPS="zlib-dev zlib-static musl-dev openssl-dev openssl-libs-static"
 
