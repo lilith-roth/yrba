@@ -4,13 +4,12 @@ use std::{
     net::TcpStream,
     path::{Path, PathBuf},
 };
-
 use ssh2::{Channel, Error, Session};
 use url::Url;
 
 use crate::Config;
 
-pub(crate) fn upload_sftp(file_path: PathBuf, config: Config) {
+pub(crate) fn upload_sftp(file_path: &Path, config: &Config) {
     // Parsing remote information from provided remote_str
     let remote_url: Url = Url::parse(&config.remote).expect("Could not parse remote URL!");
     let host: &str = remote_url
@@ -25,22 +24,21 @@ pub(crate) fn upload_sftp(file_path: PathBuf, config: Config) {
     let remote_path: &str = remote_url.path();
 
     let session: Session = setup_ssh_session(host, port);
-    authenticate_ssh(username, session.clone(), config.clone());
+    authenticate_ssh(username, &session, config);
 
     let backup_name: String = file_path
-        .clone()
         .file_stem()
         .unwrap()
         .to_str()
         .unwrap()
         .replace(".tar", "");
 
-    create_remote_directory(remote_path, session.clone());
-    upload_backup(remote_path, backup_name.clone(), file_path, session.clone());
-    delete_old_backups(remote_path, backup_name, session, config);
+    create_remote_directory(remote_path, &session);
+    upload_backup(remote_path, &backup_name, file_path, &session);
+    delete_old_backups(remote_path, &backup_name, &session, config);
 }
 
-fn delete_old_backups(remote_path: &str, backup_name: String, session: Session, config: Config) {
+fn delete_old_backups(remote_path: &str, backup_name: &str, session: &Session, config: &Config) {
     // Delete older backups than N
     if config.amount_of_backups_to_keep != 0 {
         let mut rm_cmd_channel = session.channel_session().unwrap();
@@ -52,27 +50,26 @@ fn delete_old_backups(remote_path: &str, backup_name: String, session: Session, 
             config.amount_of_backups_to_keep + 1
         );
         match rm_cmd_channel.exec(delete_cmd) {
-            Ok(_) => log::debug!(
-                "Deletion of older backups successful!\nCommand: `{}`",
-                delete_cmd
+            Ok(()) => log::debug!(
+                "Deletion of older backups successful!\nCommand: `{delete_cmd}`"
             ),
-            Err(err) => log::error!("Could not delete older backups! {:?}", err),
-        };
+            Err(err) => log::error!("Could not delete older backups! {err:?}"),
+        }
         let mut s: String = String::new();
         rm_cmd_channel.read_to_string(&mut s).unwrap();
     }
 }
 
 /// Uploads file via SSH
-fn upload_backup(remote_path: &str, backup_name: String, file_path: PathBuf, session: Session) {
+fn upload_backup(remote_path: &str, backup_name: &str, file_path: &Path, session: &Session) {
     // ToDo: Read from config!
     const BUF_SIZE: usize = 128 * 1024 * 1024;
 
     // read file
-    let file_size: usize = fs::metadata(file_path.clone())
+    let file_size: u64 = fs::metadata(file_path)
         .expect("Could not get temp file metadata!")
-        .len() as usize;
-    let file: File = File::open(file_path.clone()).expect("Failed to open file to upload!");
+        .len();
+    let file: File = File::open(file_path).expect("Failed to open file to upload!");
     let mut buf_reader: BufReader<File> = BufReader::with_capacity(BUF_SIZE, file);
 
     // Write file to remote
@@ -82,9 +79,9 @@ fn upload_backup(remote_path: &str, backup_name: String, file_path: PathBuf, ses
         chrono::offset::Local::now().format("%Y-%m-%d_%H-%M")
     );
     let remote_file_path: PathBuf = Path::join(Path::new(remote_path), remote_file_name);
-    log::debug!("Uploading to {:?}", remote_file_path);
+    log::debug!("Uploading to {}", remote_file_path.display());
     let mut remote_file: Channel = session
-        .scp_send(&remote_file_path, 0o644, file_size as u64, None)
+        .scp_send(&remote_file_path, 0o644, file_size, None)
         .expect("Could not start upload!");
     std::io::copy(&mut buf_reader, &mut remote_file).expect("Could not write file to remote host!");
 
@@ -101,68 +98,64 @@ fn upload_backup(remote_path: &str, backup_name: String, file_path: PathBuf, ses
         .expect("Error waiting for SSH channel closing!");
 }
 
-fn create_remote_directory(remote_path: &str, session: Session) {
+fn create_remote_directory(remote_path: &str, session: &Session) {
     // Create remote path if it does not exist
     let mut mkdir_cmd_channel: Channel = session.channel_session().unwrap();
-    let create_dir_cmd: String = format!("mkdir -p {}", remote_path);
+    let create_dir_cmd: String = format!("mkdir -p {remote_path}");
     match mkdir_cmd_channel.exec(&create_dir_cmd) {
         Ok(_remote_path_creation_result) => log::debug!(
-            "Remote path created successfully!\nCommand: {:?}",
-            create_dir_cmd
+            "Remote path created successfully!\nCommand: {create_dir_cmd:?}"
         ),
         Err(err) => {
             log::error!("Could not create remote path!");
             panic!("Error creating remote path! {err}")
         }
-    };
+    }
     let mut s: String = String::new();
     mkdir_cmd_channel.read_to_string(&mut s).unwrap();
 }
 
-fn authenticate_ssh(username: &str, session: Session, config: Config) {
+fn authenticate_ssh(username: &str, session: &Session, config: &Config) {
     let settings_config: Config = config.clone();
-    let ssh_config_accepted: bool = match settings_config.sftp_pubkey_path {
-        Some(pubkey_path) => {
-            let privkey_provided: bool = settings_config.sftp_privkey_path.clone().is_some()
-                && settings_config.sftp_privkey_path.clone().unwrap() != "";
+    let ssh_config_accepted: bool = match settings_config.sftp_public_key_path {
+        Some(public_key_path) => {
+            let private_key_provided: bool = settings_config.sftp_private_key_path.clone().is_some()
+                && settings_config.sftp_private_key_path.clone().unwrap() != "";
             // Making relative paths work, because they didn't for some reason
             let binding: PathBuf =
                 dirs::home_dir().expect("Could not retrieve user home directory!");
             let home_dir: &str = binding
                 .to_str()
                 .expect("Could not convert user home directory path object to str!");
-            let sftp_pubkey_path: String = pubkey_path.as_str().replace("~", home_dir);
-            let sftp_privkey_path: String = settings_config
-                .sftp_privkey_path
+            let sftp_public_key_path: String = public_key_path.as_str().replace('~', home_dir);
+            let sftp_private_key_path: String = settings_config
+                .sftp_private_key_path
                 .unwrap()
                 .as_str()
-                .replace("~", home_dir);
+                .replace('~', home_dir);
 
-            let success: bool = match privkey_provided {
-                true => {
-                    log::debug!("Trying SFTP private key authentication...");
-                    let sftp_privkey_password: Option<String> =
-                        if (settings_config.sftp_privkey_password.clone().is_some()
-                            && settings_config.sftp_privkey_password.clone().unwrap() == "")
-                            || settings_config.sftp_privkey_password.clone().is_none()
-                        {
-                            None
-                        } else {
-                            Some(settings_config.sftp_privkey_password.unwrap())
-                        };
-                    let auth_success: Result<(), Error> = session.userauth_pubkey_file(
-                        username,
-                        Some(Path::new(&sftp_pubkey_path)),
-                        sftp_privkey_path.as_ref(),
-                        sftp_privkey_password.as_deref(),
-                    );
-                    auth_success.is_ok()
-                }
-                false => false,
-            };
-            log::debug!("SFTP private key authentication result {:?}", success);
+            let success: bool = if private_key_provided {
+                log::debug!("Trying SFTP private key authentication...");
+                let sftp_private_key_password: Option<String> =
+                    if (settings_config.sftp_private_key_password.clone().is_some()
+                        && settings_config.sftp_private_key_password.clone().unwrap() == "")
+                        || settings_config.sftp_private_key_password.clone().is_none()
+                    {
+                        None
+                    } else {
+                        Some(settings_config.sftp_private_key_password.unwrap())
+                    };
+                let auth_success: Result<(), Error> = session.userauth_pubkey_file(
+                    username,
+                    Some(Path::new(&sftp_public_key_path)),
+                    sftp_private_key_path.as_ref(),
+                    sftp_private_key_password.as_deref(),
+                );
+                auth_success.is_ok()
+            } else { false };
+            log::debug!("SFTP private key authentication result {success:?}");
             if !success {
-                log::warn!("SFTP private key authentication failed!")
+                log::warn!("SFTP private key authentication failed!");
             }
             success
         }

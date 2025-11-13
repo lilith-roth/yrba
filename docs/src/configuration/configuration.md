@@ -24,8 +24,8 @@ amount_of_backups_to_keep = 5
 # if both public key path & password is defined, first the private key authentication is tried,
 # and if that fails the password is tried next.
 sftp_pubkey_path = "/auth/id_ed25519.pub"
-sftp_privkey_path = "/auth/id_ed25519"
-sftp_privkey_password = ""
+sftp_private_key_path = "/auth/id_ed25519"
+sftp_private_key_password = ""
 sftp_password = ""
 
 # Path to folders to back up, supports relative paths
@@ -63,23 +63,23 @@ Example: `amount_of_backups_to_keep = 5`
 
 
 ### SFTP Options
-#### `sftp_pubkey_path`
+#### `sftp_public_key_path`
 If SFTP private key authentication is used set this to the path of your public key.
 
 `sftp_pubkey_path = "~/.ssh/id_ed25519.pub"`
 
 
-#### `sftp_privkey_path`
+#### `sftp_private_key_path`
 If SFTP private key authentication is used set this to the path of your private key.
 
-`sftp_pubkey_path = "~/.ssh/id_ed25519"`
+`sftp_public_key_path = "~/.ssh/id_ed25519"`
 
 
-#### `sftp_privkey_password`
+#### `sftp_private_key_password`
 If SFTP private key authentication is used, and your private key is protected with a password, set the password for your
 key here.
 
-`sftp_pubkey_path = "~/.ssh/id_ed25519"`
+`sftp_public_key_path = "~/.ssh/id_ed25519"`
 
 
 #### `sftp_password`

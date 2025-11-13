@@ -19,7 +19,7 @@ pub(crate) fn create_tarball(
             .expect("Could not generate backup file name!"),
     );
     backup_archive_temp_file_path.set_extension("tar.gz");
-    log::debug!("Creating archive: {:?}", backup_archive_temp_file_path);
+    log::debug!("Creating archive: {}", backup_archive_temp_file_path.display());
     create_dir_all(cache_dir).expect("Could not create temporary folder for archives!");
     let tar_gz: File = File::create(backup_archive_temp_file_path.clone())
         .expect("Could not generate filepath for temporary file!");
@@ -36,7 +36,7 @@ pub(crate) fn create_tarball(
         .as_os_str()
         .to_str()
         .expect("Could not get home directory for tilde path!")
-        .replace("~", home_dir);
+        .replace('~', home_dir);
     if path_to_backup.starts_with("~") {
         final_path_to_backup = Path::new(replace_dir);
     }
@@ -44,26 +44,25 @@ pub(crate) fn create_tarball(
         tar.append_dir_all("", final_path_to_backup.as_os_str());
     if let Err(err) = archivation_result {
         log::error!(
-            "Error adding files to archive: {:?}\nError: {:?}",
-            backup_archive_temp_file_path,
-            err
+            "Error adding files to archive: {}\nError: {err:?}",
+            backup_archive_temp_file_path.display()
         );
     }
     match tar.finish() {
-        Ok(_) => Ok(backup_archive_temp_file_path),
+        Ok(()) => Ok(backup_archive_temp_file_path),
         Err(err) => {
             log::error!(
-                "Error finalizing tar archive {:?}\nError: {:?}",
-                final_path_to_backup.as_os_str(),
+                "Error finalizing tar archive {}\nError: {:?}",
+                final_path_to_backup.as_os_str().display(),
                 err
             );
             log::info!("Trying to delete faulty temporary archive...");
             // Delete temporary archive
             if remove_file(&backup_archive_temp_file_path).is_err() {
                 log::error!(
-                    "Could not delete temporary archive! Please manually remove: {:?}",
-                    backup_archive_temp_file_path
-                )
+                    "Could not delete temporary archive! Please manually remove: {}",
+                    backup_archive_temp_file_path.display()
+                );
             }
             Err(err)
         }
