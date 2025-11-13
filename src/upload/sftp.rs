@@ -102,7 +102,7 @@ fn create_remote_directory(remote_path: &str, session: &Session) {
     let create_dir_cmd: String = format!("mkdir -p {remote_path}");
     match mkdir_cmd_channel.exec(&create_dir_cmd) {
         Ok(_remote_path_creation_result) => {
-            log::debug!("Remote path created successfully!\nCommand: {create_dir_cmd:?}")
+            log::debug!("Remote path created successfully!\nCommand: {create_dir_cmd:?}");
         }
         Err(err) => {
             log::error!("Could not create remote path!");
