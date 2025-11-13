@@ -135,15 +135,10 @@ fn authenticate_ssh(username: &str, session: &Session, config: &Config) {
 
             let success: bool = if private_key_provided {
                 log::debug!("Trying SFTP private key authentication...");
-                let sftp_private_key_password: Option<String> =
-                    if (settings_config.sftp_private_key_password.clone().is_some()
-                        && settings_config.sftp_private_key_password.clone().unwrap() == "")
-                        || settings_config.sftp_private_key_password.clone().is_none()
-                    {
-                        None
-                    } else {
-                        Some(settings_config.sftp_private_key_password.unwrap())
-                    };
+                let sftp_private_key_password = match settings_config.sftp_private_key_password.as_deref() {
+                    None | Some("") => None,
+                    Some(pwd) => settings_config.sftp_private_key_password,
+                };
                 let auth_success: Result<(), Error> = session.userauth_pubkey_file(
                     username,
                     Some(Path::new(&sftp_public_key_path)),
