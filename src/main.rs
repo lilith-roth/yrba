@@ -56,7 +56,7 @@ fn main() {
         // Delete temporary archive
         if std::fs::remove_file(&temp_archive_path).is_err() {
             log::error!(
-                "Could not delete temporary archive! Please manually remove: {:?}",
+                "Could not delete temporary archive! Please manually remove: {}",
                 temp_archive_path.display()
             );
         }
