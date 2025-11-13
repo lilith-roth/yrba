@@ -2,8 +2,9 @@
 
 The configuration of YRBA is rather simple, and requires just a few adjustments to get going.
 
-The default location the configuration is read from is `~/.config/yrba/config.toml`, and can be changed by starting the
-executable with the `--config /path/to/config/file` or `-c /path/to/config/file` flag.
+The default location the configuration is read from is `~/.config/yrba/config.toml`, and `/etc/yrba.toml` if run as the
+*root* user, and can be changed by starting the executable with the `--config /path/to/config/file` or 
+`-c /path/to/config/file` flag.
 
 If the application has been started *without* the `-c` flag, and the default location does not contain a configuration
 file, it will automatically create an example file.

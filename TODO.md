@@ -8,7 +8,6 @@ The following features, and additions are planned to be added to YRBA in the fut
   - [ ] NFS upload
   - [ ] Local file copy
   - [ ] SMB Upload
-- [ ] Arch AUR Package
 - [ ] UNRAID Community Apps Template
 - [ ] Unit Tests
 - [ ] Add functionality to test remote authentication ahead of running backups
@@ -21,6 +20,7 @@ The following features, and additions are planned to be added to YRBA in the fut
 
 ### Done ✓
 
+- [x] Arch AUR Package
 - [x] Documentation
 - [x] Enjoy the first iteration of the application!
 - [x] Automatic releases using release-plz

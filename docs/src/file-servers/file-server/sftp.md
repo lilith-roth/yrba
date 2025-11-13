@@ -19,4 +19,14 @@ sftp_password = ""
 **Note:** Password and private key authentication can both be configured to try logging in with password, in case
 private key authentication fails.
 
-**For a more in-depth explanation of the configuration parameters, check out [Configuration](../../configuration.md)** 
+**For a more in-depth explanation of the configuration parameters, check out
+[Configuration](../../configuration/configuration.md)**
+
+
+## Note
+Make sure the system you're uploading your backups to has the following shell commands available:
+- tail
+- ls
+- grep
+- xargs
+- cd
