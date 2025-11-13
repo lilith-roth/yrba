@@ -37,15 +37,6 @@ Options:
 ```
 
 
-### Note
-Make sure the system you're uploading your backups to has the following shell commands available:
-- tail
-- ls
-- grep
-- xargs
-- cd
-
-
 ## Contributing
 Any kind of support is appreciated.
 
