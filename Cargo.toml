@@ -17,6 +17,8 @@ assets = [
 ]
 
 [package.metadata.deb]
+#copyright = "2025, Lilith Roth <lilith@roth.systems>"
+license-file = "LICENSE"
 assets = [
     # target/release path is special, and gets replaced by cargo-deb with the actual target dir path.
     ["target/release/cargo-deb", "usr/bin/", "755"],
