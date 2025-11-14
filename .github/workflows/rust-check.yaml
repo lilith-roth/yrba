@@ -1,0 +1,41 @@
+name: Rust
+
+permissions:
+  contents: write
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  Check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y --no-install-recommends libc6-dev  libfindbin-libs-perl make gcc-aarch64-linux-gnu libc6-dev-arm64-cross
+          cargo install cargo-generate-rpm just
+          rustup component add clippy rustfmt
+
+      - name: Build
+        run: just build
+
+      - name: Run tests
+        run: cargo test --verbose
+
+      - name: Run lint check
+        run: cargo clippy --verbose -- -WADF
+
+      - name: Run formatting check
+        run: cargo fmt --verbose --check

@@ -1,0 +1,93 @@
+name: Rust
+
+permissions:
+  contents: write
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  Build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - target: aarch64-unknown-linux-gnu
+            os: ubuntu-22.04
+          - target: aarch64-apple-darwin
+            os: macos-13
+          - target: x86_64-unknown-linux-gnu
+            os: ubuntu-22.04
+          - target: x86_64-pc-windows-gnu
+            os: ubuntu-22.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install rust target
+        run: |
+          cargo install cargo-generate-rpm just
+          rustup target add ${{ matrix.target }}
+
+      - uses: taiki-e/setup-cross-toolchain-action@v1
+        with:
+          target: ${{ matrix.target }}
+        if: startsWith(matrix.os, 'ubuntu') && !contains(matrix.target, '-musl')
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y --no-install-recommends libc6-dev  libfindbin-libs-perl make gcc-aarch64-linux-gnu libc6-dev-arm64-cross
+        if: startsWith(matrix.os, 'ubuntu')
+
+      - name: Build ${{ matrix.target }}
+        run: just build-vendored-target ${{ matrix.target }}
+
+      - name: Upload application binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: yrba-${{ matrix.target }}
+          path: target/${{ matrix.target }}/release/yrba
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 0
+          overwrite: false
+          include-hidden-files: false
+        if: ${{ matrix.target == 'aarch64-unknown-linux-gnu' || matrix.target == 'x86_64-unknown-linux-gnu' || matrix.target == 'aarch64-apple-darwin' }}
+
+      - name: Upload application binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: yrba-${{ matrix.target }}
+          path: target/${{ matrix.target }}/release/yrba.exe
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 0
+          overwrite: false
+          include-hidden-files: false
+        if: ${{ matrix.target == 'x86_64-pc-windows-gnu' }}
+
+      - name: Build RPM package
+        run: just build-rpm-target ${{ matrix.target }}
+        if: ${{ matrix.target == 'aarch64-unknown-linux-gnu' || matrix.target == 'x86_64-unknown-linux-gnu' }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: yrba-${{ matrix.target }}.rpm
+          path: target/${{ matrix.target }}/generate-rpm/*.rpm
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 0
+          overwrite: false
+          include-hidden-files: false
+        if: ${{ matrix.target == 'aarch64-unknown-linux-gnu' || matrix.target == 'x86_64-unknown-linux-gnu' }}

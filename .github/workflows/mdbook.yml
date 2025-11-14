@@ -5,7 +5,7 @@ on:
       - main
 
 jobs:
-  deploy:
+  Deploy:
     runs-on: ubuntu-latest
     permissions:
       contents: write  # To push a branch 

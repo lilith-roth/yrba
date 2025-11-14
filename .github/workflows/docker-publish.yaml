@@ -1,11 +1,11 @@
-name: Publish Docker image
+name: Docker
 
 on:
   release:
     types: [published]
 
 jobs:
-  push_to_registry:
+  Publish:
     name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
     permissions:
