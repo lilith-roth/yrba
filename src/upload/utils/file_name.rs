@@ -22,7 +22,7 @@ pub fn get_backup_name_stem(file_path: &Path) -> String {
 
 pub fn get_all_backups_older_than_n_newest_backups(
     n: u16,
-    backup_stem_name: String,
+    backup_stem_name: &str,
     backup_file_path: &Path,
 ) -> impl Iterator<Item = DirEntry> {
     let mut all_files_in_backup_location: Vec<DirEntry> = fs::read_dir(backup_file_path)
@@ -32,7 +32,7 @@ pub fn get_all_backups_older_than_n_newest_backups(
                 .expect("")
                 .file_name()
                 .to_string_lossy()
-                .contains(&backup_stem_name)
+                .contains(backup_stem_name)
         })
         .map(Result::unwrap)
         .collect();

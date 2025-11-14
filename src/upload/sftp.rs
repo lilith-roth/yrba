@@ -30,13 +30,13 @@ pub(crate) fn upload_sftp(file_path: &Path, config: &Config) {
     create_remote_directory(remote_path, &session);
     upload_backup(
         remote_path,
-        &*generate_backup_name(file_path),
+        &generate_backup_name(file_path),
         file_path,
         &session,
     );
     delete_old_backups(
         remote_path,
-        &*get_backup_name_stem(file_path),
+        &get_backup_name_stem(file_path),
         &session,
         config,
     );
@@ -50,7 +50,7 @@ fn delete_old_backups(
 ) {
     // Delete older backups than N
     if config.amount_of_backups_to_keep != 0 {
-        let mut rm_cmd_channel = session.channel_session().unwrap();
+        let mut rm_cmd_channel: Channel = session.channel_session().unwrap();
         let delete_cmd: &String = &format!(
             "cd {} && ls -A1t {} | grep {} | tail -n +{} | xargs rm",
             remote_path,
