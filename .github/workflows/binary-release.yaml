@@ -43,6 +43,11 @@ jobs:
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
 
+      - name: Install rust target
+        run: |
+          cargo install cargo-generate-rpm cargo-deb just
+          rustup target add ${{ matrix.target }}
+
       - uses: taiki-e/setup-cross-toolchain-action@v1
         with:
           target: ${{ matrix.target }}
