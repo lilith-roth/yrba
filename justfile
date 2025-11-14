@@ -2,8 +2,14 @@
 build:
     cargo build --release
 
+build-target target:
+    cargo build --release --target {{ target }}
+
 build-vendored:
     cargo build --release --features vendored-openssl
+
+build-vendored-target target:
+    cargo build --release --features vendored-openssl --target {{ target }}
 
 build-dev:
     cargo build
@@ -16,6 +22,9 @@ build-docker:
 
 build-rpm:
     cargo generate-rpm
+
+build-rpm-target target:
+    cargo generate-rpm --target {{ target }}
 
 build-nix:
     nix build --impure

@@ -51,7 +51,7 @@ jobs:
           rustup target add ${{ matrix.target }}
 
       - name: Build {{ matrix.target }}
-        run: cargo build --verbose --release --features vendored-openssl --target ${{ matrix.target }}
+        run: just build-vendored-target ${{ matrix.target }}
 
       - name: Upload application binary
         uses: actions/upload-artifact@v4
@@ -65,14 +65,16 @@ jobs:
           include-hidden-files: false
 
       - name: Build RPM package
-        run: just build-rpm
+        run: just build-rpm-target ${{ matrix.target }}
+        if: ${{ matrix.target == 'aarch64-unknown-linux-gnu' || 'x86_64-unknown-linux-gnu' }}
 
       - uses: actions/upload-artifact@v4
         with:
           name: yrba-${{ matrix.target }}.rpm
-          path: target/generate-rpm/*.rpm
+          path: target/${{ matrix.target }}/generate-rpm/*.rpm
           if-no-files-found: error
           retention-days: 7
           compression-level: 0
           overwrite: false
           include-hidden-files: false
+        if: ${{ matrix.target == 'aarch64-unknown-linux-gnu' || 'x86_64-unknown-linux-gnu' }}
