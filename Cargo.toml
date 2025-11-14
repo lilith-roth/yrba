@@ -5,8 +5,16 @@ version = "2.0.0"
 edition = "2024"
 readme = "README.md"
 repository = "https://github.com/lilith-roth/yrba"
+documentation = "https://yrba.roth.systems/"
 license = "GPL-3.0-only"
 keywords = ["backup", "sftp", "nfs"]
+
+[package.metadata.generate-rpm]
+assets = [
+    { source = "target/release/yrba", dest = "/bin/yrba", mode = "755" },
+    { source = "config.example.toml", dest = "/etc/default/yrba.toml", mode = "644" },
+    { source = "systemd/*", dest = "/usr/lib/systemd/system/", mode = "644" },
+]
 
 [lints.clippy]
 pedantic = "warn"

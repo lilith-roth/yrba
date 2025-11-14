@@ -1,5 +1,8 @@
 name: Rust check
 
+permissions:
+  contents: read
+
 on:
   push:
     branches: [ "main" ]
@@ -25,10 +28,29 @@ jobs:
             os: ubuntu-22.04
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - uses: taiki-e/setup-cross-toolchain-action@v1
+        with:
+          target: ${{ matrix.target }}
+        if: startsWith(matrix.os, 'ubuntu') && !contains(matrix.target, '-musl')
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y --no-install-recommends libc6-dev  libfindbin-libs-perl make gcc-aarch64-linux-gnu libc6-dev-arm64-cross
+          cargo install cargo-generate-rpm just
+        if: startsWith(matrix.os, 'ubuntu')
+
       - name: Build {{ matrix.target }}
         run: cargo build --verbose --target ${{ matrix.target }}
-      - uses: actions/upload-artifact@v4
+
+      - name: Upload application binary
+        uses: actions/upload-artifact@v4
         with:
           name: yrba-${{ matrix.target }}
           path: target/debug/yrba
@@ -37,4 +59,16 @@ jobs:
           compression-level: 0
           overwrite: false
           include-hidden-files: false
-# ToDo: Add package builds
+
+      - name: Build RPM package
+        run: just build-rpm
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: yrba-${{ matrix.target }}.rpm
+          path: target/generate-rpm/*.rpm
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 0
+          overwrite: false
+          include-hidden-files: false

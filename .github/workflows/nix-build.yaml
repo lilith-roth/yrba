@@ -1,0 +1,39 @@
+name: "Setup Nix"
+
+permissions:
+    contents: "read"
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+    example:
+        runs-on: "ubuntu-latest"
+
+        steps:
+            - name: "GitHub: Checkout Repository"
+              uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683" #v4.2.2
+
+            - name: "GitHub: Setup Nix"
+              # IMPORTANT:
+              # Consider GitHub Actions Pinning for additional security.
+              # See: https://stackoverflow.com/a/78905195
+              uses: "custom-workflows/setup-nix@latest"
+              with:
+                # NOTE:
+                # Set 'nix_path' by:
+                #  - Picking a channel → https://status.nixos.org/
+                #  - Pin 'nixpkgs' → https://nix.dev/reference/pinning-nixpkgs
+                nix_path: nixpkgs=channel:nixos-unstable
+
+            - name: "Install Just"
+              run: |
+                apt update
+                apt install -y just
+
+            - name: "Nix: Build"
+              run: |
+                just nix-build
