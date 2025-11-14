@@ -34,6 +34,11 @@ jobs:
       - name: Install rust toolchain
         uses: dtolnay/rust-toolchain@stable
 
+      - name: Install rust target
+        run: |
+          cargo install cargo-generate-rpm just
+          rustup target add ${{ matrix.target }}
+
       - uses: taiki-e/setup-cross-toolchain-action@v1
         with:
           target: ${{ matrix.target }}
@@ -44,11 +49,6 @@ jobs:
           sudo apt update
           sudo apt install -y --no-install-recommends libc6-dev  libfindbin-libs-perl make gcc-aarch64-linux-gnu libc6-dev-arm64-cross
         if: startsWith(matrix.os, 'ubuntu')
-
-      - name: Install rust target
-        run: |
-          cargo install cargo-generate-rpm just
-          rustup target add ${{ matrix.target }}
 
       - name: Build {{ matrix.target }}
         run: just build-vendored-target ${{ matrix.target }}
