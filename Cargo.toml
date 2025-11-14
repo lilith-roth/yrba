@@ -21,9 +21,16 @@ assets = [
 license-file = "LICENSE"
 assets = [
     # target/release path is special, and gets replaced by cargo-deb with the actual target dir path.
-    ["target/release/cargo-deb", "usr/bin/", "755"],
+    ["target/release/yrba", "usr/bin/", "755"],
     { source = "config.example.toml", dest = "/etc/default/yrba.toml", mode = "644" },
-    { source = "systemd/*", dest = "/usr/lib/systemd/system/", mode = "644" },
+#    { source = "systemd/*", dest = "/usr/lib/systemd/system/", mode = "644" },
+]
+maintainer-scripts = "systemd/"
+systemd-units = [
+    { unit-name = "yrba", enable = false },
+    { unit-name = "yrba.daily", enable = false },
+    { unit-name = "yrba.weekly", enable = false },
+    { unit-name = "yrba.monthly", enable = false }
 ]
 
 [lints.clippy]
