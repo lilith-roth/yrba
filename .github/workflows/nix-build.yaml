@@ -19,8 +19,8 @@ jobs:
 
             - name: "Install Just"
               run: |
-                apt update
-                apt install -y just
+                sudo apt update
+                sudo apt install -y just
 
             - name: "GitHub: Setup Nix"
               # IMPORTANT:
