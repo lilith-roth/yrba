@@ -1,6 +1,7 @@
 [package]
 name = "yrba"
 description = "Incremental remote backups made simple!"
+authors = ["Lilith Roth <lilith@roth.systems>"]
 version = "2.0.0"
 edition = "2024"
 readme = "README.md"
@@ -17,7 +18,6 @@ assets = [
 ]
 
 [package.metadata.deb]
-#copyright = "2025, Lilith Roth <lilith@roth.systems>"
 license-file = "LICENSE"
 assets = [
     # target/release path is special, and gets replaced by cargo-deb with the actual target dir path.
