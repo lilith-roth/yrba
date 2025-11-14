@@ -51,13 +51,13 @@ jobs:
           rustup target add ${{ matrix.target }}
 
       - name: Build {{ matrix.target }}
-        run: cargo build --verbose --features vendored-openssl --target ${{ matrix.target }}
+        run: cargo build --verbose --release --features vendored-openssl --target ${{ matrix.target }}
 
       - name: Upload application binary
         uses: actions/upload-artifact@v4
         with:
           name: yrba-${{ matrix.target }}
-          path: target/debug/yrba
+          path: target/${{ matrix.target }}/yrba
           if-no-files-found: error
           retention-days: 7
           compression-level: 0
