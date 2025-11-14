@@ -20,6 +20,7 @@ env:
 
 jobs:
   Check:
+    name: Lint & Formatting
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -41,7 +42,7 @@ jobs:
         run: cargo test --verbose
 
       - name: Run lint check
-        run: cargo clippy --verbose -- -WADF
+        run: cargo clippy --verbose
 
       - name: Run formatting check
         run: cargo fmt --verbose --check
