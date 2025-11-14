@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.1](https://github.com/lilith-roth/yrba/compare/v2.0.0...v2.0.1) - 2025-11-14
+
+### Other
+
+- deb packaging ([#55](https://github.com/lilith-roth/yrba/pull/55))
+- packaging & PR binary builds ([#54](https://github.com/lilith-roth/yrba/pull/54))
+
 ## [2.0.0](https://github.com/lilith-roth/yrba/compare/v1.3.0...v2.0.0) - 2025-11-13
 
 ### Other
