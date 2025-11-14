@@ -1,4 +1,4 @@
-name: "Setup Nix"
+name: "Nix"
 
 permissions:
     contents: "write"
@@ -10,7 +10,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-    example:
+    Build:
         runs-on: "ubuntu-latest"
 
         steps:
@@ -37,8 +37,3 @@ jobs:
             - name: "Nix: Build"
               run: |
                 just build-nix
-
-            - name: "log"
-              if: failure()
-              run: |
-                nix log /nix/store/2hbalylj2pf2k4ndbr5qcyfr95py5ln7-rust-docs-1.90.0-x86_64-unknown-linux-gnu.drv

@@ -1,4 +1,4 @@
-name: Publish Release Builds
+name: Release
 
 permissions:
   contents: write
@@ -21,7 +21,7 @@ defaults:
     shell: bash
 
 jobs:
-  upload-assets:
+  Assets:
     name: ${{ matrix.target }}
     runs-on: ${{ matrix.os }}
     strategy:

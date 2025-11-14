@@ -27,7 +27,7 @@ build-rpm-target target:
     cargo generate-rpm --target {{ target }}
 
 build-nix:
-    nix build --impure
+    nix build
 
 run-docker-compose:
     docker compose up
@@ -36,7 +36,7 @@ run-docker-compose-cron:
     docker compose up -f docker-compose-cron.yml
 
 run-nix:
-    nix run . --impure
+    nix run .
 
 test:
     cargo test

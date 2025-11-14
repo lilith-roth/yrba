@@ -1,4 +1,4 @@
-name: Rust check
+name: Rust
 
 permissions:
   contents: write
@@ -13,7 +13,7 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  rust-check:
+  Check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

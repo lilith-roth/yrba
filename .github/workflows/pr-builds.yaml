@@ -1,4 +1,4 @@
-name: Rust check
+name: Rust
 
 permissions:
   contents: write
@@ -13,7 +13,7 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  rust-build:
+  Build:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
