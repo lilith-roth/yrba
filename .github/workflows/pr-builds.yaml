@@ -63,6 +63,19 @@ jobs:
           compression-level: 0
           overwrite: false
           include-hidden-files: false
+        if: ${{ matrix.target == 'aarch64-unknown-linux-gnu' || 'x86_64-unknown-linux-gnu' }}
+
+      - name: Upload application binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: yrba-${{ matrix.target }}
+          path: target/${{ matrix.target }}/release/yrba.exe
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 0
+          overwrite: false
+          include-hidden-files: false
+        if: ${{ matrix.target == 'x86_64-pc-windows-gnu' }}
 
       - name: Build RPM package
         run: just build-rpm-target ${{ matrix.target }}
