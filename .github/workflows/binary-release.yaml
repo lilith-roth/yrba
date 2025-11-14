@@ -39,21 +39,26 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
+
       - uses: taiki-e/setup-cross-toolchain-action@v1
         with:
           target: ${{ matrix.target }}
         if: startsWith(matrix.os, 'ubuntu') && !contains(matrix.target, '-musl')
+
       - name: Install dependencies
         run: |
           sudo apt update
           sudo apt install -y --no-install-recommends libc6-dev  libfindbin-libs-perl make gcc-aarch64-linux-gnu libc6-dev-arm64-cross
         if: startsWith(matrix.os, 'ubuntu')
+
       - uses: taiki-e/install-action@v2
         with:
           tool: cross
         if: contains(matrix.target, '-musl')
+
       - uses: taiki-e/upload-rust-binary-action@v1
         with:
           bin: yrba
@@ -62,3 +67,23 @@ jobs:
           zip: windows
           features: vendored-openssl
           token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build RPM package
+        run: just build-rpm-target ${{ matrix.target }}
+        if: ${{ matrix.target == 'aarch64-unknown-linux-gnu' || matrix.target == 'x86_64-unknown-linux-gnu' }}
+
+      - name: Upload RPM package
+        uses: softprops/action-gh-release@v2
+        if: github.ref_type == 'tag'
+        with:
+          files: target/${{ matrix.target }}/generate-rpm/*.rpm
+
+      - name: Build DEB package
+        run: just build-deb-target ${{ matrix.target }}
+        if: ${{ matrix.target == 'aarch64-unknown-linux-gnu' || matrix.target == 'x86_64-unknown-linux-gnu' }}
+
+      - name: Upload DEB package
+        uses: softprops/action-gh-release@v2
+        if: github.ref_type == 'tag'
+        with:
+          files: target/${{ matrix.target }}/generate-rpm/*.deb

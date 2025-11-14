@@ -26,6 +26,12 @@ build-rpm:
 build-rpm-target target:
     cargo generate-rpm --target {{ target }}
 
+build-deb:
+    cargo generate-deb
+
+build-deb-target target:
+    cargo generate-rpm --target {{ target }}
+
 build-nix:
     nix build
 
