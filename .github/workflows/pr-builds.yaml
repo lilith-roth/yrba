@@ -36,7 +36,7 @@ jobs:
 
       - name: Install rust target
         run: |
-          cargo install cargo-generate-rpm just
+          cargo install cargo-generate-rpm cargo-deb just
           rustup target add ${{ matrix.target }}
 
       - uses: taiki-e/setup-cross-toolchain-action@v1
