@@ -8,6 +8,7 @@ use std::{
 use url::Url;
 
 use crate::Config;
+use crate::upload::utils::file_name::{generate_backup_name, get_backup_name_stem};
 
 pub(crate) fn upload_sftp(file_path: &Path, config: &Config) {
     // Parsing remote information from provided remote_str
@@ -26,19 +27,27 @@ pub(crate) fn upload_sftp(file_path: &Path, config: &Config) {
     let session: Session = setup_ssh_session(host, port);
     authenticate_ssh(username, &session, config);
 
-    let backup_name: String = file_path
-        .file_stem()
-        .unwrap()
-        .to_str()
-        .unwrap()
-        .replace(".tar", "");
-
     create_remote_directory(remote_path, &session);
-    upload_backup(remote_path, &backup_name, file_path, &session);
-    delete_old_backups(remote_path, &backup_name, &session, config);
+    upload_backup(
+        remote_path,
+        &*generate_backup_name(file_path),
+        file_path,
+        &session,
+    );
+    delete_old_backups(
+        remote_path,
+        &*get_backup_name_stem(file_path),
+        &session,
+        config,
+    );
 }
 
-fn delete_old_backups(remote_path: &str, backup_name: &str, session: &Session, config: &Config) {
+fn delete_old_backups(
+    remote_path: &str,
+    backup_name_stem: &str,
+    session: &Session,
+    config: &Config,
+) {
     // Delete older backups than N
     if config.amount_of_backups_to_keep != 0 {
         let mut rm_cmd_channel = session.channel_session().unwrap();
@@ -46,7 +55,7 @@ fn delete_old_backups(remote_path: &str, backup_name: &str, session: &Session, c
             "cd {} && ls -A1t {} | grep {} | tail -n +{} | xargs rm",
             remote_path,
             remote_path,
-            backup_name,
+            backup_name_stem,
             config.amount_of_backups_to_keep + 1
         );
         match rm_cmd_channel.exec(delete_cmd) {
@@ -71,12 +80,7 @@ fn upload_backup(remote_path: &str, backup_name: &str, file_path: &Path, session
     let mut buf_reader: BufReader<File> = BufReader::with_capacity(BUF_SIZE, file);
 
     // Write file to remote
-    let remote_file_name: String = format!(
-        "{}--{}.tar.gz",
-        backup_name,
-        chrono::offset::Local::now().format("%Y-%m-%d_%H-%M")
-    );
-    let remote_file_path: PathBuf = Path::join(Path::new(remote_path), remote_file_name);
+    let remote_file_path: PathBuf = Path::join(Path::new(remote_path), backup_name);
     log::debug!("Uploading to {}", remote_file_path.display());
     let mut remote_file: Channel = session
         .scp_send(&remote_file_path, 0o644, file_size, None)
