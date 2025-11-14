@@ -10,14 +10,23 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  build:
-
+  rust-check:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
+
+      - name: Install rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y --no-install-recommends libc6-dev  libfindbin-libs-perl make gcc-aarch64-linux-gnu libc6-dev-arm64-cross
+          cargo install cargo-generate-rpm just
+
       - name: Build
-        run: cargo build --verbose
+        run: just build
+
       - uses: actions/upload-artifact@v4
         with:
           name: Application Binary
@@ -27,9 +36,12 @@ jobs:
           compression-level: 0
           overwrite: false
           include-hidden-files: false
+
       - name: Run tests
         run: cargo test --verbose
+
       - name: Run lint check
         run: cargo clippy --verbose -- -WADF
+
       - name: Run formatting check
         run: cargo fmt --verbose --check
