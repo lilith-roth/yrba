@@ -2,8 +2,14 @@
 build:
     cargo build --release
 
+build-vendored:
+    cargo build --release --features vendored-openssl
+
 build-dev:
     cargo build
+
+build-dev-vendored:
+    cargo build --features vendored-openssl
 
 build-docker:
     docker build . -t dcpacky/yrba-official:latest
