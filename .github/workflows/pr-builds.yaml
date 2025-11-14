@@ -50,7 +50,7 @@ jobs:
           sudo apt install -y --no-install-recommends libc6-dev  libfindbin-libs-perl make gcc-aarch64-linux-gnu libc6-dev-arm64-cross
         if: startsWith(matrix.os, 'ubuntu')
 
-      - name: Build ${{ matrix.target }}
+      - name: Build YRBA ${{ matrix.target }}
         run: just build-vendored-target ${{ matrix.target }}
 
       - name: Upload application binary
