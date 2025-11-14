@@ -10,10 +10,17 @@ on:
     branches: [ "main" ]
 
 env:
+  CARGO_INCREMENTAL: 0
+  CARGO_NET_GIT_FETCH_WITH_CLI: true
+  CARGO_NET_RETRY: 10
   CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+  RUSTFLAGS: -D warnings
+  RUSTUP_MAX_RETRIES: 10
 
 jobs:
   Check:
+    name: Lint & Formatting
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -35,7 +42,7 @@ jobs:
         run: cargo test --verbose
 
       - name: Run lint check
-        run: cargo clippy --verbose -- -WADF
+        run: cargo clippy --verbose
 
       - name: Run formatting check
         run: cargo fmt --verbose --check

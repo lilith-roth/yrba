@@ -26,6 +26,12 @@ build-rpm:
 build-rpm-target target:
     cargo generate-rpm --target {{ target }}
 
+build-deb:
+    cargo deb
+
+build-deb-target target:
+    cargo deb -- --target {{ target }} --features vendored-openssl
+
 build-nix:
     nix build
 
