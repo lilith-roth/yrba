@@ -41,11 +41,14 @@ jobs:
 
       - name: Install dependencies
         run: |
-          rustup target add ${{ matrix.target }}
           sudo apt update
           sudo apt install -y --no-install-recommends libc6-dev  libfindbin-libs-perl make gcc-aarch64-linux-gnu libc6-dev-arm64-cross
           cargo install cargo-generate-rpm just
         if: startsWith(matrix.os, 'ubuntu')
+
+      - name: Install rust target
+        run: |
+          rustup target add ${{ matrix.target }}
 
       - name: Build {{ matrix.target }}
         run: cargo build --verbose --features vendored-openssl --target ${{ matrix.target }}
