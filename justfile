@@ -30,7 +30,7 @@ build-deb:
     cargo deb
 
 build-deb-target target:
-    cargo deb --target {{ target }}
+    cargo deb -- --target {{ target }}
 
 build-nix:
     nix build
