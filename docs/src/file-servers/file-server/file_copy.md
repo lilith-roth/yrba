@@ -5,7 +5,7 @@ drive, you can use the file protocol as your remote string in the YRBA configura
 
 For example your remote string might look like this.
 ```toml
-remote = "sftp://root@127.0.0.1/path/to/my/backup/storage/directory"
+remote = "file:///path/to/my/backup/storage/directory"
 ```
 
 ## Configuration example
