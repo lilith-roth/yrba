@@ -26,17 +26,23 @@ pub fn get_all_backups_older_than_n_newest_backups(
     backup_file_path: &Path,
 ) -> impl Iterator<Item = DirEntry> {
     let mut all_files_in_backup_location: Vec<DirEntry> = fs::read_dir(backup_file_path)
-        .expect("")
+        .expect("Could not read backup directory content!") // ToDo: Improve to not crash
         .filter(|file| {
             file.as_ref()
-                .expect("")
+                .expect("Could not retrieve file reference!")
                 .file_name()
                 .to_string_lossy()
                 .contains(backup_stem_name)
         })
         .map(Result::unwrap)
         .collect();
-    all_files_in_backup_location.sort_by_key(|thing| thing.metadata().unwrap().created().unwrap());
+    all_files_in_backup_location.sort_by_key(|thing| {
+        thing
+            .metadata()
+            .expect("Could not read file metadata!") // ToDo: Improve to not crash
+            .created()
+            .expect("Could not read file created date!") // ToDo: Improve to not crash
+    });
     all_files_in_backup_location
         .into_iter()
         .rev()

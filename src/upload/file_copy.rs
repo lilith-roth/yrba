@@ -42,5 +42,12 @@ pub fn file_copy_backup(backup_file_path: &Path, config: &Config) {
 fn delete_n_old_backups_at_location(n: u16, backup_stem_name: &str, target_backup_location: &Path) {
     let backups_older_than_n_newest =
         get_all_backups_older_than_n_newest_backups(n, backup_stem_name, target_backup_location);
-    backups_older_than_n_newest.for_each(|backup| fs::remove_file(backup.path()).expect("REASON"));
+    backups_older_than_n_newest.for_each(|backup| {
+        fs::remove_file(backup.path()).unwrap_or_else(|err| {
+            log::warn!(
+                "Could not delete old backup at {}!\nError: {err}",
+                backup.path().display()
+            );
+        });
+    });
 }

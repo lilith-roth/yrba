@@ -50,7 +50,9 @@ fn delete_old_backups(
 ) {
     // Delete older backups than N
     if config.amount_of_backups_to_keep != 0 {
-        let mut rm_cmd_channel: Channel = session.channel_session().unwrap();
+        let mut rm_cmd_channel: Channel = session
+            .channel_session()
+            .expect("Could not create SSH channel session to delete older backups!"); // ToDo: Improve to not crash
         let delete_cmd: &String = &format!(
             "cd {} && ls -A1t {} | grep {} | tail -n +{} | xargs rm",
             remote_path,
@@ -63,7 +65,9 @@ fn delete_old_backups(
             Err(err) => log::error!("Could not delete older backups! {err:?}"),
         }
         let mut s: String = String::new();
-        rm_cmd_channel.read_to_string(&mut s).unwrap();
+        rm_cmd_channel
+            .read_to_string(&mut s)
+            .expect("Could not read backup deletion command response!"); // ToDo: Improve to not crash
     }
 }
 
@@ -74,7 +78,7 @@ fn upload_backup(remote_path: &str, backup_name: &str, file_path: &Path, session
 
     // read file
     let file_size: u64 = fs::metadata(file_path)
-        .expect("Could not get temp file metadata!")
+        .expect("Could not get temp file metadata!") // ToDo: Improve to not crash
         .len();
     let file: File = File::open(file_path).expect("Failed to open file to upload!");
     let mut buf_reader: BufReader<File> = BufReader::with_capacity(BUF_SIZE, file);
@@ -84,20 +88,20 @@ fn upload_backup(remote_path: &str, backup_name: &str, file_path: &Path, session
     log::debug!("Uploading to {}", remote_file_path.display());
     let mut remote_file: Channel = session
         .scp_send(&remote_file_path, 0o644, file_size, None)
-        .expect("Could not start upload!");
-    std::io::copy(&mut buf_reader, &mut remote_file).expect("Could not write file to remote host!");
+        .expect("Could not start upload!"); // ToDo: Improve to not crash
+    std::io::copy(&mut buf_reader, &mut remote_file).expect("Could not write file to remote host!"); // ToDo: Improve to not crash
 
     // Closing channel
     remote_file
         .send_eof()
-        .expect("Error sending EOF to SSH server!");
+        .expect("Error sending EOF to SSH server!"); // ToDo: Improve to not crash
     remote_file
         .wait_eof()
         .expect("Error waiting for EOF to SSH server!");
-    remote_file.close().expect("Error closing SSH channel!");
+    remote_file.close().expect("Error closing SSH channel!"); // ToDo: Improve to not crash
     remote_file
         .wait_close()
-        .expect("Error waiting for SSH channel closing!");
+        .expect("Error waiting for SSH channel closing!"); // ToDo: Improve to not crash
 }
 
 fn create_remote_directory(remote_path: &str, session: &Session) {
@@ -110,11 +114,13 @@ fn create_remote_directory(remote_path: &str, session: &Session) {
         }
         Err(err) => {
             log::error!("Could not create remote path!");
-            panic!("Error creating remote path! {err}")
+            panic!("Error creating remote path!\nError: {err}")
         }
     }
     let mut s: String = String::new();
-    mkdir_cmd_channel.read_to_string(&mut s).unwrap();
+    mkdir_cmd_channel
+        .read_to_string(&mut s)
+        .expect("Could not read remote backup directory creation response!");
 }
 
 fn authenticate_ssh(username: &str, session: &Session, config: &Config) {
