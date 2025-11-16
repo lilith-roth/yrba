@@ -48,3 +48,19 @@ pub fn get_all_backups_older_than_n_newest_backups(
         .rev()
         .skip(n as usize)
 }
+
+#[cfg(test)]
+mod tests {
+    use tempfile::{NamedTempFile};
+
+    use super::*;
+
+    #[test]
+    fn test_backup_name_stem() {
+        let file = NamedTempFile::new().unwrap();
+        let file_path = file.path();
+
+        let backup_name_stem = get_backup_name_stem(file_path);
+        assert!(backup_name_stem.eq(&file_path.file_name().unwrap().to_string_lossy()));
+    }
+}
