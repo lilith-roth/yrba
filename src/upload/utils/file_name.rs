@@ -26,11 +26,18 @@ pub fn get_backup_name_stem(file_path: &Path) -> anyhow::Result<String> {
     Ok(name_stem)
 }
 
+/// Retrieves all backups older than the n newest.
+///
+/// Used to delete older unnecessary backups.
+/// In case of file errors, like no metadata etc. just ignore the file, we don't want to
+/// accidentally delete anything that might still be important.
 pub fn get_all_backups_older_than_n_newest_backups(
     n: u16,
     backup_stem_name: &str,
     backup_file_path: &Path,
 ) -> anyhow::Result<impl Iterator<Item = DirEntry>> {
+    // ToDo: Convert to for loop to improve error handling
+    //          -> ToDo: Make vector tuple of <DirEntry, CreatedDate>, if created date can not be retrieved, don't add it to vector
     let mut all_files_in_backup_location: Vec<DirEntry> = fs::read_dir(backup_file_path)
         .expect("Could not read backup directory content!") // ToDo: Improve to not crash
         .filter(|file| {
