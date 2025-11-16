@@ -30,8 +30,6 @@ jobs:
 
       - name: Install dependencies
         run: |
-          sudo apt update
-          #sudo apt install -y --no-install-recommends libc6-dev  libfindbin-libs-perl make libc6-dev-arm64-cross
           cargo install just
           rustup component add clippy rustfmt
 
