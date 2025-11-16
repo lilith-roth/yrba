@@ -20,7 +20,7 @@ env:
 
 jobs:
   Check:
-    name: Lint & Formatting
+    name: Test, Lint & Format
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
