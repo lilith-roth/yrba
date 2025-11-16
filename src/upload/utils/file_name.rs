@@ -49,10 +49,11 @@ pub fn get_all_backups_older_than_n_newest_backups(
             .created()
             .expect("Could not read file created date!") // ToDo: Improve to not crash
     });
-    all_files_in_backup_location
+    let backups_older_n_newest = all_files_in_backup_location
         .into_iter()
         .rev()
-        .skip(n as usize)
+        .skip(n as usize);
+    Ok(backups_older_n_newest)
 }
 
 #[cfg(test)]
