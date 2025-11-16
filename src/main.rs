@@ -51,7 +51,10 @@ fn main() {
             };
 
         // Uploading
-        upload_file(&temp_archive_path, &upload_mode, &config);
+        if let Err(err) = upload_file(&temp_archive_path, &upload_mode, &config) {
+            log::error!("Upload failed: {err}");
+            log::debug!("Error context: {err:?}");
+        }
 
         // Delete temporary archive
         if std::fs::remove_file(&temp_archive_path).is_err() {

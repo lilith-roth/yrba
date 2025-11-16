@@ -20,11 +20,16 @@ pub(crate) fn get_upload_mode(remote_str: &str) -> UploadMode {
     }
 }
 
-pub(crate) fn upload_file(file_path: &Path, upload_mode: &UploadMode, config: &Config) {
+pub(crate) fn upload_file(
+    file_path: &Path,
+    upload_mode: &UploadMode,
+    config: &Config,
+) -> anyhow::Result<()> {
     log::info!("Starting upload...");
     match upload_mode {
         UploadMode::Sftp => upload_sftp(file_path, config),
-        UploadMode::File => file_copy_backup(file_path, config),
+        UploadMode::File => file_copy_backup(file_path, config)?,
     }
     log::info!("Upload finished!");
+    Ok(())
 }

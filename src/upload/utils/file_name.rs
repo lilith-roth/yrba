@@ -1,9 +1,9 @@
+use anyhow::anyhow;
 use std::fs;
 use std::fs::DirEntry;
 use std::path::Path;
 
-pub fn generate_backup_name(file_path: &Path) -> String {
-    let backup_name: String = get_backup_name_stem(file_path);
+pub fn generate_backup_name(backup_name: &str) -> String {
     format!(
         "{}--{}.tar.gz",
         backup_name,
@@ -11,20 +11,26 @@ pub fn generate_backup_name(file_path: &Path) -> String {
     )
 }
 
-pub fn get_backup_name_stem(file_path: &Path) -> String {
-    file_path
+pub fn get_backup_name_stem(file_path: &Path) -> anyhow::Result<String> {
+    let name_stem = file_path
         .file_stem()
-        .unwrap()
+        .ok_or_else(|| anyhow!("Could not retrieve file stem of {}!", file_path.display()))?
         .to_str()
-        .unwrap()
-        .replace(".tar", "")
+        .ok_or_else(|| {
+            anyhow!(
+                "File stem contain invalid UTF-8 characters! {}",
+                file_path.display()
+            )
+        })?
+        .replace(".tar", "");
+    Ok(name_stem)
 }
 
 pub fn get_all_backups_older_than_n_newest_backups(
     n: u16,
     backup_stem_name: &str,
     backup_file_path: &Path,
-) -> impl Iterator<Item = DirEntry> {
+) -> anyhow::Result<impl Iterator<Item = DirEntry>> {
     let mut all_files_in_backup_location: Vec<DirEntry> = fs::read_dir(backup_file_path)
         .expect("Could not read backup directory content!") // ToDo: Improve to not crash
         .filter(|file| {
@@ -51,7 +57,7 @@ pub fn get_all_backups_older_than_n_newest_backups(
 
 #[cfg(test)]
 mod tests {
-    use tempfile::{NamedTempFile};
+    use tempfile::NamedTempFile;
 
     use super::*;
 
@@ -60,7 +66,7 @@ mod tests {
         let file = NamedTempFile::new().unwrap();
         let file_path = file.path();
 
-        let backup_name_stem = get_backup_name_stem(file_path);
+        let backup_name_stem = get_backup_name_stem(file_path).unwrap();
         assert!(backup_name_stem.eq(&file_path.file_name().unwrap().to_string_lossy()));
     }
 }
