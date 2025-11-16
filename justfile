@@ -45,7 +45,13 @@ run-nix:
     nix run .
 
 test:
-    cargo test
+    cargo test --verbose
+
+lint:
+    cargo clippy --verbose
 
 format:
     cargo fmt
+
+format-check:
+    cargo fmt --verbose --check

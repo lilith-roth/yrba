@@ -20,7 +20,7 @@ env:
 
 jobs:
   Check:
-    name: Lint & Formatting
+    name: Test, Lint & Format
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -30,19 +30,17 @@ jobs:
 
       - name: Install dependencies
         run: |
-          sudo apt update
-          sudo apt install -y --no-install-recommends libc6-dev  libfindbin-libs-perl make gcc-aarch64-linux-gnu libc6-dev-arm64-cross
-          cargo install cargo-generate-rpm just
+          cargo install just
           rustup component add clippy rustfmt
 
       - name: Build
         run: just build
 
       - name: Run tests
-        run: cargo test --verbose
+        run: just test
 
       - name: Run lint check
-        run: cargo clippy --verbose
+        run: just lint
 
       - name: Run formatting check
-        run: cargo fmt --verbose --check
+        run: just format-check
