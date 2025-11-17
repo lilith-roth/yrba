@@ -6,6 +6,6 @@ services:
       dockerfile: Dockerfile
     command: "/app/release/yrba -c /app/config.toml"
     volumes:
-      - ./config.toml:/app/config.toml
-      - ./folder-to-backup:/backup
+      - ../config.toml:/app/config.toml
+      - ../folder-to-backup:/backup
       - ~/.ssh/:/auth
