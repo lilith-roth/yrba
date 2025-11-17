@@ -28,7 +28,7 @@ The setup with docker compose is recommended as it is completely preconfigured, 
 
 1. Clone the GitHub repository to your system `git clone https://github.com/lilith-roth/yrba`
 2. Copy `config.example.toml` to `config.toml`
-3. Adjust `config.toml` as described in [Configuration](../configuration.md)
+3. Adjust `config.toml` as described in [Configuration](../../configuration/configuration.md)
 4. (Optional) If using the cron schedule based setup, adjust your automatic backup schedule by adjusting the 
 `CRON_SCHEDULE` line in `docker-compose-cron.yml`
 5. Adjust `docker-compose.yml` or `docker-compose-cron.yml` with correct mount paths for your backup folder, and your
