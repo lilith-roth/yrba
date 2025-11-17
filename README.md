@@ -8,13 +8,13 @@ and uploading them to a server of your choice.
 
 ## Features
 
-- Archives your backup as .tar.gz
+- Archives your backups as .tar.gz
 - Incremental backups automatically keeps the last N backups
 - Can back up directories on any OS
 - - GNU/Linux
 - - macOS
 - - Windows (untested)
-- Automatic uploads with SFTP (NFS & file copy are planned)
+- Automatic uploads with SFTP or local copy to a target location (NFS & SMB are planned)
 - Can upload backups to Unix systems
 - - GNU/Linux
 - - macOS
