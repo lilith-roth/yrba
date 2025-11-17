@@ -1,10 +1,12 @@
 use anyhow::anyhow;
 use std::fs;
 use std::fs::{DirEntry, ReadDir};
+use std::iter::{Rev, Skip};
 use std::path::Path;
+use std::vec::IntoIter;
 
 pub fn generate_backup_name(backup_name: &Path) -> anyhow::Result<String> {
-    let backup_name = format!(
+    let backup_name: String = format!(
         "{}--{}.tar.gz",
         backup_name
             .file_name()
@@ -16,7 +18,7 @@ pub fn generate_backup_name(backup_name: &Path) -> anyhow::Result<String> {
 }
 
 pub fn get_backup_name_stem(file_path: &Path) -> anyhow::Result<String> {
-    let name_stem = file_path
+    let name_stem: String = file_path
         .file_stem()
         .ok_or_else(|| anyhow!("Could not retrieve file stem of {}!", file_path.display()))?
         .to_str()
@@ -57,10 +59,11 @@ pub fn get_all_backups_older_than_n_newest_backups(
     }
     files_in_backup_location_with_known_creation_date
         .sort_by_key(|thing| thing.metadata().unwrap().created().unwrap());
-    let backups_older_n_newest = files_in_backup_location_with_known_creation_date
-        .into_iter()
-        .rev()
-        .skip(n as usize);
+    let backups_older_n_newest: Skip<Rev<IntoIter<DirEntry>>> =
+        files_in_backup_location_with_known_creation_date
+            .into_iter()
+            .rev()
+            .skip(n as usize);
     Ok(backups_older_n_newest)
 }
 
