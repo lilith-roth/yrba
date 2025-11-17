@@ -1,5 +1,16 @@
 # YRBA - Your Remote Backup Assistant
 
+![GitHub Release Date](https://img.shields.io/github/release-date/lilith-roth/yrba?label=Release)
+![GitHub branch check runs](https://img.shields.io/github/check-runs/lilith-roth/yrba/main?label=Checks)
+![GitHub Sponsors](https://img.shields.io/github/sponsors/lilith-roth?label=Sponsors)
+![GitHub License](https://img.shields.io/github/license/lilith-roth/yrba?label=License)
+
+![Crates.io Total Downloads](https://img.shields.io/crates/d/yrba?label=Downloads%20crates.io)
+![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/lilith-roth/yrba/total?label=Downloads%20GitHub)
+![Docker Pulls](https://img.shields.io/docker/pulls/dcpacky/yrba-official?label=Docker%20pulls)
+![AUR Votes](https://img.shields.io/aur/votes/yrba-git?label=AUR%20votes)
+
+
 YRBA makes backing up your systems easy, by automating incremental backups of defined folders, 
 and uploading them to a server of your choice.
 
