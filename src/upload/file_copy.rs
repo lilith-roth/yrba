@@ -1,7 +1,6 @@
 use crate::config::Config;
-use crate::upload::utils::file_name::{
-    generate_backup_name, get_all_backups_older_than_n_newest_backups, get_backup_name_stem,
-};
+use crate::upload::utils::backup_removal::get_all_backups_older_than_n_newest_backups;
+use crate::upload::utils::file_name::{generate_backup_name, get_backup_name_stem};
 use anyhow::Context;
 use std::fs;
 use std::path::{Path, PathBuf};
