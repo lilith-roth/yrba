@@ -17,7 +17,7 @@ pub fn file_copy_backup(backup_file_path: &Path, config: &Config) -> anyhow::Res
         target_directory
     );
     let backup_stem_name: String = get_backup_name_stem(backup_file_path)?;
-    let file_name: String = generate_backup_name(&backup_stem_name);
+    let file_name: String = generate_backup_name(backup_stem_name.as_ref())?;
     let target_file_path: PathBuf = Path::new(target_directory).join(&file_name);
     match fs::copy(backup_file_path, &target_file_path) {
         Ok(_) => {
@@ -30,7 +30,7 @@ pub fn file_copy_backup(backup_file_path: &Path, config: &Config) -> anyhow::Res
                 config.amount_of_backups_to_keep,
                 &backup_stem_name,
                 target_directory.as_ref(),
-            );
+            )?;
         }
         Err(err) => log::error!(
             "Could not back up {} to {}\nError: {:?}",
@@ -42,10 +42,10 @@ pub fn file_copy_backup(backup_file_path: &Path, config: &Config) -> anyhow::Res
     Ok(())
 }
 
-fn delete_n_old_backups_at_location(n: u16, backup_stem_name: &str, target_backup_location: &Path) {
+fn delete_n_old_backups_at_location(n: u16, backup_stem_name: &str, target_backup_location: &Path) -> anyhow::Result<()> {
     let backups_older_than_n_newest =
         get_all_backups_older_than_n_newest_backups(n, backup_stem_name, target_backup_location);
-    backups_older_than_n_newest.for_each(|backup| {
+    backups_older_than_n_newest?.into_iter().for_each(|backup| {
         fs::remove_file(backup.path()).unwrap_or_else(|err| {
             log::warn!(
                 "Could not delete old backup at {}!\nError: {err}",
@@ -53,4 +53,5 @@ fn delete_n_old_backups_at_location(n: u16, backup_stem_name: &str, target_backu
             );
         });
     });
+    Ok(())
 }

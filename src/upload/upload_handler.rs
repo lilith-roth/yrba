@@ -27,7 +27,7 @@ pub(crate) fn upload_file(
 ) -> anyhow::Result<()> {
     log::info!("Starting upload...");
     match upload_mode {
-        UploadMode::Sftp => upload_sftp(file_path, config),
+        UploadMode::Sftp => upload_sftp(file_path, config)?,
         UploadMode::File => file_copy_backup(file_path, config)?,
     }
     log::info!("Upload finished!");

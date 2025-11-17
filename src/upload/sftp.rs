@@ -10,7 +10,7 @@ use url::Url;
 use crate::Config;
 use crate::upload::utils::file_name::{generate_backup_name, get_backup_name_stem};
 
-pub(crate) fn upload_sftp(file_path: &Path, config: &Config) {
+pub(crate) fn upload_sftp(file_path: &Path, config: &Config) -> anyhow::Result<()> {
     // Parsing remote information from provided remote_str
     let remote_url: Url = Url::parse(&config.remote).expect("Could not parse remote URL!");
     let host: &str = remote_url
@@ -30,21 +30,22 @@ pub(crate) fn upload_sftp(file_path: &Path, config: &Config) {
     create_remote_directory(remote_path, &session);
     upload_backup(
         remote_path,
-        &generate_backup_name(file_path),
+        &generate_backup_name(file_path)?,
         file_path,
         &session,
     );
     delete_old_backups(
         remote_path,
-        &get_backup_name_stem(file_path),
+        get_backup_name_stem(file_path)?,
         &session,
         config,
     );
+    Ok(())
 }
 
 fn delete_old_backups(
     remote_path: &str,
-    backup_name_stem: &str,
+    backup_name_stem: String,
     session: &Session,
     config: &Config,
 ) {
