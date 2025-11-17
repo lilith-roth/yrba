@@ -1,9 +1,8 @@
 use anyhow::anyhow;
 use std::fs;
-use std::fs::{DirEntry, ReadDir};
-use std::iter::{Rev, Skip};
+use std::fs::{DirEntry, Metadata, ReadDir};
 use std::path::Path;
-use std::vec::IntoIter;
+use std::time::SystemTime;
 
 pub fn generate_backup_name(backup_name: &Path) -> anyhow::Result<String> {
     let backup_name: String = format!(
@@ -42,28 +41,27 @@ pub fn get_all_backups_older_than_n_newest_backups(
     backup_stem_name: &str,
     backup_file_path: &Path,
 ) -> anyhow::Result<impl Iterator<Item = DirEntry>> {
-    let mut files_in_backup_location_with_known_creation_date: Vec<DirEntry> = vec![];
+    let mut files_in_backup_location_with_known_creation_date: Vec<(SystemTime, DirEntry)> = vec![];
     let all_files_in_backup_location: ReadDir = fs::read_dir(backup_file_path)?;
-    for file_result in all_files_in_backup_location {
-        let file: DirEntry = file_result?;
+    for file in all_files_in_backup_location.filter_map(Result::ok) {
         if !file
             .file_name()
             .to_string_lossy()
             .contains(backup_stem_name)
-            || file.metadata().is_err()
-            || file.metadata()?.created().is_err()
         {
             continue;
         }
-        files_in_backup_location_with_known_creation_date.append(&mut vec![file]);
+        let Ok(Ok(created_date)) = file.metadata().as_ref().map(Metadata::created) else {
+            continue;
+        };
+        files_in_backup_location_with_known_creation_date.append(&mut vec![(created_date, file)]);
     }
-    files_in_backup_location_with_known_creation_date
-        .sort_by_key(|thing| thing.metadata().unwrap().created().unwrap());
-    let backups_older_n_newest: Skip<Rev<IntoIter<DirEntry>>> =
-        files_in_backup_location_with_known_creation_date
-            .into_iter()
-            .rev()
-            .skip(n as usize);
+    files_in_backup_location_with_known_creation_date.sort_by_key(|(created, _)| *created);
+    let backups_older_n_newest = files_in_backup_location_with_known_creation_date
+        .into_iter()
+        .rev()
+        .skip(n as usize)
+        .map(|(_, file)| file);
     Ok(backups_older_n_newest)
 }
 
