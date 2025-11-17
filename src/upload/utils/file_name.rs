@@ -43,15 +43,17 @@ pub fn get_all_backups_older_than_n_newest_backups(
     let mut all_files_in_backup_location = fs::read_dir(backup_file_path)?;
     let amount_files_in_backup_location = all_files_in_backup_location.by_ref().count();
     for (i, file_result) in all_files_in_backup_location.enumerate() {
-        let mut file = file_result?;
+        let file = file_result?;
         if file.file_name().to_string_lossy().contains(backup_stem_name) {
             if file.metadata().is_err() || file.metadata()?.created().is_err(){
                 continue;
             }
             if i > amount_files_in_backup_location - n as usize {
+                log::warn!("Skip {}", i);
                 break;
             }
 
+            log::warn!("add {}", file.file_name().display());
             backups_older_n_newest.append(&mut vec![file]);
         }
     }
