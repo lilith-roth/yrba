@@ -36,7 +36,7 @@ pub(crate) fn upload_sftp(file_path: &Path, config: &Config) -> anyhow::Result<(
     );
     delete_old_backups(
         remote_path,
-        get_backup_name_stem(file_path)?,
+        &get_backup_name_stem(file_path)?,
         &session,
         config,
     );
@@ -45,7 +45,7 @@ pub(crate) fn upload_sftp(file_path: &Path, config: &Config) -> anyhow::Result<(
 
 fn delete_old_backups(
     remote_path: &str,
-    backup_name_stem: String,
+    backup_name_stem: &str,
     session: &Session,
     config: &Config,
 ) {

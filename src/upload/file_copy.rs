@@ -38,14 +38,18 @@ pub fn file_copy_backup(backup_file_path: &Path, config: &Config) -> anyhow::Res
             target_file_path.display(),
             err
         ),
-    };
+    }
     Ok(())
 }
 
-fn delete_n_old_backups_at_location(n: u16, backup_stem_name: &str, target_backup_location: &Path) -> anyhow::Result<()> {
+fn delete_n_old_backups_at_location(
+    n: u16,
+    backup_stem_name: &str,
+    target_backup_location: &Path,
+) -> anyhow::Result<()> {
     let backups_older_than_n_newest =
         get_all_backups_older_than_n_newest_backups(n, backup_stem_name, target_backup_location);
-    backups_older_than_n_newest?.into_iter().for_each(|backup| {
+    backups_older_than_n_newest?.for_each(|backup| {
         fs::remove_file(backup.path()).unwrap_or_else(|err| {
             log::warn!(
                 "Could not delete old backup at {}!\nError: {err}",
