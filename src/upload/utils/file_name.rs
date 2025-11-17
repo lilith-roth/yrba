@@ -1,3 +1,4 @@
+use std::arch::aarch64::vzip1_f32;
 use anyhow::anyhow;
 use std::fs;
 use std::fs::DirEntry;
@@ -36,48 +37,27 @@ pub fn get_all_backups_older_than_n_newest_backups(
     n: u16,
     backup_stem_name: &str,
     backup_file_path: &Path,
-) -> anyhow::Result<Vec<DirEntry>> {
-    // ToDo: Convert to for loop to improve error handling
-    //          -> ToDo: Make vector tuple of <DirEntry, CreatedDate>, if created date can not be retrieved, don't add it to vector
-    let mut backups_older_n_newest: Vec<DirEntry> = vec![];
-    let mut all_files_in_backup_location = fs::read_dir(backup_file_path)?;
-    let amount_files_in_backup_location = all_files_in_backup_location.by_ref().count();
-    for (i, file_result) in all_files_in_backup_location.enumerate() {
+) -> anyhow::Result<impl Iterator<Item = DirEntry>> {
+    let mut files_in_backup_location_with_known_creation_date: Vec<DirEntry> = vec![];
+    let all_files_in_backup_location = fs::read_dir(backup_file_path)?;
+    for file_result in all_files_in_backup_location {
         let file = file_result?;
-        if file.file_name().to_string_lossy().contains(backup_stem_name) {
-            if file.metadata().is_err() || file.metadata()?.created().is_err(){
-                continue;
-            }
-            if i > amount_files_in_backup_location - n as usize {
-                log::warn!("Skip {}", i);
-                break;
-            }
-
-            log::warn!("add {}", file.file_name().display());
-            backups_older_n_newest.append(&mut vec![file]);
+        if file.metadata().is_err() || file.metadata()?.created().is_err(){
+            continue;
         }
+        files_in_backup_location_with_known_creation_date.append(&mut vec![file]);
     }
-    //     .expect("Could not read backup directory content!") // ToDo: Improve to not crash
-    //     .filter(|file| {
-    //         file.as_ref()
-    //             .expect("Could not retrieve file reference!")
-    //             .file_name()
-    //             .to_string_lossy()
-    //             .contains(backup_stem_name)
-    //     })
-    //     .map(Result::unwrap)
-    //     .collect();
-    // all_files_in_backup_location.sort_by_key(|thing| {
-    //     thing
-    //         .metadata()
-    //         .expect("Could not read file metadata!") // ToDo: Improve to not crash
-    //         .created()
-    //         .expect("Could not read file created date!") // ToDo: Improve to not crash
-    // });
-    // let backups_older_n_newest = all_files_in_backup_location
-    //     .into_iter()
-    //     .rev()
-    //     .skip(n as usize);
+    files_in_backup_location_with_known_creation_date.sort_by_key(|thing| {
+        thing
+            .metadata()
+            .unwrap()
+            .created()
+            .unwrap()
+    });
+    let backups_older_n_newest = files_in_backup_location_with_known_creation_date
+        .into_iter()
+        .rev()
+        .skip(n as usize);
     Ok(backups_older_n_newest)
 }
 
