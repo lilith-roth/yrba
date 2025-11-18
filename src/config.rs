@@ -1,3 +1,4 @@
+use anyhow::Context;
 use std::fs;
 use std::path::PathBuf;
 use toml::value::Array;
@@ -56,13 +57,13 @@ fn generate_default_config() -> PathBuf {
     config_file_path
 }
 
-pub(crate) fn load_config(config_path: Option<&PathBuf>) -> Config {
+pub(crate) fn load_config(config_path: Option<&PathBuf>) -> anyhow::Result<Config> {
     let config_path: PathBuf = config_path.cloned().unwrap_or_else(generate_default_config);
 
     let config_path_final: PathBuf = PathBuf::from(&*shellexpand::tilde(
         &config_path
             .to_str()
-            .expect("Could not convert config path to UTF-8!"),
+            .context("Could not convert config path to UTF-8!")?,
     ));
 
     assert!(
@@ -70,10 +71,11 @@ pub(crate) fn load_config(config_path: Option<&PathBuf>) -> Config {
         "Could not find config path!"
     );
     let config_content: String =
-        fs::read_to_string(config_path_final).expect("Could not read config file!");
-    let mut config: Config = toml::from_str(&config_content).expect("Could not parse config file!");
+        fs::read_to_string(config_path_final).context("Could not read config file!")?;
+    let mut config: Config =
+        toml::from_str(&config_content).context("Could not parse config file!")?;
     config = check_config(config);
-    config
+    Ok(config)
 }
 
 fn check_config(config: Config) -> Config {
