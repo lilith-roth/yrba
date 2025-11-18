@@ -30,10 +30,10 @@ The setup with docker compose is recommended as it is completely preconfigured, 
 2. Copy `config.example.toml` to `config.toml`
 3. Adjust `config.toml` as described in [Configuration](../../configuration/configuration.md)
 4. (Optional) If using the cron schedule based setup, adjust your automatic backup schedule by adjusting the 
-`CRON_SCHEDULE` line in `docker-compose-cron.yml`
-5. Adjust `docker-compose.yml` or `docker-compose-cron.yml` with correct mount paths for your backup folder, and your
+`CRON_SCHEDULE` line in `docker/docker-compose-cron.yml`
+5. Adjust `docker/docker-compose.yml` or `docker/docker-compose-cron.yml` with correct mount paths for your backup folder, and your
 authentication keys if SFTP private keys are used
-6. Start the docker container with `docker compose up` or `docker compose up -f docker-compose-cron.yml` if the cron
+6. Start the docker container with `docker compose -f docker/docker-compose.yml up` or `docker compose -f docker/docker-compose-cron.yml up` if the cron
 container is used
 
 
@@ -55,3 +55,18 @@ docker run \
 ```
 Adjust the command with your mount paths for the configuration file, the folder to back up, and your authentication keys
 if private key authentication is desired.
+
+### Building the docker image locally
+
+You can easily build the docker image on your local machine either by using the `just` command, or by using the full
+`docker build` command.
+
+**Note:** Make sure you're running these commands from the root folder of the repository.
+
+```shell
+just build-docker
+```
+or
+```shell
+docker build . -f docker/Dockerfile -t dcpacky/yrba-official:latest
+```

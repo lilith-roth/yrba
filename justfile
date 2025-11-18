@@ -18,7 +18,7 @@ build-dev-vendored:
     cargo build --features vendored-openssl
 
 build-docker:
-    docker build . -t dcpacky/yrba-official:latest
+    docker build . -f docker/Dockerfile -t dcpacky/yrba-official:latest
 
 build-rpm:
     cargo generate-rpm

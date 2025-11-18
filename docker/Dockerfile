@@ -10,8 +10,9 @@ WORKDIR /build
 COPY . ./
 
 RUN cargo build --release --target-dir /app &&  \
-    cp /build/cron_start.sh /app/ &&  \
-    chmod +x /app/cron_start.sh && \
+    mkdir -p /app/docker && \
+    cp /build/docker/cron_start.sh /app/docker/cron_start.sh &&  \
+    chmod +x /app/docker/cron_start.sh && \
     rm -rf /build && \
     apk del $BUILD_DEPS
 
