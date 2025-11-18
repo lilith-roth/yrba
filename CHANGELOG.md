@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.1](https://github.com/lilith-roth/yrba/compare/v2.1.0...v2.1.1) - 2025-11-18
+
+### Other
+
+- *(deps)* bump docker/login-action from 2.1.0 to 3.6.0 ([#67](https://github.com/lilith-roth/yrba/pull/67))
+- docker cleanup ([#65](https://github.com/lilith-roth/yrba/pull/65))
+- improved error handling ([#66](https://github.com/lilith-roth/yrba/pull/66))
+
 ## [2.1.0](https://github.com/lilith-roth/yrba/compare/v2.0.2...v2.1.0) - 2025-11-17
 
 ### Added
