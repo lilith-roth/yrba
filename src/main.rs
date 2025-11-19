@@ -14,7 +14,8 @@ use upload::upload_handler::{get_upload_mode, upload_file};
 use crate::args::{Args, setup_logging};
 use crate::upload::upload_handler::UploadMode;
 
-fn main() {
+#[tokio::main]
+async fn main() {
     // parse application args
     let args: Args = setup_logging();
 
@@ -61,7 +62,7 @@ fn main() {
             };
 
         // Uploading
-        if let Err(err) = upload_file(&temp_archive_path, &upload_mode, &config) {
+        if let Err(err) = upload_file(&temp_archive_path, &upload_mode, &config).await {
             log::error!("Upload failed: {err}");
             log::debug!("Error: {err:?}");
         }
