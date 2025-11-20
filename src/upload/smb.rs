@@ -17,28 +17,29 @@ pub(crate) async fn upload_smb(file_path: &Path, config: &Config) -> anyhow::Res
     log::info!("START SMB");
     let client: Client = Client::new(ClientConfig::default());
 
-    let target_path: UncPath = UncPath::from_str(r"\\100.68.218.81\slow-access")?;
+    let target_path: UncPath = UncPath::from_str(r"\\100.68.218.81\slow-access\tmp\yrba-dbg")?;
     client
         .share_connect(&target_path, "dcpacky", "&Wij&^@@rhGH8W".to_string())
         .await?;
-    //\tmp\yrba-dbg
+    //
     let remote_url: Url = Url::parse(&config.remote).context("Could not parse remote URL!")?;
-    let remote_path: &str = &remote_url.path()[1..remote_url.path().len()];
+    // let remote_path: &str = &remote_url.path()[1..remote_url.path().len()];
     let backup_name = &generate_backup_name(file_path)?;
-    let remote_full_path = &format!("{remote_path}/{backup_name}");
-    log::info!("{}", remote_full_path);
-    let file_to_open: UncPath = target_path.with_path(remote_full_path);
+    let file_to_open: UncPath = target_path.with_add_path(backup_name);
+    log::info!("{file_to_open}");
     let file_open_args: FileCreateArgs =
-        FileCreateArgs::make_overwrite(FileAttributes::default(), CreateOptions::default());
+        FileCreateArgs::make_create_new(
+            FileAttributes::default().with_directory(true).with_normal(true),
+            CreateOptions::default().with_non_directory_file(true).with_open_for_backup_intent(true)
+        );
     let resource: Resource = client.create_file(&file_to_open, &file_open_args).await?;
-
+    log::info!("After create_file");
     let mut file: File = resource.unwrap_file();
+    log::info!("After unwrap_file");
     let file_locally: std::fs::File =
         std::fs::File::open(file_path).context("Failed to open file to upload!")?;
-    let mut buf_reader: BufReader<std::fs::File> = BufReader::with_capacity(BUF_SIZE, file_locally);
-    // ToDo: Read from config!
-    const BUF_SIZE: usize = 128 * 1024 * 1024;
-    let mut buffer = vec![0; BUF_SIZE];
+    let mut buf_reader: BufReader<std::fs::File> = BufReader::with_capacity(16384, file_locally);
+    let mut buffer = [0; 16384];
     let mut offset: usize = 0;
     loop {
         let bytes_read = buf_reader.read(&mut buffer)?;
