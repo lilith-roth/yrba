@@ -1,9 +1,10 @@
 use std::io::BufReader;
 use crate::config::Config;
 use anyhow::{anyhow, Context};
-use smb::{Client, ClientConfig, CreateOptions, File, FileAccessMask, FileAttributes, FileCreateArgs, ReadAt, Resource, UncPath};
+use smb::{Client, ClientConfig, CreateOptions, File, FileAccessMask, FileAttributes, FileCreateArgs, ReadAt, Resource, UncPath, WriteRequest};
 use std::path::Path;
 use std::str::FromStr;
+use binrw::BinWrite;
 
 pub(crate) async fn upload_smb(file_path: &Path, config: &Config) -> anyhow::Result<()> {
     log::info!("START SMB");
@@ -26,8 +27,9 @@ pub(crate) async fn upload_smb(file_path: &Path, config: &Config) -> anyhow::Res
     let file_locally: std::fs::File = std::fs::File::open(file_path).context("Failed to open file to upload!")?;
     let mut buf_reader: BufReader<std::fs::File> = BufReader::with_capacity(BUF_SIZE, file_locally);
 
-
-    file.read_at(&mut data, 0).await?;
+    WriteRequest::
+    BinWrite::write(&file, &mut buf_reader).expect("TODO: panic message");
+    // file.read_at(&mut data, 0).await?;
 
     // and close
     file.close().await?;

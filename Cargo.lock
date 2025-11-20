@@ -3729,6 +3729,7 @@ name = "yrba"
 version = "2.1.1"
 dependencies = [
  "anyhow",
+ "binrw",
  "chrono",
  "clap",
  "clap-verbosity-flag",
