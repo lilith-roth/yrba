@@ -36,11 +36,16 @@ pub(crate) async fn upload_smb(file_path: &Path, config: &Config) -> anyhow::Res
         .split_once('/')
         .ok_or_else(|| anyhow!("Could not get path to store remote backups!"))?
         .1;
-    // ToDo: Detect if {backup_directory_path} is empty and if yes, use root of the share!
 
-    let target_path: UncPath = UncPath::from_str(&format!(
-        "\\\\{remote_address}\\{share_name}\\{backup_directory_path}"
-    ))?;
+    let target_path: UncPath = if backup_directory_path.is_empty() {
+        UncPath::from_str(&format!(
+            r"\\{remote_address}\{share_name}"
+        ))?
+    } else {
+        UncPath::from_str(&format!(
+            r"\\{remote_address}\{share_name}\{backup_directory_path}"
+        ))?
+    };
     log::debug!("Remote path {target_path}");
     client
         .share_connect(&target_path, username, password.clone())
