@@ -7,7 +7,8 @@ pub fn generate_backup_name(backup_name: &Path) -> anyhow::Result<String> {
         backup_name
             .file_name()
             .ok_or_else(|| anyhow!("Could not generate backup file name!"))?
-            .to_string_lossy(),
+            .to_string_lossy()
+            .replace(".tar.gz", ""),
         chrono::offset::Local::now().format("%Y-%m-%d_%H-%M")
     );
     Ok(backup_name)

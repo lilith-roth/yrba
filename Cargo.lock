@@ -2035,7 +2035,7 @@ dependencies = [
  "once_cell",
  "socket2",
  "tracing",
- "windows-sys 0.59.0",
+ "windows-sys 0.60.2",
 ]
 
 [[package]]
@@ -2560,9 +2560,9 @@ checksum = "8917285742e9f3e1683f0a9c4e6b57960b7314d0b08d30d1ecd426713ee2eee9"
 
 [[package]]
 name = "smb"
-version = "0.10.4"
+version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "edac4744872fa1ce8e5aec210f71dcb43e12bc9da6235b1b55ca5261a3519437"
+checksum = "85e5812a5aea11774250978e082ccef7549d3648f42396ba90d016a9c2180b56"
 dependencies = [
  "aead",
  "aes",
@@ -2599,22 +2599,34 @@ dependencies = [
 
 [[package]]
 name = "smb-dtyp"
-version = "0.10.4"
+version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "93c841e39256a1ce8498d13db3632e03728d81314b3be30ba988c5fcfcda1cb5"
+checksum = "f7d27f780ca3cb8862b06e7630635be44d2d40eb87f062ccef2339725a364b50"
 dependencies = [
  "binrw",
  "modular-bitfield",
  "pastey",
  "rand 0.8.5",
+ "smb-dtyp-derive",
  "time",
 ]
 
 [[package]]
-name = "smb-fscc"
-version = "0.10.4"
+name = "smb-dtyp-derive"
+version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dacd239590004fbb1825a732285486ab6a3c4bba4d43f69f824631cfe1689128"
+checksum = "4aafe9cf48d49125d7236e21a0a3c3fe8468756a437085f8fc982500cdb83bcd"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.101",
+]
+
+[[package]]
+name = "smb-fscc"
+version = "0.11.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a0f3d21818c20d9b2976c8128cd0b226ef4b7454a4e21f32d2cdc2b72ebcb6ac"
 dependencies = [
  "binrw",
  "modular-bitfield",
@@ -2626,24 +2638,36 @@ dependencies = [
 
 [[package]]
 name = "smb-msg"
-version = "0.10.4"
+version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "90da146e01c066c325d3be075d01bf71896fe7552f423bf38bc597723e54812a"
+checksum = "055249a7cc5d66f6c5a0a4f112e34126e1388069d330e2b4ba47b1bd6756b983"
 dependencies = [
  "binrw",
  "modular-bitfield",
  "pastey",
  "smb-dtyp",
  "smb-fscc",
+ "smb-msg-derive",
  "thiserror",
  "time",
 ]
 
 [[package]]
-name = "smb-rpc"
-version = "0.10.4"
+name = "smb-msg-derive"
+version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7a9774152cdcb9780e856a4bb6d041bb07dd6d31947df0ed32a3d4e486b8c20b"
+checksum = "323736cd18b0b9fe048c1d60dc9e60a542ae9f39e71ce9f2f9b96189788a49c9"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.101",
+]
+
+[[package]]
+name = "smb-rpc"
+version = "0.11.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c798d3d80879fb4a439845f160f4d272e368aa50d5038af550552aa15c885d99"
 dependencies = [
  "binrw",
  "maybe-async",
@@ -2656,9 +2680,9 @@ dependencies = [
 
 [[package]]
 name = "smb-transport"
-version = "0.10.4"
+version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "45533ad50054338ccabd66201bf01423b9d6830c59db0fae6b25d45a403bdae1"
+checksum = "f06f448a9ea90dbf805716a25adc60c2d7a9a39ad34527535ed335c96b6001c0"
 dependencies = [
  "binrw",
  "futures-core",
@@ -3729,7 +3753,6 @@ name = "yrba"
 version = "2.1.1"
 dependencies = [
  "anyhow",
- "binrw",
  "chrono",
  "clap",
  "clap-verbosity-flag",

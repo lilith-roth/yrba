@@ -62,7 +62,7 @@ async fn main() {
             };
 
         // Uploading
-        if let Err(err) = upload_file(&temp_archive_path, &upload_mode, &config).await {
+        if let Err(err) = Box::pin(upload_file(&temp_archive_path, &upload_mode, &config)).await {
             log::error!("Upload failed: {err}");
             log::debug!("Error: {err:?}");
         }

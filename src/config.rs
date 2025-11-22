@@ -24,6 +24,10 @@ pub(crate) struct Config {
     // SFTP password
     pub(crate) sftp_password: Option<String>,
 
+    // SMB Settings
+    // SMB password
+    pub(crate) smb_password: Option<String>,
+
     // Path to folders to back up
     pub(crate) folders_to_backup: Array,
 

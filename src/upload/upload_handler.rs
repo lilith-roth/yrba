@@ -9,7 +9,7 @@ use url::Url;
 #[derive(Clone)]
 pub(crate) enum UploadMode {
     File,
-    SMB,
+    Smb,
     Sftp,
 }
 
@@ -18,7 +18,7 @@ pub(crate) fn get_upload_mode(remote_str: &str) -> anyhow::Result<UploadMode> {
     let upload_mode = match url.scheme() {
         "file" => UploadMode::File,
         "sftp" => UploadMode::Sftp,
-        "smb" => UploadMode::SMB,
+        "smb" => UploadMode::Smb,
         _ => return Err(anyhow!("Unknown upload mode: {}", url.scheme())),
     };
     Ok(upload_mode)
@@ -32,7 +32,7 @@ pub(crate) async fn upload_file(
     log::info!("Starting upload...");
     match upload_mode {
         UploadMode::File => file_copy_backup(file_path, config)?,
-        UploadMode::SMB => upload_smb(file_path, config).await?,
+        UploadMode::Smb => Box::pin(upload_smb(file_path, config)).await?,
         UploadMode::Sftp => upload_sftp(file_path, config)?,
     }
     log::info!("Upload finished!");
