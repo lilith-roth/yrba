@@ -1,6 +1,6 @@
 # Installation
 
-There are two main ways to install YRBA.
+There are three main ways to install YRBA.
 
 1. [Native Installation](./installation/native-setup.md)
 2. [Docker Container](./installation/docker-setup.md)

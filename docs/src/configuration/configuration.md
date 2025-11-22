@@ -14,6 +14,7 @@ An example configuration file looks somewhat like this:
 ```toml
 # Remote address for uploading backups
 # SFTP: "sftp://root@127.0.0.1/path/to/my/backup/storage/directory"
+# FILE: "file:///path/to/my/local/backup/storage/directory
 remote = "sftp://root@127.0.0.1/path/to/my/backup/storage/directory"
 
 # The amount of backups to keep
