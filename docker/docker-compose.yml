@@ -9,3 +9,6 @@ services:
       - ../config.toml:/app/config.toml
       - ../folder-to-backup:/backup
       - ~/.ssh/:/auth
+      - tmp-data:/tmp
+volumes:
+  tmp-data:
