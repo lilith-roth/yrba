@@ -3,17 +3,20 @@
 To use YRBA with SFTP uploads configure the protocol in your `config.toml` to SFTP, and set up the username to log in
 with.
 
-Example: remote = "sftp://root@127.0.0.1/path/to/my/backup/storage/directory"
+**NOTE:** The remote system *has* to be a unix like system like Linux or macOS due to the required cli commands on the
+remote machine!
+
+Example: remote = 'sftp://root@127.0.0.1/path/to/my/backup/storage/directory'
 
 Afterwards, configure the following settings as well in the `config.toml`:
 ```toml
 # SFTP Settings (only used if remote string above is set to sftp protocol)
 # if both public key path & password is defined, first the private key authentication is tried,
 # and if that fails the password is tried next.
-sftp_public_key_path = "~/.ssh/id_ed25519.pub"
-sftp_private_key_path = "~/.ssh/id_ed25519"
-sftp_private_key_password = ""
-sftp_password = ""
+sftp_public_key_path = '~/.ssh/id_ed25519.pub'
+sftp_private_key_path = '~/.ssh/id_ed25519'
+sftp_private_key_password = 'my-super-secure-password'
+sftp_password = 'my-super-secure-password'
 ```
 
 **Note:** Password and private key authentication can both be configured to try logging in with password, in case

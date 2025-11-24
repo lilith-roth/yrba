@@ -12,7 +12,7 @@
 
 
 YRBA makes backing up your systems easy, by automating incremental backups of defined folders, 
-and uploading them to a server of your choice.
+and uploading them to a server of your choice or copying them to a different location.
 
 **Documentation:** [https://yrba.roth.systems/](https://yrba.roth.systems/)
 
@@ -21,14 +21,11 @@ and uploading them to a server of your choice.
 
 - Archives your backups as .tar.gz
 - Incremental backups automatically keeps the last N backups
+- Automatic uploads with SFTP, SMB or local copy to a target location like external drives
 - Can back up directories on any OS
-- - GNU/Linux
-- - macOS
-- - Windows (untested)
-- Automatic uploads with SFTP or local copy to a target location (NFS & SMB are planned)
-- Can upload backups to Unix systems
-- - GNU/Linux
-- - macOS
+    - GNU/Linux
+    - macOS
+    - Windows
 
 
 ## Installation
@@ -44,7 +41,7 @@ Usage: yrba [OPTIONS]
 Options:
   -v, --verbose...                 Increase logging verbosity
   -q, --quiet...                   Decrease logging verbosity
-  -c, --config <CONFIG_FILE_PATH>  [default: ~/.config/yrba/config.toml]
+  -c, --config <CONFIG_FILE_PATH>  
   -h, --help                       Print help
   -V, --version                    Print version
 ```
