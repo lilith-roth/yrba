@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.2](https://github.com/lilith-roth/yrba/compare/v2.1.1...v2.1.2) - 2025-11-25
+
+### Fixed
+
+- *(docker)* added a tmp docker volume  ([#77](https://github.com/lilith-roth/yrba/pull/77))
+
+### Other
+
+- *(deps)* bump peter-evans/dockerhub-description from 4.0.0 to 5.0.0 ([#80](https://github.com/lilith-roth/yrba/pull/80))
+- *(deps)* bump actions/upload-artifact from 4 to 5 ([#79](https://github.com/lilith-roth/yrba/pull/79))
+- Two small docs changes ([#78](https://github.com/lilith-roth/yrba/pull/78))
+- *(deps)* bump docker/build-push-action from 4.0.0 to 6.18.0 ([#68](https://github.com/lilith-roth/yrba/pull/68))
+- *(deps)* bump docker/metadata-action from 9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7 to 8d8c7c12f7b958582a5cb82ba16d5903cb27976a ([#71](https://github.com/lilith-roth/yrba/pull/71))
+- *(deps)* bump actions/configure-pages from 4 to 5 ([#70](https://github.com/lilith-roth/yrba/pull/70))
+- *(deps)* bump actions/attest-build-provenance from 2 to 3 ([#69](https://github.com/lilith-roth/yrba/pull/69))
+
 - fix: added docker volume mounts 
 
 ## [2.1.1](https://github.com/lilith-roth/yrba/compare/v2.1.0...v2.1.1) - 2025-11-18
