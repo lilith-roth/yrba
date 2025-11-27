@@ -2863,7 +2863,7 @@ dependencies = [
 [[package]]
 name = "tar"
 version = "0.4.44"
-source = "git+https://github.com/lilith-roth/tar-rs#b2f355202e4bb7f56f838c9786c74ee3ea5d6e64"
+source = "git+https://github.com/lilith-roth/tar-rs?rev=b2f3552#b2f355202e4bb7f56f838c9786c74ee3ea5d6e64"
 dependencies = [
  "filetime",
  "libc",
