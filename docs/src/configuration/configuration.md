@@ -25,12 +25,12 @@ amount_of_backups_to_keep = 5
 # SFTP Settings (only used if remote string above is set to sftp protocol)
 # if both public key path & password is defined, first the private key authentication is tried,
 # and if that fails the password is tried next.
-sftp_pubkey_path = '/auth/id_ed25519.pub'
+sftp_public_key_path = '/auth/id_ed25519.pub'
 sftp_private_key_path = '/auth/id_ed25519'
 sftp_private_key_password = 'my-super-secure-password'
 sftp_password = 'my-super-secure-password'
 
-# SMB Settings
+# SMB Settings (only used if remote string above is set to smb protocol)
 # SMB user password
 smb_password = 'my-super-secure-password'
 

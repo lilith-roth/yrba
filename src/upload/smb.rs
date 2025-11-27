@@ -15,6 +15,11 @@ use std::sync::Arc;
 use tokio_stream::StreamExt;
 use url::Url;
 
+/// Establishes connection with the remote smb server, uploads backup, and removes old backups.
+///
+/// # Arguments
+/// * `file_path`   - Path to the file to upload
+/// * `config`      - Parsed configuration file
 pub(crate) async fn upload_smb(file_path: &Path, config: &Config) -> anyhow::Result<()> {
     let client: Client = Client::new(ClientConfig::default());
     let remote_url: Url = Url::parse(&config.remote).context("Could not parse remote URL!")?;
@@ -73,6 +78,12 @@ pub(crate) async fn upload_smb(file_path: &Path, config: &Config) -> anyhow::Res
     Ok(())
 }
 
+/// Uploads the backup, to be called by `upload_smb` above
+///
+/// # Arguments
+/// * `file_path`   - Path to file to upload
+/// * `target_path` - UNC path to backup folder on remote to upload backup to
+/// * `client`      - Connected SMB client
 async fn upload_backup(
     file_path: &Path,
     target_path: &UncPath,
@@ -113,6 +124,13 @@ async fn upload_backup(
     Ok(())
 }
 
+/// Deletes oldest backups on smb remote, and keeps N newest
+///
+/// # Arguments
+/// * `n`           - Amount of backups to keep
+/// * `backup_name` - File name of backup archive created in previous steps
+/// * `target_path` - UNC path to the backups on remote server
+/// * `client`      - Connected SMB client
 async fn delete_old_backup(
     n: u16,
     backup_name: &str,

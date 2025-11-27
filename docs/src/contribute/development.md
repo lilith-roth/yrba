@@ -30,7 +30,7 @@ cargo build --release
 ## Code formatting
 A formatting and lint check is automatically run on every pull request. To check this locally, and reformat your code use:
 ```bash
-cargo clippy --verbose -- WADF # Runs the clippy linter on your code
+cargo clippy --verbose # Runs the clippy linter on your code
 cargo fmt # Automatically reformats your code files
 ```
 

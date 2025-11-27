@@ -1,14 +1,20 @@
 # File copy backup
 
+## Configuration
+
 If you want your backup to be stored by copying to a different directory, for example to store backups on an external
 drive, you can use the file protocol as your remote string in the YRBA configuration.
 
-For example your remote string might look like this.
+Example:
 ```toml
 remote = "file:///path/to/my/backup/storage/directory"
 ```
 
-## Configuration example
+**For a more in-depth explanation of the configuration parameters, check out
+[Configuration](../../configuration/configuration.md)**
+
+
+### Full configuration example
 
 A complete file copy backup configuration could look like this.
 ```toml

@@ -7,7 +7,8 @@ The following features, and additions are planned to be added to YRBA in the fut
 - [ ] Additional backup upload options
   - [ ] NFS upload
 - [ ] UNRAID Community Apps Template
-- [ ] More unit Tests
+- [ ] More unit tests
+- [ ] Integration tests
 - [ ] Add functionality to test remote authentication ahead of running backups
 
 

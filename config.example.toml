@@ -1,7 +1,7 @@
 # Remote address for uploading backups
 # SFTP: 'sftp://root@127.0.0.1/path/to/my/backup/storage/directory'
-# SMB: 'smb://user@127.0.0.1/share-name/path/to/my/backup/storage/directory'
-# File copy: 'file:///path/to/my/backup/storage/directory'
+# SMB:  'smb://user@127.0.0.1/share-name/path/to/my/backup/storage/directory'
+# FILE: 'file:///path/to/my/backup/storage/directory'
 remote = 'sftp://root@127.0.0.1/path/to/my/backup/storage/directory'
 
 # The amount of backups to keep
@@ -16,7 +16,7 @@ sftp_private_key_path = '/auth/id_ed25519'
 sftp_private_key_password = 'my-super-secure-password'
 sftp_password = 'my-super-secure-password'
 
-# SMB Settings
+# SMB Settings (only used if remote string above is set to smb protocol)
 # SMB user password
 smb_password = 'my-super-secure-password'
 
