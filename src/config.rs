@@ -1,4 +1,4 @@
-use anyhow::Context;
+use anyhow::{Context, anyhow};
 use std::fs;
 use std::path::PathBuf;
 use toml::value::Array;
@@ -36,13 +36,16 @@ pub(crate) struct Config {
 }
 
 #[cfg(unix)]
-fn get_default_config_path() -> PathBuf {
+fn get_default_config_path() -> anyhow::Result<PathBuf> {
     let config_file_path: &str = if nix::unistd::geteuid().is_root() {
         DEFAULT_ROOT_CONFIG_FILE_PATH
     } else {
-        DEFAULT_CONFIG_FILE_PATH
+        let home_dir: PathBuf = dirs::home_dir().ok_or_else(|| {
+            anyhow!("Could not retrieve user home directory to create config file!")
+        })?;
+        &DEFAULT_CONFIG_FILE_PATH.replace('~', home_dir.to_string_lossy().as_ref())
     };
-    PathBuf::from(config_file_path)
+    Ok(PathBuf::from(config_file_path))
 }
 
 #[cfg(windows)]
@@ -50,19 +53,25 @@ fn get_default_config_path() -> PathBuf {
     PathBuf::from(DEFAULT_CONFIG_FILE_PATH)
 }
 
-fn generate_default_config() -> PathBuf {
-    let config_file_path: PathBuf = get_default_config_path();
+fn generate_default_config() -> anyhow::Result<PathBuf> {
+    let config_file_path: PathBuf = get_default_config_path()?;
     if !fs::exists(&config_file_path)
-        .expect("Could not check if default config file already exists!")
+        .context("Could not check if default config file already exists!")?
     {
+        let mut config_file_dir_path: PathBuf = config_file_path.clone();
+        config_file_dir_path.pop();
+        fs::create_dir_all(config_file_dir_path)?;
         fs::write(&config_file_path, DEFAULT_CONFIG)
-            .expect("Could not create default config file!");
+            .context("Could not create default config file!")?;
     }
-    config_file_path
+    Ok(config_file_path)
 }
 
 pub(crate) fn load_config(config_path: Option<&PathBuf>) -> anyhow::Result<Config> {
-    let config_path: PathBuf = config_path.cloned().unwrap_or_else(generate_default_config);
+    let config_path: PathBuf = match config_path.cloned() {
+        None => generate_default_config()?,
+        Some(config_path) => config_path,
+    };
 
     let config_path_final: PathBuf = PathBuf::from(&*shellexpand::tilde(
         &config_path
