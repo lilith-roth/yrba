@@ -49,8 +49,8 @@ fn get_default_config_path() -> anyhow::Result<PathBuf> {
 }
 
 #[cfg(windows)]
-fn get_default_config_path() -> PathBuf {
-    PathBuf::from(DEFAULT_CONFIG_FILE_PATH)
+fn get_default_config_path() -> anyhow::Result<PathBuf> {
+    Ok(PathBuf::from(DEFAULT_CONFIG_FILE_PATH))
 }
 
 fn generate_default_config() -> anyhow::Result<PathBuf> {
