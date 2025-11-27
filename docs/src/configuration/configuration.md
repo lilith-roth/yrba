@@ -100,7 +100,7 @@ If SFTP password authentication is used, enter the password of your user here.
 `sftp_password = 'my-super-secure-password'`
 
 
-### SFTP Options
+### SMB Options
 #### `smb_password`
 User of the smb user connecting to the remote storage system.
 
