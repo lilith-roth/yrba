@@ -3770,7 +3770,7 @@ dependencies = [
  "tar",
  "tempfile",
  "tokio",
- "tokio-macros",
+ "tokio-stream",
  "toml",
  "url",
  "whoami",
