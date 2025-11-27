@@ -13,6 +13,7 @@
 # Remote servers
 - [Supported File Servers](./file-servers/file-servers.md)
   - [SFTP](./file-servers/file-server/sftp.md)
+  - [SMB](./file-servers/file-server/smb.md)
   - [File copy](./file-servers/file-server/file_copy.md)
 # Contribute
 - [Contribute](./contribute/contribute.md)
