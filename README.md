@@ -12,7 +12,7 @@
 
 
 YRBA makes backing up your systems easy, by automating incremental backups of defined folders, 
-and uploading them to a server of your choice or copying them to a different location.
+and uploading them to a server of your choice or copying them to a different location like an external hard drive.
 
 **Documentation:** [https://yrba.roth.systems/](https://yrba.roth.systems/)
 
