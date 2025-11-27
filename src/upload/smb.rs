@@ -131,13 +131,12 @@ async fn delete_old_backup(
             file_access_args,
         )
         .await?;
-    if !resource.is_dir() {
+    let Resource::Directory(dir) = resource else {
         return Err(anyhow!(
             "Expected remote backup directory is for some weird reason not a directory!?"
         ));
-    }
-    let dir: Directory = resource.unwrap_dir();
-    let dir_arc_ref: Arc<Directory> = dir.into();
+    };
+    let dir_arc_ref: Arc<Directory> = Arc::new(dir);
     let dir_info: QueryDirectoryStream<FileFullDirectoryInformation> =
         Directory::query(&dir_arc_ref, "*").await?;
     let mut full_dir_content: Vec<smb::Result<FileFullDirectoryInformation>> = dir_info
