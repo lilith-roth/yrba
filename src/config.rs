@@ -87,16 +87,15 @@ pub(crate) fn load_config(config_path: Option<&PathBuf>) -> anyhow::Result<Confi
         fs::read_to_string(config_path_final).context("Could not read config file!")?;
     let mut config: Config =
         toml::from_str(&config_content).context("Could not parse config file!")?;
-    config = check_config(config);
+    config = check_config(config)?;
     Ok(config)
 }
 
-fn check_config(config: Config) -> Config {
+fn check_config(config: Config) -> anyhow::Result<Config> {
     for folder in config.clone().folders_to_backup {
-        assert!(
-            folder.as_str().is_some(),
-            "Could not parse folder to backup: {folder:?}"
-        );
+        folder
+            .as_str()
+            .ok_or_else(|| anyhow!("Could not parse folder to backup: {folder:?}"))?;
     }
-    config
+    Ok(config)
 }
