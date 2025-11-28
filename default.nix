@@ -11,5 +11,8 @@ pkgs.rustPlatform.buildRustPackage rec {
     buildInputs = with pkgs; [
         openssl
     ];
+    cargoLock.outputHashes = {
+        "tar-0.4.44" = "sha256-0sCBUzZqaV7OD6kEkNN4wylILwY2n7ltahN2xC7iJmU=";
+    };
     PKG_CONFIG_PATH = "${pkgs.openssl.dev}/lib/pkgconfig";
 }
