@@ -54,6 +54,14 @@ nix run github:lilith-roth/yrba -- --config ./config.toml
 If you have Rust's Cargo installed on your system, you can easily compile and run the latest version easily on your
 machine, with this simple command.
 
+**NOTE:** Due to an issue with the upstream library `tar-rs` if the cargo installation method is used, and socket files
+are encountered during the archiving process, it will error, and stop archiving at that point!
+
+In other installation methods this is solved by using our own fork of `tar-rs`, though that does not work with cargo
+installations, as they always use the library on crates.io for building the application.
+
+---
+
 Install YRBA:
 ```shell
 cargo install yrba
