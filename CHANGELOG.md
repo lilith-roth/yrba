@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.2.1](https://github.com/lilith-roth/yrba/compare/v2.2.0...v2.2.1) - 2025-12-02
+
+### Fixed
+
+- undid release marker 2.2.1 as it was broken
+- release broken due to forked library ([#96](https://github.com/lilith-roth/yrba/pull/96))
+- sockets cause archiving error ([#93](https://github.com/lilith-roth/yrba/pull/93))
+- config file directories were not created ([#91](https://github.com/lilith-roth/yrba/pull/91))
+
+### Other
+
+- *(README.md)* added no ai disclaimer
+- release v2.2.1 ([#94](https://github.com/lilith-roth/yrba/pull/94))
+- small typo
+
 ### Fixed
 
 - sockets cause archiving error ([#93](https://github.com/lilith-roth/yrba/pull/93))
