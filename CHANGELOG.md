@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.2.2](https://github.com/lilith-roth/yrba/compare/v2.2.1...v2.2.2) - 2025-12-05
+
+### Fixed
+
+- *(systemd)* service description broken
+
 ## [2.2.1](https://github.com/lilith-roth/yrba/compare/v2.2.0...v2.2.1) - 2025-12-02
 
 ### Fixed
