@@ -1,5 +1,5 @@
 [Unit]
-Description=Description of what service file do
+Description=Automatic incremental remote backups using YRBA
 After=network-online.target remote-fs.target nss-lookup.target
 StartLimitIntervalSec=10min
 StartLimitBurst=2
