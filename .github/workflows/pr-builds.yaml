@@ -60,7 +60,7 @@ jobs:
         run: just build-vendored-target ${{ matrix.target }}
 
       - name: Upload application binary
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: yrba-${{ matrix.target }}
           path: target/${{ matrix.target }}/release/yrba
@@ -72,7 +72,7 @@ jobs:
         if: ${{ matrix.target == 'aarch64-unknown-linux-gnu' || matrix.target == 'x86_64-unknown-linux-gnu' || matrix.target == 'aarch64-apple-darwin' }}
 
       - name: Upload application binary (Windows)
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: yrba-${{ matrix.target }}
           path: target/${{ matrix.target }}/release/yrba.exe
@@ -88,7 +88,7 @@ jobs:
         if: ${{ matrix.target == 'aarch64-unknown-linux-gnu' || matrix.target == 'x86_64-unknown-linux-gnu' }}
 
       - name: Upload RPM package
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: yrba-${{ matrix.target }}.rpm
           path: target/${{ matrix.target }}/generate-rpm/*.rpm
@@ -104,7 +104,7 @@ jobs:
         if: ${{ matrix.target == 'aarch64-unknown-linux-gnu' || matrix.target == 'x86_64-unknown-linux-gnu' }}
 
       - name: Upload DEB package
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: yrba-${{ matrix.target }}.deb
           path: target/debian/*.deb
