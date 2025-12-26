@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.2.3](https://github.com/lilith-roth/yrba/compare/v2.2.2...v2.2.3) - 2025-12-26
+
+### Added
+
+- smb with non-standard ports
+
+### Other
+
+- integration tests
+- *(deps)* bump actions/upload-artifact from 5 to 6 ([#103](https://github.com/lilith-roth/yrba/pull/103))
+- *(deps)* bump docker/metadata-action from 8d8c7c12f7b958582a5cb82ba16d5903cb27976a to c299e40c65443455700f0fdfc63efafe5b349051 ([#101](https://github.com/lilith-roth/yrba/pull/101))
+- *(deps)* bump actions/checkout from 4.3.1 to 6.0.1 ([#100](https://github.com/lilith-roth/yrba/pull/100))
+- *(github)* improved issue templates
+
 ## [2.2.2](https://github.com/lilith-roth/yrba/compare/v2.2.1...v2.2.2) - 2025-12-05
 
 ### Fixed
