@@ -3,9 +3,9 @@ use crate::upload::utils::file_name::generate_backup_name;
 use anyhow::{Context, anyhow};
 use smb::resource::iter_stream::QueryDirectoryStream;
 use smb::{
-    Client, ClientConfig, CreateDisposition, CreateOptions, Directory, File, FileAccessMask,
-    FileAttributes, FileCreateArgs, FileDispositionInformation, FileFullDirectoryInformation,
-    Resource, Tree, UncPath,
+    Client, ClientConfig, ConnectionConfig, CreateDisposition, CreateOptions, Directory, File,
+    FileAccessMask, FileAttributes, FileCreateArgs, FileDispositionInformation,
+    FileFullDirectoryInformation, Resource, Tree, UncPath,
 };
 use std::io::{BufReader, Read};
 use std::ops::Add;
@@ -13,7 +13,7 @@ use std::path::Path;
 use std::str::FromStr;
 use std::sync::Arc;
 use tokio_stream::StreamExt;
-use url::Url;
+use url::{Host, Url};
 
 /// Establishes connection with the remote smb server, uploads backup, and removes old backups.
 ///
@@ -21,27 +21,17 @@ use url::Url;
 /// * `file_path`   - Path to the file to upload
 /// * `config`      - Parsed configuration file
 pub(crate) async fn upload_smb(file_path: &Path, config: &Config) -> anyhow::Result<()> {
-    let client: Client = Client::new(ClientConfig::default());
     let remote_url: Url = Url::parse(&config.remote).context("Could not parse remote URL!")?;
     let remote_address = remote_url
         .host()
         .ok_or_else(|| anyhow!("No remote address defined!"))?;
+    let remote_port = remote_url.port();
     let share_name = remote_url.path()[1..]
         .split_once('/')
         .ok_or_else(|| anyhow!("Could not get remote share name!"))?
         .0;
     let username = remote_url.username();
-    let password: &str = match &config.smb_password {
-        None => {
-            if username == "guest" {
-                ""
-            } else {
-                return Err(anyhow!("No SMB user password defined!"));
-            }
-        }
-        Some(pw) => pw,
-    };
-
+    let password: &str = &config.smb_password.clone().unwrap_or_default();
     let backup_directory_path = remote_url.path()[1..]
         .split_once('/')
         .ok_or_else(|| anyhow!("Could not get path to store remote backups!"))?
@@ -56,11 +46,38 @@ pub(crate) async fn upload_smb(file_path: &Path, config: &Config) -> anyhow::Res
     };
     log::debug!("Remote path {target_path}");
 
+    let client: Client = Client::new(ClientConfig {
+        dfs: false,
+        connection: ConnectionConfig {
+            port: remote_port,
+            timeout: None,
+            min_dialect: None,
+            max_dialect: None,
+            encryption_mode: smb::connection::EncryptionMode::default(),
+            allow_unsigned_guest_access: true,
+            compression_enabled: true,
+            multichannel: smb::connection::MultiChannelConfig::default(),
+            client_name: None,
+            disable_notifications: false,
+            smb2_only_negotiate: false,
+            transport: smb::transport::TransportConfig::default(),
+            auth_methods: smb::connection::AuthMethodsConfig::default(),
+            credits_backlog: None,
+            default_transaction_size: None,
+        },
+        client_guid: smb::Guid::default(),
+    });
     client
         .share_connect(&target_path, username, password.parse()?)
         .await?;
 
-    Box::pin(upload_backup(file_path, &target_path, &client)).await?;
+    Box::pin(upload_backup(
+        file_path,
+        &target_path,
+        remote_address,
+        &client,
+    ))
+    .await?;
     delete_old_backup(
         config.amount_of_backups_to_keep,
         file_path
@@ -87,11 +104,15 @@ pub(crate) async fn upload_smb(file_path: &Path, config: &Config) -> anyhow::Res
 async fn upload_backup(
     file_path: &Path,
     target_path: &UncPath,
+    remote_address: Host<&str>,
     client: &Client,
 ) -> anyhow::Result<()> {
     let backup_name: &String = &generate_backup_name(file_path)?;
     let file_to_open: UncPath = target_path.to_owned().with_add_path(backup_name);
     log::debug!("Backup path {file_to_open}");
+
+    create_remote_path(&file_to_open, remote_address, client).await?;
+
     let file_open_args: FileCreateArgs =
         FileCreateArgs::make_overwrite(FileAttributes::default(), CreateOptions::default());
     let resource: Resource = client.create_file(&file_to_open, &file_open_args).await?;
@@ -121,6 +142,55 @@ async fn upload_backup(
     }
     file.close().await?;
 
+    Ok(())
+}
+
+async fn create_remote_path(
+    file_to_open: &UncPath,
+    remote_address: Host<&str>,
+    client: &Client,
+) -> anyhow::Result<()> {
+    let directory_create_attributes = FileAttributes::default().with_directory(true);
+    let directory_create_options: CreateOptions =
+        CreateOptions::default().with_directory_file(true);
+    let directory_open_args: FileCreateArgs =
+        FileCreateArgs::make_create_new(directory_create_attributes, directory_create_options);
+    let remote_path_parts = file_to_open
+        .path()
+        .context("Could not retrieve remote path!")?
+        .split('\\');
+    let path_parts_amount = remote_path_parts.clone().count();
+    let mut checked_paths = String::new();
+    for (i, dir_path) in remote_path_parts.enumerate() {
+        if i == path_parts_amount - 1 {
+            break;
+        }
+        checked_paths = format!("{checked_paths}\\{dir_path}");
+        let dir_create_path = &format!(
+            "\\\\{}\\{}{}",
+            remote_address,
+            file_to_open
+                .share()
+                .context("Could not retrieve remote share!")?,
+            checked_paths
+        );
+        log::debug!("Creating remote path: {dir_create_path}");
+        match client
+            .create_file(&UncPath::from_str(dir_create_path)?, &directory_open_args)
+            .await
+        {
+            Ok(_) => (),
+            Err(err) => {
+                if err.to_string().contains("0xc0000035") {
+                    log::debug!(
+                        "Object Name Collision (0xc0000035): Directory likely already exists! Ignoring..."
+                    );
+                } else {
+                    return Err(anyhow!(err));
+                }
+            }
+        }
+    }
     Ok(())
 }
 
