@@ -1,0 +1,15 @@
+# Remote address for uploading backups
+remote = 'smb://guest@127.0.0.1:4455/content/yrba-test-smb-guest/out'
+
+# The amount of backups to keep
+# Set to 0 to never delete old backups
+amount_of_backups_to_keep = 5
+
+# Path to folders to back up, supports relative paths
+folders_to_backup = [
+    '/tmp/yrba-test-smb-guest/backup-content'
+]
+
+# Optional: Temporary folder to store archive before upload
+# Default: '~/.cache/yrba'
+temporary_folder = '/tmp/yrba-test-smb-guest/tmp'

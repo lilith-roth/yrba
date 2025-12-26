@@ -64,3 +64,5 @@ whoami = "1.6.1"
 
 [dev-dependencies]
 tempfile = "3.23.0"
+assert_cmd = "2.1.1"
+checksums = "0.9.1"
