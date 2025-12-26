@@ -44,8 +44,19 @@ run-docker-compose-cron:
 run-nix:
     nix run .
 
-test:
-    cargo test --verbose
+test: test-unit-tests test-integration-tests
+
+test-unit-tests:
+    cargo test --bins
+
+test-integration-tests:
+    #!/usr/bin/env sh
+    docker compose -f docker/docker-compose-integration-tests.yml up --build -d --wait
+    if ! cargo test --test '*'; then
+        docker compose -f docker/docker-compose-integration-tests.yml down
+        exit 1
+    fi
+    docker compose -f docker/docker-compose-integration-tests.yml down
 
 lint:
     cargo clippy --verbose

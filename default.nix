@@ -4,6 +4,9 @@ pkgs.rustPlatform.buildRustPackage rec {
     version = "main";
     cargoLock.lockFile = ./Cargo.lock;
     src = pkgs.lib.cleanSource ./.;
+    cargoTestFlags = [
+      "--bins" # Don't run integration tests, as they require other services to run which are configured in docker
+    ];
 
     nativeBuildInputs = with pkgs; [
         pkg-config

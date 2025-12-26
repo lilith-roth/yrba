@@ -1,0 +1,28 @@
+services:
+  openssh-server:
+    image: lscr.io/linuxserver/openssh-server:version-10.0_p1-r10
+    container_name: openssh-server
+    hostname: openssh-server
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+      - PUBLIC_KEY=ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINz6G51pvyIrO2HIzLoqUMuXcgKqIna6tWNoC+35Wbq3
+      - PASSWORD_ACCESS=true
+      - USER_PASSWORD=Sup3rS3cur3
+      - USER_NAME=testuser
+    ports:
+      - "2222:2222"
+    restart: unless-stopped
+
+  smb-server:
+    image: dockurr/samba:4.22.6
+    environment:
+      NAME: "content"
+      USER: "testuser"
+      PASS: "Sup3rS3cur3"
+    ports:
+      - "4455:445"
+    volumes:
+      - ./smb.conf:/etc/samba/smb.conf
+    restart: always
