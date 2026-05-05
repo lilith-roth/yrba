@@ -42,6 +42,8 @@
             pkgs.efm-langserver
             pkgs.prettierd
             pkgs.marksman
+            pkgs.openssl
+            pkgs.pkg-config
           ];
         };
 
