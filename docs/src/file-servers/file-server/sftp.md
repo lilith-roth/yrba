@@ -56,7 +56,8 @@ sftp_private_key_path = '~/.ssh/id_ed25519'
 sftp_private_key_password = 'my-super-secure-password'
 sftp_password = 'my-super-secure-password'
 
-# Enable SFTP compression (default: true)
+# Optional: Enable SFTP compression
+# Default: true
 sftp_compression_enabled = true
 
 # The amount of backups to keep
