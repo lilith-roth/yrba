@@ -23,6 +23,8 @@ pub(crate) struct Config {
     pub(crate) sftp_private_key_password: Option<String>,
     // SFTP password
     pub(crate) sftp_password: Option<String>,
+    // Enable SFTP compression
+    pub(crate) sftp_compression_enabled: Option<bool>,
 
     // SMB Settings
     // SMB password
