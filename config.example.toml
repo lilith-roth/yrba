@@ -16,6 +16,10 @@ sftp_private_key_path = '/auth/id_ed25519'
 sftp_private_key_password = 'my-super-secure-password'
 sftp_password = 'my-super-secure-password'
 
+# Optional: Enable SFTP compression
+# Default: true
+sftp_compression_enabled = true
+
 # SMB Settings (only used if remote string above is set to smb protocol)
 # SMB user password
 smb_password = 'my-super-secure-password'

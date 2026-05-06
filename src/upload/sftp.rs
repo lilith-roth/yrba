@@ -24,8 +24,9 @@ pub(crate) fn upload_sftp(file_path: &Path, config: &Config) -> anyhow::Result<(
         username = system_username;
     }
     let remote_path: &str = remote_url.path();
+    let compression_enabled: bool = config.sftp_compression_enabled.unwrap_or(true);
 
-    let session: Session = setup_ssh_session(host, port)?;
+    let session: Session = setup_ssh_session(host, port, compression_enabled)?;
     authenticate_ssh(username, &session, config)?;
 
     create_remote_directory(remote_path, &session)?;
@@ -203,11 +204,12 @@ fn authenticate_ssh(username: &str, session: &Session, config: &Config) -> anyho
     Ok(())
 }
 
-fn setup_ssh_session(host: &str, port: u16) -> anyhow::Result<Session> {
+fn setup_ssh_session(host: &str, port: u16, compression_enabled: bool) -> anyhow::Result<Session> {
     // Connect to SSH
     let tcp: TcpStream =
         TcpStream::connect(format!("{host}:{port}")).context("Could not connect to SSH server!")?;
     let mut session: Session = Session::new().context("Could not create SSH session!")?;
+    session.set_compress(compression_enabled);
     session.set_tcp_stream(tcp);
     session
         .handshake()
