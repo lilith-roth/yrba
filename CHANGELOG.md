@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.3.0](https://github.com/lilith-roth/yrba/compare/v2.2.3...v2.3.0) - 2026-05-06
+
+### Added
+
+- sftp connection compression ([#126](https://github.com/lilith-roth/yrba/pull/126))
+- nix flake devshell ([#110](https://github.com/lilith-roth/yrba/pull/110))
+- add nix shell ([#108](https://github.com/lilith-roth/yrba/pull/108))
+
+### Other
+
+- missing nix dependency for development
+- *(deps)* bump actions/upload-pages-artifact from 4 to 5 ([#125](https://github.com/lilith-roth/yrba/pull/125))
+- *(deps)* bump docker/build-push-action from 7.0.0 to 7.1.0
+- *(deps)* bump softprops/action-gh-release from 2 to 3 ([#123](https://github.com/lilith-roth/yrba/pull/123))
+- *(deps)* bump docker/login-action from 4.0.0 to 4.1.0 ([#122](https://github.com/lilith-roth/yrba/pull/122))
+- *(deps)* bump actions/configure-pages from 5 to 6 ([#121](https://github.com/lilith-roth/yrba/pull/121))
+- *(deps)* bump actions/deploy-pages from 4 to 5 ([#120](https://github.com/lilith-roth/yrba/pull/120))
+- *(deps)* bump docker/build-push-action from 6.19.2 to 7.0.0 ([#119](https://github.com/lilith-roth/yrba/pull/119))
+- *(deps)* bump docker/login-action from 3.7.0 to 4.0.0 ([#118](https://github.com/lilith-roth/yrba/pull/118))
+- *(deps)* bump docker/metadata-action from 5.10.0 to 6.0.0 ([#117](https://github.com/lilith-roth/yrba/pull/117))
+- *(deps)* bump actions/attest-build-provenance from 3 to 4 ([#115](https://github.com/lilith-roth/yrba/pull/115))
+- *(deps)* bump actions/upload-artifact from 6 to 7 ([#114](https://github.com/lilith-roth/yrba/pull/114))
+- *(deps)* bump docker/build-push-action from 6.18.0 to 6.19.2 ([#113](https://github.com/lilith-roth/yrba/pull/113))
+- *(deps)* bump docker/login-action from 3.6.0 to 3.7.0 ([#112](https://github.com/lilith-roth/yrba/pull/112))
+- *(deps)* bump actions/checkout from 6.0.1 to 6.0.2 ([#111](https://github.com/lilith-roth/yrba/pull/111))
+
 ## [2.2.3](https://github.com/lilith-roth/yrba/compare/v2.2.2...v2.2.3) - 2025-12-26
 
 ### Added
