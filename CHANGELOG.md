@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.4.0](https://github.com/lilith-roth/yrba/compare/v2.3.0...v2.4.0) - 2026-05-07
+
+### Added
+
+- sftp configurable file buffer ([#127](https://github.com/lilith-roth/yrba/pull/127))
+
+### Other
+
+- dep update ([#116](https://github.com/lilith-roth/yrba/pull/116))
+
 ## [2.3.0](https://github.com/lilith-roth/yrba/compare/v2.2.3...v2.3.0) - 2026-05-06
 
 ### Added
