@@ -1,5 +1,5 @@
 use crate::config::Config;
-use crate::upload::utils::backup_removal::get_all_backups_older_than_n_newest_backups;
+use crate::upload::file_copy::backup_removal::get_all_backups_older_than_n_newest_backups;
 use crate::upload::utils::file_name::{generate_backup_name, get_backup_name_stem};
 use anyhow::Context;
 use std::fs;
