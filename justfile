@@ -66,3 +66,6 @@ format:
 
 format-check:
     cargo fmt --verbose --check
+
+install-build-tools:
+    cargo install cargo-generate-rpm cargo-deb

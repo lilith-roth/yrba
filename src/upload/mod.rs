@@ -1,5 +1,3 @@
-mod file_copy;
-mod sftp;
-mod smb;
+mod protocols;
 pub(crate) mod upload_handler;
 mod utils;
