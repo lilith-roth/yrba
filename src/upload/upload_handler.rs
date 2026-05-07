@@ -29,10 +29,12 @@ pub(crate) async fn upload_file(
     log::info!("Starting upload...");
     match upload_mode {
         UploadMode::File => {
-            crate::upload::file_copy::file_copy::file_copy_backup(file_path, config)?
+            crate::upload::protocols::file_copy::file_copy_backup(file_path, config)?;
         }
-        UploadMode::Smb => Box::pin(crate::upload::smb::smb::upload_smb(file_path, config)).await?,
-        UploadMode::Sftp => crate::upload::sftp::sftp::upload_sftp(file_path, config)?,
+        UploadMode::Smb => {
+            Box::pin(crate::upload::protocols::smb::upload_smb(file_path, config)).await?;
+        }
+        UploadMode::Sftp => crate::upload::protocols::sftp::upload_sftp(file_path, config)?,
     }
     log::info!("Upload finished!");
     Ok(())
