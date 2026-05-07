@@ -59,6 +59,9 @@ sftp_password = 'my-super-secure-password'
 # Optional: Enable SFTP compression
 # Default: true
 sftp_compression_enabled = true
+# Optional: SFTP file buffer size in MiB
+# Default: 128 MiB
+sftp_file_buffer_size = "128 MiB"
 
 # The amount of backups to keep
 # Set to 0 to never delete old backups

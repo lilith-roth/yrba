@@ -25,6 +25,17 @@ pub(crate) fn upload_sftp(file_path: &Path, config: &Config) -> anyhow::Result<(
     }
     let remote_path: &str = remote_url.path();
     let compression_enabled: bool = config.sftp_compression_enabled.unwrap_or(true);
+    let upload_buffer_size = usize::try_from(
+        size::Size::from_str(config.sftp_file_buffer_size.as_deref().unwrap_or("128 MiB"))
+            .context("Could not parse buffer size!")?
+            .bytes(),
+    )
+    .unwrap_or_else(|err| {
+        log::error!(
+            "Error parsing SFTP file buffer size! Using default of 128 MiB...\nError: {err}"
+        );
+        128 * 1024 * 1024
+    });
 
     let session: Session = setup_ssh_session(host, port, compression_enabled)?;
     authenticate_ssh(username, &session, config)?;
@@ -33,6 +44,7 @@ pub(crate) fn upload_sftp(file_path: &Path, config: &Config) -> anyhow::Result<(
     upload_backup(
         remote_path,
         &generate_backup_name(file_path)?,
+        upload_buffer_size as usize,
         file_path,
         &session,
     )?;
@@ -79,18 +91,16 @@ fn delete_old_backups(
 fn upload_backup(
     remote_path: &str,
     backup_name: &str,
+    buffer_size_bytes: usize,
     file_path: &Path,
     session: &Session,
 ) -> anyhow::Result<()> {
-    // ToDo: Read from config!
-    const BUF_SIZE: usize = 128 * 1024 * 1024;
-
     // read file
     let file_size: u64 = fs::metadata(file_path)
         .context("Could not get temp file metadata!")?
         .len();
     let file: File = File::open(file_path).context("Failed to open file to upload!")?;
-    let mut buf_reader: BufReader<File> = BufReader::with_capacity(BUF_SIZE, file);
+    let mut buf_reader: BufReader<File> = BufReader::with_capacity(buffer_size_bytes, file);
 
     // Write file to remote
     let remote_file_path: PathBuf = Path::join(Path::new(remote_path), backup_name);

@@ -30,6 +30,13 @@ sftp_private_key_path = '/auth/id_ed25519'
 sftp_private_key_password = 'my-super-secure-password'
 sftp_password = 'my-super-secure-password'
 
+# Optional: Enable SFTP compression
+# Default: true
+sftp_compression_enabled = true
+# Optional: SFTP file buffer size in MiB
+# Default: 128 MiB
+sftp_file_buffer_size = "128 MiB"
+
 # SMB Settings (only used if remote string above is set to smb protocol)
 # SMB user password
 smb_password = 'my-super-secure-password'
@@ -98,6 +105,22 @@ key here.
 If SFTP password authentication is used, enter the password of your user here.
 
 `sftp_password = 'my-super-secure-password'`
+
+
+#### `sftp_compression_enabled`
+Optional: Enable SFTP compression
+Will enable compression for the SSH connection to reduce upload data size for the cost of CPU processing.
+Default: true
+
+`sftp_compression_enabled = true`
+
+
+#### `sftp_file_buffer_size`
+Optional: SFTP file buffer size in MiB.
+Will parse any file size string given as input, for example `"64 KB"`.
+Default: 128 MiB
+
+`sftp_file_buffer_size = "128 MiB"`
 
 
 ### SMB Options
