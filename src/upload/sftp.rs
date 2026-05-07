@@ -44,7 +44,7 @@ pub(crate) fn upload_sftp(file_path: &Path, config: &Config) -> anyhow::Result<(
     upload_backup(
         remote_path,
         &generate_backup_name(file_path)?,
-        upload_buffer_size as usize,
+        upload_buffer_size,
         file_path,
         &session,
     )?;
