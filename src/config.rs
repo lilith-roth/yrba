@@ -25,6 +25,8 @@ pub(crate) struct Config {
     pub(crate) sftp_password: Option<String>,
     // Enable SFTP compression
     pub(crate) sftp_compression_enabled: Option<bool>,
+    // SFTP file buffer size in MiB
+    pub(crate) sftp_file_buffer_size: Option<String>,
 
     // SMB Settings
     // SMB password
