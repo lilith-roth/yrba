@@ -18,10 +18,10 @@ pub(crate) fn upload_sftp(file_path: &Path, config: &Config) -> anyhow::Result<(
         .host_str()
         .expect("Could not retrieve remote host from URL!");
     let port: u16 = remote_url.port().unwrap_or(22);
-    let mut username: &str = remote_url.username();
-    let system_username: &String = &whoami::username();
+    let mut username: String = remote_url.username().to_string();
     if username.is_empty() {
-        username = system_username;
+        username = whoami::username()
+            .context("No username specified and could not retrieve system username!")?;
     }
     let remote_path: &str = remote_url.path();
     let compression_enabled: bool = config.sftp_compression_enabled.unwrap_or(true);
@@ -38,7 +38,7 @@ pub(crate) fn upload_sftp(file_path: &Path, config: &Config) -> anyhow::Result<(
     });
 
     let session: Session = setup_ssh_session(host, port, compression_enabled)?;
-    authenticate_ssh(username, &session, config)?;
+    authenticate_ssh(&username, &session, config)?;
 
     create_remote_directory(remote_path, &session)?;
     upload_backup(
