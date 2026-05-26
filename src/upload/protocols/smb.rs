@@ -95,6 +95,13 @@ pub(crate) async fn upload_smb(file_path: &Path, config: &Config) -> anyhow::Res
     Ok(())
 }
 
+/// Generates a file name for the backup that complies with windows' arbitrary arcane file name
+/// restrictions.
+fn generate_windows_compatible_backup_name(backup_name: &Path) -> anyhow::Result<String> {
+    // ':' is a reserved character under windows. blegh
+    generate_backup_name(backup_name).map(|name| name.replace(':', "-"))
+}
+
 /// Uploads the backup, to be called by `upload_smb` above
 ///
 /// # Arguments
@@ -107,7 +114,7 @@ async fn upload_backup(
     remote_address: Host<&str>,
     client: &Client,
 ) -> anyhow::Result<()> {
-    let backup_name: &String = &generate_backup_name(file_path)?;
+    let backup_name: &String = &generate_windows_compatible_backup_name(file_path)?;
     let file_to_open: UncPath = target_path.to_owned().with_add_path(backup_name);
     log::debug!("Backup path {file_to_open}");
 
