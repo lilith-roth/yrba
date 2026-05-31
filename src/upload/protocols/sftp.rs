@@ -50,8 +50,7 @@ pub(crate) fn upload_sftp(file_path: &Path, config: &Config) -> anyhow::Result<(
         .context("Could not create SFTP session! Make sure the remote server supports SFTP.")?;
 
     //sftp_session.mkdir(&Path::new(remote_path), 0600).context("Could not create remote directory for backups!")?;
-    create_remote_directory(remote_path, &sftp_session)
-        .context("Could not create remote path!")?;
+    create_remote_directory(remote_path, &sftp_session).context("Could not create remote path!")?;
     upload_backup(
         remote_path,
         &generate_backup_name(file_path)?,
