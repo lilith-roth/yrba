@@ -49,7 +49,8 @@ pub(crate) fn upload_sftp(file_path: &Path, config: &Config) -> anyhow::Result<(
         .sftp()
         .context("Could not create SFTP session! Make sure the remote server supports SFTP.")?;
 
-    sftp_session.mkdir(&Path::new(remote_path), 0600).context("Could not create remote directory for backups!")?;
+    //sftp_session.mkdir(&Path::new(remote_path), 0600).context("Could not create remote directory for backups!")?;
+    create_remote_directory(&remote_path, &sftp_session).context("Could not create remote path!")?;
     upload_backup(
         remote_path,
         &generate_backup_name(file_path)?,
@@ -224,4 +225,9 @@ fn setup_ssh_session(host: &str, port: u16, compression_enabled: bool) -> anyhow
         .handshake()
         .context("Could not handshake SSH server!")?;
     Ok(session)
+}
+
+fn create_remote_directory(remote_path: &str, sftp_session: &Sftp) -> anyhow::Result<()> {
+    remote_path.split("/").for_each(|remote_dir| {sftp_session.opendir(remote_dir); return;});
+    Ok(())
 }
