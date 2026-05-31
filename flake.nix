@@ -29,7 +29,6 @@
       {
         devShells.default = pkgs.mkShell {
           buildInputs = [
-            pkgs.rustup
             pkgs.rustc
             pkgs.cargo
             pkgs.gcc
@@ -44,6 +43,7 @@
             pkgs.marksman
             pkgs.openssl
             pkgs.pkg-config
+            pkgs.vscode-extensions.vadimcn.vscode-lldb.adapter
           ];
         };
 
