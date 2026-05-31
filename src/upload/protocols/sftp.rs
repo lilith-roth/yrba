@@ -1,5 +1,5 @@
 use anyhow::{Context, anyhow};
-use ssh2::{Error, Session, Sftp};
+use ssh2::{Error, ErrorCode, Session, Sftp};
 use std::{
     fs::File,
     io::BufReader,
@@ -50,7 +50,8 @@ pub(crate) fn upload_sftp(file_path: &Path, config: &Config) -> anyhow::Result<(
         .context("Could not create SFTP session! Make sure the remote server supports SFTP.")?;
 
     //sftp_session.mkdir(&Path::new(remote_path), 0600).context("Could not create remote directory for backups!")?;
-    create_remote_directory(&remote_path, &sftp_session).context("Could not create remote path!")?;
+    create_remote_directory(remote_path, &sftp_session)
+        .context("Could not create remote path!")?;
     upload_backup(
         remote_path,
         &generate_backup_name(file_path)?,
@@ -80,7 +81,9 @@ fn delete_old_backups(
     remote_path: &str,
     sftp_session: &Sftp,
 ) -> anyhow::Result<()> {
-    let mut dir_content = sftp_session.readdir(remote_path).context("Could not read remote backup directory content!")?;
+    let mut dir_content = sftp_session
+        .readdir(remote_path)
+        .context("Could not read remote backup directory content!")?;
     dir_content.sort_by_key(|x| x.0.file_name().unwrap_or_default().to_os_string());
 
     let mut skip_counter = n;
@@ -99,7 +102,9 @@ fn delete_old_backups(
         }
 
         log::debug!("Deleting old backup: {x:?}");
-        sftp_session.unlink(&*x.0).context("Could not delete old backup: {x:?}")?;
+        sftp_session
+            .unlink(&x.0)
+            .context("Could not delete old backup: {x:?}")?;
     }
 
     Ok(())
@@ -127,11 +132,15 @@ fn upload_backup(
     // Write file to remote
     let remote_file_path: PathBuf = Path::join(Path::new(remote_path), backup_name);
     log::debug!("Uploading to {}", remote_file_path.display());
-    let mut remote_file = sftp_session.create(&remote_file_path).context("Could not create file on remote!")?;
+    let mut remote_file = sftp_session
+        .create(&remote_file_path)
+        .context("Could not create file on remote!")?;
     std::io::copy(&mut buf_reader, &mut remote_file).context("Could not write file to remote!")?;
-    
+
     // Closing channel
-    remote_file.close().context("Error closing remote file handle!")?;
+    remote_file
+        .close()
+        .context("Error closing remote file handle!")?;
     Ok(())
 }
 
@@ -228,6 +237,18 @@ fn setup_ssh_session(host: &str, port: u16, compression_enabled: bool) -> anyhow
 }
 
 fn create_remote_directory(remote_path: &str, sftp_session: &Sftp) -> anyhow::Result<()> {
-    remote_path.split("/").for_each(|remote_dir| {sftp_session.opendir(remote_dir); return;});
+    let mut creation_dir: String = String::new();
+    for remote_dir in remote_path.split('/') {
+        if remote_dir.is_empty() {
+            continue;
+        }
+        creation_dir = creation_dir.clone() + "/" + remote_dir;
+        let dir_result = sftp_session.opendir(&creation_dir);
+        if dir_result.is_err_and(|err| err.code() == ErrorCode::SFTP(2)) {
+            sftp_session
+                .mkdir(creation_dir.as_ref(), 0o700)
+                .map_err(|err| anyhow!("Could not create remote backup directory: {err:?}"))?;
+        }
+    }
     Ok(())
 }
