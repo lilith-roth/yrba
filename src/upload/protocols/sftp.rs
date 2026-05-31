@@ -43,11 +43,11 @@ pub(crate) fn upload_sftp(file_path: &Path, config: &Config) -> anyhow::Result<(
     });
 
     let session: Session = setup_ssh_session(host, port, compression_enabled)?;
+    authenticate_ssh(&username, &session, config)?;
+
     let sftp_session: Sftp = session
         .sftp()
         .context("Could not create SFTP session! Make sure the remote server supports SFTP.")?;
-
-    authenticate_ssh(&username, &session, config)?;
 
     sftp_session.mkdir(&Path::new(remote_path), 0600).context("Could not create remote directory for backups!")?;
     upload_backup(
