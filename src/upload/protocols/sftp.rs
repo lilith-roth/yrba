@@ -1,5 +1,5 @@
 use anyhow::{Context, anyhow};
-use ssh2::{Channel, Error, Session};
+use ssh2::{Channel, Error, Session, Sftp};
 use std::{
     fs::{self, File},
     io::{BufReader, Read},
@@ -38,6 +38,10 @@ pub(crate) fn upload_sftp(file_path: &Path, config: &Config) -> anyhow::Result<(
     });
 
     let session: Session = setup_ssh_session(host, port, compression_enabled)?;
+    let sftp_session: Sftp = session
+        .sftp()
+        .context("Could not create SFTP session! Make sure the remote server supports SFTP.")?;
+
     authenticate_ssh(&username, &session, config)?;
 
     create_remote_directory(remote_path, &session)?;
@@ -51,7 +55,7 @@ pub(crate) fn upload_sftp(file_path: &Path, config: &Config) -> anyhow::Result<(
     delete_old_backups(
         remote_path,
         &get_backup_name_stem(file_path)?,
-        &session,
+        &sftp_session,
         config,
     )?;
     Ok(())
@@ -60,30 +64,33 @@ pub(crate) fn upload_sftp(file_path: &Path, config: &Config) -> anyhow::Result<(
 fn delete_old_backups(
     remote_path: &str,
     backup_name_stem: &str,
-    session: &Session,
+    sftp_session: &Sftp,
     config: &Config,
 ) -> anyhow::Result<()> {
-    // Delete older backups than N
-    if config.amount_of_backups_to_keep != 0 {
-        let mut rm_cmd_channel: Channel = session
-            .channel_session()
-            .context("Could not create SSH channel session to delete older backups!")?;
-        let delete_cmd: &String = &format!(
-            "cd {} && ls -A1t {} | grep {} | tail -n +{} | xargs rm",
-            remote_path,
-            remote_path,
-            backup_name_stem,
-            config.amount_of_backups_to_keep + 1
-        );
-        match rm_cmd_channel.exec(delete_cmd) {
-            Ok(()) => log::debug!("Deletion of older backups successful!\nCommand: `{delete_cmd}`"),
-            Err(err) => log::error!("Could not delete older backups! {err:?}"),
+    log::info!("DEL!");
+    log::info!("path: {remote_path:?}");
+    let mut dir_content = sftp_session.readdir(remote_path).unwrap();
+    log::info!("DC: {dir_content:?}");
+    dir_content.sort_by_key(|x| x.0.file_name().unwrap_or_default().to_os_string());
+
+    let mut skip_counter = config.amount_of_backups_to_keep;
+    for x in &dir_content {
+        let file_name =
+            x.0.file_name()
+                .ok_or_else(|| anyhow!("Could not retrieve remote file name for deletion!"))?
+                .to_string_lossy();
+
+        if !x.1.is_file() || !file_name.contains(backup_name_stem) {
+            continue;
         }
-        let mut s: String = String::new();
-        rm_cmd_channel
-            .read_to_string(&mut s)
-            .context("Could not read backup deletion command response!")?;
+        if skip_counter > 0 {
+            skip_counter -= 1;
+            continue;
+        }
+
+        log::debug!("DELETE: {x:?}");
     }
+
     Ok(())
 }
 
