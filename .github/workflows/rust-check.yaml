@@ -23,7 +23,7 @@ jobs:
     name: Test, Lint & Format
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6.0.2
+      - uses: actions/checkout@v6.0.3
 
       - name: Install rust toolchain
         uses: dtolnay/rust-toolchain@stable
