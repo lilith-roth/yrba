@@ -22,7 +22,6 @@
             inherit system;
             pkgs = import nixpkgs {
               inherit system;
-              # You likely (but not necessarily) want the default overlay from your flake here
               overlays = [
                 self.overlays.default
                 (import rust-overlay)
