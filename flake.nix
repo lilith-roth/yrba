@@ -46,8 +46,6 @@
           ];
         };
 
-        overlays = final: prev: { yrba = prev.callPackage ./default.nix { }; };
-
         nixosModules.default = import ./nixos-module.nix;
 
         packages.default = pkgsFor.${pkgs.system}.callPackage ./. { };
@@ -56,5 +54,8 @@
 
         checks.formatting = (treefmt-nix.lib.evalModule pkgs ./treefmt.nix).config.build.check self;
       }
-    );
+    )
+    // flake-utils.lib.eachDefaultSystemPassThrough (system: {
+      overlays = final: prev: { yrba = prev.callPackage ./default.nix { }; };
+    });
 }
