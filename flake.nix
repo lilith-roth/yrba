@@ -13,17 +13,27 @@
       flake-utils,
       treefmt-nix,
     }:
-    flake-utils.lib.eachDefaultSystem (
-      system:
-      let
-        overlays = [ (import rust-overlay) ];
-        pkgs = import nixpkgs {
-          inherit system;
-          inherit overlays;
-        };
-        pkgsFor = nixpkgs.legacyPackages;
-      in
-      {
+    let
+      eachDefaultEnvironment =
+        f:
+        flake-utils.lib.eachDefaultSystem (
+          system:
+          f {
+            inherit system;
+            pkgs = import nixpkgs {
+              inherit system;
+              # You likely (but not necessarily) want the default overlay from your flake here
+              overlays = [
+                self.overlays.default
+                (import rust-overlay)
+              ];
+            };
+          }
+        );
+      pkgsFor = nixpkgs.legacyPackages;
+    in
+    eachDefaultEnvironment (
+      { system, pkgs }: {
         devShells.default = pkgs.mkShell {
           buildInputs = [
             pkgs.rustc
@@ -55,7 +65,7 @@
         checks.formatting = (treefmt-nix.lib.evalModule pkgs ./treefmt.nix).config.build.check self;
       }
     )
-    // flake-utils.lib.eachDefaultSystemPassThrough (system: {
-      overlays = final: prev: { yrba = prev.callPackage ./default.nix { }; };
-    });
+    // {
+      overlays.default = import ./overlay.nix;
+    };
 }

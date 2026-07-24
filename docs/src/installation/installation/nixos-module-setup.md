@@ -80,7 +80,7 @@ your `flake.nix`, and pass the overlay to nixpkgs.
     pkgs = import nixpkgs {
       system = "x86_64-linux";
       overlays = [
-        yrba.overlays
+        yrba.overlays.default
       ];
     };
     pkgsFor = nixpkgs.legacyPackages;
