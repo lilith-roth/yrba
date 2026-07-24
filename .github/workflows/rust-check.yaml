@@ -5,9 +5,9 @@ permissions:
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 env:
   CARGO_INCREMENTAL: 0
@@ -40,7 +40,7 @@ jobs:
         run: just test
 
       - name: Run lint check
-        run: just lint
+        run: just lint-rust
 
       - name: Run formatting check
-        run: just format-check
+        run: just format-check-rust

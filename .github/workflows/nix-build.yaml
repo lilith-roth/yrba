@@ -1,39 +1,35 @@
 name: "Nix"
 
 permissions:
-    contents: "write"
+  contents: "write"
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
-    Build:
-        runs-on: "ubuntu-latest"
+  Build:
+    runs-on: "ubuntu-latest"
 
-        steps:
-            - name: "GitHub: Checkout Repository"
-              uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" #v6.0.1
+    steps:
+      - name: "GitHub: Checkout Repository"
+        uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" #v6.0.1
 
-            - name: "Install Just"
-              run: |
-                sudo apt update
-                sudo apt install -y just
+      - name: "GitHub: Setup Nix"
+        uses: "custom-workflows/setup-nix@d3dc49dd7bd37d10de81c938bebefad918e4d499"
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
 
-            - name: "GitHub: Setup Nix"
-              # IMPORTANT:
-              # Consider GitHub Actions Pinning for additional security.
-              # See: https://stackoverflow.com/a/78905195
-              uses: "custom-workflows/setup-nix@latest"
-              with:
-                # NOTE:
-                # Set 'nix_path' by:
-                #  - Picking a channel → https://status.nixos.org/
-                #  - Pin 'nixpkgs' → https://nix.dev/reference/pinning-nixpkgs
-                nix_path: nixpkgs=channel:nixos-unstable
+      - name: "Nix: Check Formatting"
+        run: |
+          nix run nixpkgs#just format-check-nix
 
-            - name: "Nix: Build"
-              run: |
-                just build-nix
+      - name: "Nix: Check Lint"
+        run: |
+          nix run nixpkgs#just lint-nix
+
+      - name: "Nix: Build"
+        run: |
+          nix run nixpkgs#just build-nix

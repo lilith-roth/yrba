@@ -58,14 +58,33 @@ test-integration-tests:
     fi
     docker compose -f docker/docker-compose-integration-tests.yml down
 
-lint:
-    cargo clippy --verbose
+lint: lint-rust lint-nix
+	
+lint-rust:
+	cargo clippy --verbose
 
-format:
-    cargo fmt
+lint-nix:
+	nix run nixpkgs#statix -- check .
 
-format-check:
-    cargo fmt --verbose --check
+format: format-rust format-nix
+
+format-rust:
+	cargo fmt
+
+format-nix:
+	nix fmt
+
+format-check: format-check-rust format-check-nix
+
+format-check-rust:
+	cargo fmt --verbose --check
+
+format-check-nix:
+	nix flake check
 
 install-build-tools:
     cargo install cargo-generate-rpm cargo-deb
+
+mdbook-dev:
+	mdbook watch docs --open
+

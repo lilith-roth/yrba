@@ -3,6 +3,7 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     rust-overlay.url = "github:oxalica/rust-overlay";
+    treefmt-nix.url = "github:numtide/treefmt-nix";
   };
   outputs =
     {
@@ -10,23 +11,28 @@
       nixpkgs,
       rust-overlay,
       flake-utils,
+      treefmt-nix,
     }:
-    flake-utils.lib.eachDefaultSystem (
-      system:
-      let
-        overlays = [ (import rust-overlay) ];
-        pkgs = import nixpkgs {
-          inherit system;
-          inherit overlays;
-        };
-        supportedSystems = [
-          "x86_64-linux"
-          "aarch64-darwin"
-        ];
-        forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
-        pkgsFor = nixpkgs.legacyPackages;
-      in
-      {
+    let
+      eachDefaultEnvironment =
+        f:
+        flake-utils.lib.eachDefaultSystem (
+          system:
+          f {
+            inherit system;
+            pkgs = import nixpkgs {
+              inherit system;
+              overlays = [
+                self.overlays.default
+                (import rust-overlay)
+              ];
+            };
+          }
+        );
+      pkgsFor = nixpkgs.legacyPackages;
+    in
+    eachDefaultEnvironment (
+      { system, pkgs }: {
         devShells.default = pkgs.mkShell {
           buildInputs = [
             pkgs.rustc
@@ -44,14 +50,21 @@
             pkgs.openssl
             pkgs.pkg-config
             pkgs.vscode-extensions.vadimcn.vscode-lldb.adapter
+            pkgs.mdbook
+            pkgs.statix
           ];
         };
 
-        packages = {
-          nixpkgs.overlays = [ rust-overlay.overlays.default ];
-          environment.systemPackages = [ pkgs.rust-bin.stable.latest.default ];
-          default = pkgsFor.${system}.callPackage ./. { };
-        };
+        nixosModules.default = import ./nixos-module.nix;
+
+        packages.default = pkgsFor.${pkgs.system}.callPackage ./. { };
+
+        formatter = (treefmt-nix.lib.evalModule pkgs ./treefmt.nix).config.build.wrapper;
+
+        checks.formatting = (treefmt-nix.lib.evalModule pkgs ./treefmt.nix).config.build.check self;
       }
-    );
+    )
+    // {
+      overlays.default = import ./overlay.nix;
+    };
 }
