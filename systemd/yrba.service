@@ -5,6 +5,7 @@ StartLimitIntervalSec=10min
 StartLimitBurst=2
 
 [Service]
+Type=oneshot
 ExecStart=/usr/bin/yrba -c /etc/yrba.toml
 Restart=on-failure
 RestartSec=5s
