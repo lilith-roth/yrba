@@ -1,5 +1,5 @@
 {
-  config,
+  config ? pkgs.config,
   lib,
   pkgs,
   ...
