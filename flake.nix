@@ -42,6 +42,7 @@
             pkgs.pkg-config
             pkgs.vscode-extensions.vadimcn.vscode-lldb.adapter
             pkgs.mdbook
+            pkgs.statix
           ];
         };
 
@@ -49,11 +50,11 @@
 
         nixosModules.default = import ./nixos-module.nix;
 
+        packages.default = pkgsFor.${pkgs.system}.callPackage ./. { };
+
         formatter = (treefmt-nix.lib.evalModule pkgs ./treefmt.nix).config.build.wrapper;
 
         checks.formatting = (treefmt-nix.lib.evalModule pkgs ./treefmt.nix).config.build.check self;
-
-        packages.default = pkgsFor.${pkgs.system}.callPackage ./. { };
       }
     );
 }

@@ -80,7 +80,7 @@ format-check-rust:
 	cargo fmt --verbose --check
 
 format-check-nix:
-	find ./ -name "*.nix" -type f -exec nix run nixpkgs#nixfmt -- -c -s {} \;
+	nix flake check
 
 install-build-tools:
     cargo install cargo-generate-rpm cargo-deb

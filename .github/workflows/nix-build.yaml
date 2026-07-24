@@ -17,11 +17,6 @@ jobs:
       - name: "GitHub: Checkout Repository"
         uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" #v6.0.1
 
-      - name: "Install Just"
-        run: |
-          sudo apt update
-          sudo apt install -y just
-
       - name: "GitHub: Setup Nix"
         uses: "custom-workflows/setup-nix@d3dc49dd7bd37d10de81c938bebefad918e4d499"
         with:
@@ -29,12 +24,12 @@ jobs:
 
       - name: "Nix: Check Formatting"
         run: |
-          just format-check-nix
+          nix run nixpkgs#just format-check-nix
 
       - name: "Nix: Check Lint"
         run: |
-          just lint-nix
+          nix run nixpkgs#just lint-nix
 
       - name: "Nix: Build"
         run: |
-          just build-nix
+          nix run nixpkgs#just build-nix
