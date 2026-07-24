@@ -15,7 +15,7 @@ jobs:
 
     steps:
       - name: "GitHub: Checkout Repository"
-        uses: "actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10" #v6.0.1
+        uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" #v6.0.1
 
       - name: "Install Just"
         run: |
@@ -23,15 +23,8 @@ jobs:
           sudo apt install -y just
 
       - name: "GitHub: Setup Nix"
-        # IMPORTANT:
-        # Consider GitHub Actions Pinning for additional security.
-        # See: https://stackoverflow.com/a/78905195
-        uses: "custom-workflows/setup-nix@latest"
+        uses: "custom-workflows/setup-nix@d3dc49dd7bd37d10de81c938bebefad918e4d499"
         with:
-          # NOTE:
-          # Set 'nix_path' by:
-          #  - Picking a channel → https://status.nixos.org/
-          #  - Pin 'nixpkgs' → https://nix.dev/reference/pinning-nixpkgs
           nix_path: nixpkgs=channel:nixos-unstable
 
       - name: "Nix: Check Formatting"
