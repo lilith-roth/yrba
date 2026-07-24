@@ -43,4 +43,4 @@ jobs:
         run: just lint-rust
 
       - name: Run formatting check
-        run: just format-check
+        run: just format-check-rust
