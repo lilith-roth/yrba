@@ -1,9 +1,24 @@
 {
   pkgs ? import <nixpkgs> { },
+  lib ? pkgs.lib,
 }:
 pkgs.rustPlatform.buildRustPackage {
   pname = "yrba";
   version = "main";
+  meta = {
+    description = "Incremental remote backups made simple!";
+    longDescription = ''
+            YRBA is a tool to automatically perform periodic incremental backups
+      	  of all your important data, and automatically copy them to a specified
+      	  location or upload them to a remote server.
+      	'';
+    homepage = "https://github.com/lilith-roth/yrba";
+    licenses = lib.licenses.gpl3Only;
+    platforms = lib.platforms.all;
+    downloadPage = "https://github.com/lilith-roth/yrba/releases";
+    changelog = "https://github.com/lilith-roth/yrba/blob/HEAD/CHANGELOG.md";
+    mainProgram = "yrba";
+  };
   cargoLock.lockFile = ./Cargo.lock;
   src = pkgs.lib.cleanSource ./.;
   cargoTestFlags = [
