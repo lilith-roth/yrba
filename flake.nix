@@ -46,7 +46,7 @@
           ];
         };
 
-        overlays = import ./overlay.nix;
+        overlays = final: prev: { yrba = prev.callPackage ./default.nix { }; };
 
         nixosModules.default = import ./nixos-module.nix;
 
