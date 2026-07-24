@@ -38,7 +38,7 @@ in
     extraConfig = lib.mkOption {
       default = { };
       description = "Extra configuration options for YRBA";
-      type = settingsFormat.type;
+      inherit (settingsFormat) type;
     };
   };
 

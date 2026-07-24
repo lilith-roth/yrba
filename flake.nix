@@ -3,6 +3,7 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     rust-overlay.url = "github:oxalica/rust-overlay";
+    treefmt-nix.url = "github:numtide/treefmt-nix";
   };
   outputs =
     {
@@ -10,6 +11,7 @@
       nixpkgs,
       rust-overlay,
       flake-utils,
+      treefmt-nix,
     }:
     flake-utils.lib.eachDefaultSystem (
       system:
@@ -43,15 +45,15 @@
           ];
         };
 
-        overlays.default = import ./overlays.nix;
+        overlays = import ./overlay.nix;
 
         nixosModules.default = import ./nixos-module.nix;
 
-        packages = {
-          nixpkgs.overlays = [ rust-overlay.overlays.default ];
-          environment.systemPackages = [ pkgs.rust-bin.stable.latest.default ];
-          default = pkgsFor.${system}.callPackage ./. { };
-        };
+        formatter = (treefmt-nix.lib.evalModule pkgs ./treefmt.nix).config.build.wrapper;
+
+        checks.formatting = (treefmt-nix.lib.evalModule pkgs ./treefmt.nix).config.build.check self;
+
+        packages.default = pkgsFor.${pkgs.system}.callPackage ./. { };
       }
     );
 }

@@ -7,71 +7,93 @@ There are multiple ways to YRBA natively on your system.
 3. Nix
 4. Rust Cargo
 
-
 ## 1. System Packages (Linux)
 
-You can find packages for your Linux distribution either on the release page, in the package repositories of your
-distribution.
+You can find packages for your Linux distribution either on the release page, in
+the package repositories of your distribution.
 
-Currently, we offer packages for the following linux distributions. If yours is not one of the following distributions,
-please create an [issue on the GitHub](https://github.com/lilith-roth/yrba/issues) page, and it will likely get added
-very soon.
+Currently, we offer packages for the following linux distributions. If yours is
+not one of the following distributions, please create an
+[issue on the GitHub](https://github.com/lilith-roth/yrba/issues) page, and it
+will likely get added very soon.
 
 ### Arch Linux AUR
 
-An easy to install Arch Linux AUR package can be installed using any AUR helper of your choice. Check out
-[AUR Instructions](./arch-aur.md) for further information.
+An easy to install Arch Linux AUR package can be installed using any AUR helper
+of your choice. Check out [AUR Instructions](./arch-aur.md) for further
+information.
 
+### NixOS Module
+
+On NixOS, YRBA can be easily installed and configured with your system
+configuration. For more information check out the
+[NixOS Instructions](./nixos-module-setup.md).
+
+### RPM Based Systems
+
+On an RPM based system like Fedora or AlmaLinux, you can install the `.rpm` file
+from the [release page](https://github.com/lilith-roth/yrba/releases) on GitHub.
+
+### DEB Based Systems
+
+On a DEB based system like Debian, Ubuntu, Mint, you can install the `.deb` file
+from the [release page](https://github.com/lilith-roth/yrba/releases) on GitHub.
 
 ## 2. Download Binaries
 
-Ready to run executables can be downloaded from the GitHub releases page, and are always up to date with the latest
-release of YRBA.
+Ready to run executables can be downloaded from the GitHub releases page, and
+are always up to date with the latest release of YRBA.
+
+Binaries are available for Linux, macOS & Windows.
 
 [You can find the download of the latest release here.](https://github.com/lilith-roth/yrba/releases)
 
-
 ## 3. Nix
 
-If you have Nix installed on your system be it Linux, macOS or Windows, you can easily install & run YRBA with a single
-command.
+If you have Nix installed on your system be it Linux, macOS or Windows, you can
+easily install & run YRBA with a single command.
 
 ```shell
 nix run github:lilith-roth/yrba
 ```
 
-In case you need to add parameters while calling the application, you have to append a `--` at the end of the command,
-before the parameters.
+In case you need to add parameters while calling the application, you have to
+append a `--` at the end of the command, before the parameters.
 
 Example:
+
 ```shell
 nix run github:lilith-roth/yrba -- --config ./config.toml
 ```
 
-
 ## 4. Rust Cargo
 
-If you have Rust's Cargo installed on your system, you can easily compile and run the latest version easily on your
-machine, with this simple command.
+If you have Rust's Cargo installed on your system, you can easily compile and
+run the latest version easily on your machine, with this simple command.
 
-**NOTE:** Due to an issue with the upstream library `tar-rs` if the cargo installation method is used, and socket files
-are encountered during the archiving process, it will error, and stop archiving at that point!
+**NOTE:** Due to an issue with the upstream library `tar-rs` if the cargo
+installation method is used, and socket files are encountered during the
+archiving process, it will error, and stop archiving at that point!
 
-In other installation methods this is solved by using our own fork of `tar-rs`, though that does not work with cargo
-installations, as they always use the library on crates.io for building the application.
+In other installation methods this is solved by using our own fork of `tar-rs`,
+though that does not work with cargo installations, as they always use the
+library on crates.io for building the application.
 
 ---
 
 Install YRBA:
+
 ```shell
 cargo install yrba
 ```
 
 Afterwards, you can call YRBA just by calling `yrba` in your terminal.
+
 ```shell
 yrba
 ```
 
-
 ---
-**Now that we installed YRBA we can continue to [configuring](../../configuration/configuration.md) YRBA.** 
+
+**Now that we installed YRBA we can continue to
+[configuring](../../configuration/configuration.md) YRBA.**
