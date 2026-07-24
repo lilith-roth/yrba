@@ -50,6 +50,33 @@ in
       }
     ];
 
+    systemd = {
+      services.yrba = {
+        description = "Automatic incremental remote backups using YRBA";
+        startAt = cfg.schedule.dates;
+        path = [ config.nix.package ];
+        wants = [
+          "network-online.target"
+          "remote-fs.target"
+          "nss-lookup.target"
+        ];
+        after = [
+          "network-online.target"
+          "remote-fs.target"
+          "nss-lookup.target"
+        ];
+        serviceConfig = {
+          Type = "oneshot";
+          ExecStart = "${lib.getExe cfg.package} -c /etc/yrba.toml";
+        };
+      };
+      timers.yrba = {
+        timerConfig = {
+          Persistent = true;
+        };
+      };
+    };
+
     environment = lib.mkIf cfg.enable {
       systemPackages = [ cfg.package ];
       etc."yrba.toml".source = "${configFile}";

@@ -39,8 +39,13 @@
             pkgs.openssl
             pkgs.pkg-config
             pkgs.vscode-extensions.vadimcn.vscode-lldb.adapter
+            pkgs.mdbook
           ];
         };
+
+        overlays.default = import ./overlays.nix;
+
+        nixosModules.default = import ./nixos-module.nix;
 
         packages = {
           nixpkgs.overlays = [ rust-overlay.overlays.default ];
