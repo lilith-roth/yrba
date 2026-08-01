@@ -31,7 +31,11 @@ pub(crate) async fn upload_smb(file_path: &Path, config: &Config) -> anyhow::Res
         .ok_or_else(|| anyhow!("Could not get remote share name!"))?
         .0;
     let username = remote_url.username();
-    let password: &str = &config.smb_password.clone().unwrap_or_default();
+    let password: &str = config
+        .smb
+        .as_ref()
+        .and_then(|smb| smb.password.as_deref())
+        .unwrap_or_default();
     let backup_directory_path = remote_url.path()[1..]
         .split_once('/')
         .ok_or_else(|| anyhow!("Could not get path to store remote backups!"))?

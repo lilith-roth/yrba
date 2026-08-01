@@ -45,6 +45,7 @@
             pkgs.bash-language-server
             pkgs.nil
             pkgs.efm-langserver
+            pkgs.rustfmt
             pkgs.prettierd
             pkgs.marksman
             pkgs.openssl

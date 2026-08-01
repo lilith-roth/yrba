@@ -1,5 +1,5 @@
 use anyhow::{Context, anyhow};
-use ssh2::{Error, ErrorCode, Session, Sftp};
+use ssh2::{ErrorCode, Session, Sftp};
 use std::{
     fs::File,
     io::BufReader,
@@ -29,11 +29,21 @@ pub(crate) fn upload_sftp(file_path: &Path, config: &Config) -> anyhow::Result<(
             .context("No username specified and could not retrieve system username!")?;
     }
     let remote_path: &str = remote_url.path();
-    let compression_enabled: bool = config.sftp_compression_enabled.unwrap_or(true);
+    let compression_enabled: bool = config
+        .sftp
+        .as_ref()
+        .and_then(|sftp| sftp.compression_enabled)
+        .unwrap_or(true);
     let upload_buffer_size = usize::try_from(
-        size::Size::from_str(config.sftp_file_buffer_size.as_deref().unwrap_or("128 MiB"))
-            .context("Could not parse buffer size!")?
-            .bytes(),
+        size::Size::from_str(
+            config
+                .sftp
+                .as_ref()
+                .and_then(|sftp| sftp.file_buffer_size.as_deref())
+                .unwrap_or("128 MiB"),
+        )
+        .context("Could not parse buffer size!")?
+        .bytes(),
     )
     .unwrap_or_else(|err| {
         log::error!(
@@ -49,7 +59,6 @@ pub(crate) fn upload_sftp(file_path: &Path, config: &Config) -> anyhow::Result<(
         .sftp()
         .context("Could not create SFTP session! Make sure the remote server supports SFTP.")?;
 
-    //sftp_session.mkdir(&Path::new(remote_path), 0600).context("Could not create remote directory for backups!")?;
     create_remote_directory(remote_path, &sftp_session).context("Could not create remote path!")?;
     upload_backup(
         remote_path,
@@ -143,6 +152,39 @@ fn upload_backup(
     Ok(())
 }
 
+fn authenticate_ssh_keys(
+    username: &str,
+    public_key_path: &str,
+    private_key_path: &str,
+    private_key_password: Option<&str>,
+    session: &Session,
+) -> anyhow::Result<()> {
+    let pub_path = PathBuf::from(shellexpand::tilde(public_key_path).as_ref());
+    let priv_path = PathBuf::from(shellexpand::tilde(private_key_path).as_ref());
+
+    log::info!("Trying SFTP private key authentication...");
+
+    session.userauth_pubkey_file(username, Some(&pub_path), &priv_path, private_key_password)?;
+
+    log::debug!("SFTP private key authentication succeded");
+
+    Ok(())
+}
+
+fn authenticate_ssh_password(
+    username: &str,
+    password: &str,
+    session: &Session,
+) -> anyhow::Result<()> {
+    log::info!("Trying SFTP password authentication...");
+
+    session.userauth_password(username, password)?;
+
+    log::debug!("SFTP password authentication succeded");
+
+    Ok(())
+}
+
 /// Authenticates the SSH session
 ///
 /// # Arguments
@@ -150,70 +192,47 @@ fn upload_backup(
 /// * `session`     - SSH session
 /// * `config`      - Parsed configuration file
 fn authenticate_ssh(username: &str, session: &Session, config: &Config) -> anyhow::Result<()> {
-    let settings_config: Config = config.clone();
-    let ssh_config_accepted: bool = match settings_config.sftp_public_key_path {
-        Some(public_key_path) => {
-            let private_key_provided: bool =
-                settings_config.sftp_private_key_path.clone().is_some()
-                    && settings_config.sftp_private_key_path.clone().unwrap() != "";
-            // Making relative paths work, because they didn't for some reason
-            let binding: PathBuf =
-                dirs::home_dir().context("Could not retrieve user home directory!")?;
-            let home_dir: &str = binding
-                .to_str()
-                .context("Could not convert user home directory path object to str!")?;
-            let sftp_public_key_path: String = public_key_path.as_str().replace('~', home_dir);
-            let sftp_private_key_path: String = settings_config
-                .sftp_private_key_path
-                .unwrap()
-                .as_str()
-                .replace('~', home_dir);
-
-            let success: bool = if private_key_provided {
-                log::debug!("Trying SFTP private key authentication...");
-                let sftp_private_key_password =
-                    match settings_config.sftp_private_key_password.as_deref() {
-                        None | Some("") => None,
-                        Some(_) => settings_config.sftp_private_key_password,
-                    };
-                let auth_success: Result<(), Error> = session.userauth_pubkey_file(
-                    username,
-                    Some(Path::new(&sftp_public_key_path)),
-                    sftp_private_key_path.as_ref(),
-                    sftp_private_key_password.as_deref(),
-                );
-                auth_success.is_ok()
-            } else {
-                false
-            };
-            log::debug!("SFTP private key authentication result {success:?}");
-            if !success {
-                log::warn!("SFTP private key authentication failed!");
-            }
-            success
-        }
-        None => false,
+    let Some(sftp_cfg) = config.sftp.as_ref() else {
+        return Err(anyhow!("No SFTP configuration provided!"));
     };
-    if !ssh_config_accepted {
-        match settings_config.sftp_password {
-            None => {
-                log::error!("No SFTP authentication provided!");
-                return Err(anyhow!(
-                    "No SFTP authentication accepted! No password provided."
-                ));
-            }
-            Some(sftp_password) => {
-                log::info!("Trying SFTP password authentication...");
-                let password_auth_result: Result<(), Error> =
-                    session.userauth_password(username, &sftp_password);
-                if password_auth_result.is_err() {
-                    log::error!("SFTP: Password authentication failed!");
-                    return Err(anyhow!("Could not authenticate with SFTP server!"));
-                }
-            }
+
+    // Try public key auth
+    if let Some(pub_path) = &sftp_cfg.public_key_path
+        && let Some(priv_path) = &sftp_cfg.private_key_path
+    {
+        let mut priv_pwd = sftp_cfg.private_key_password.as_deref();
+        if priv_pwd == Some("") {
+            priv_pwd = None;
         }
+        if let Err(err) = authenticate_ssh_keys(username, pub_path, priv_path, priv_pwd, session) {
+            log::error!(
+                "SFTP public key authentication failed: {err}\nFalling back to password authentication..."
+            );
+        } else {
+            return Ok(());
+        }
+    } else if sftp_cfg.public_key_path.is_some() && sftp_cfg.private_key_path.is_none() {
+        log::error!("SFTP public key configured, but private key is missing!");
+    } else if sftp_cfg.public_key_path.is_none() && sftp_cfg.private_key_path.is_some() {
+        log::error!("SFTP private key configured, but public key is missing!");
     }
-    Ok(())
+
+    // Try password auth
+    if let Some(password) = sftp_cfg.password.as_deref()
+        && !password.is_empty()
+    {
+        if let Err(err) = authenticate_ssh_password(username, password, session) {
+            log::error!("SFTP password authentication failed: {err}");
+        } else {
+            return Ok(());
+        }
+    } else {
+        log::error!("No password set for SFTP password authentication!");
+        return Err(anyhow!("Failed to authenticate SFTP"));
+    }
+
+    // No authentication methods worked
+    Err(anyhow!("Failed to authenticate SFTP"))
 }
 
 /// Creates SSH session

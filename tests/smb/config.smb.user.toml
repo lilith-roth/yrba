@@ -1,7 +1,6 @@
 # Remote address for uploading backups
 remote = 'smb://testuser@127.0.0.1:4455/content/yrba-test-smb-user/out'
 
-smb_password = 'Sup3rS3cur3'
 # The amount of backups to keep
 # Set to 0 to never delete old backups
 amount_of_backups_to_keep = 5
@@ -14,3 +13,6 @@ folders_to_backup = [
 # Optional: Temporary folder to store archive before upload
 # Default: '~/.cache/yrba'
 temporary_folder = '/tmp/yrba-test-smb-user/tmp'
+
+[smb]
+password = 'Sup3rS3cur3'
