@@ -1,5 +1,5 @@
 use anyhow::{Context, anyhow};
-use ssh2::{Error, ErrorCode, Session, Sftp};
+use ssh2::{ErrorCode, Session, Sftp};
 use std::{
     fs::File,
     io::BufReader,
@@ -9,7 +9,6 @@ use std::{
 use url::Url;
 
 use crate::Config;
-use crate::config;
 use crate::upload::utils::file_name::{generate_backup_name, get_backup_name_stem};
 
 /// Establishes connection with the remote SFTP server, uploads backup, and removes old backups.
