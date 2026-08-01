@@ -29,12 +29,18 @@ pub(crate) fn upload_sftp(file_path: &Path, config: &Config) -> anyhow::Result<(
             .context("No username specified and could not retrieve system username!")?;
     }
     let remote_path: &str = remote_url.path();
-    let compression_enabled: bool = config.sftp_compression_enabled.unwrap_or(true);
-    let upload_buffer_size = usize::try_from(
-        size::Size::from_str(config.sftp_file_buffer_size.as_deref().unwrap_or("128 MiB"))
+    let compression_enabled: bool = match &config.sftp {
+        Some(sftp) => sftp.sftp_compression_enabled.unwrap_or(true),
+        None => true,
+    };
+    let upload_buffer_size = match &config.sftp {
+        Some(sftp) => usize::try_from(
+        size::Size::from_str(sftp.sftp_file_buffer_size.as_deref().unwrap_or("128 MiB"))
             .context("Could not parse buffer size!")?
             .bytes(),
-    )
+    ),
+        None => usize::try_from(size::Size::from_str("128 MiB").context("Could not parse buffer size!")?.bytes()),
+    }
     .unwrap_or_else(|err| {
         log::error!(
             "Error parsing SFTP file buffer size! Using default of 128 MiB...\nError: {err}"
@@ -151,11 +157,14 @@ fn upload_backup(
 /// * `config`      - Parsed configuration file
 fn authenticate_ssh(username: &str, session: &Session, config: &Config) -> anyhow::Result<()> {
     let settings_config: Config = config.clone();
-    let ssh_config_accepted: bool = match settings_config.sftp_public_key_path {
+    if settings_config.sftp.is_none() {
+        panic!("No SFTP configuration specified in config file!");
+    }
+    let ssh_config_accepted: bool = match settings_config.clone().sftp.unwrap().sftp_public_key_path {
         Some(public_key_path) => {
             let private_key_provided: bool =
-                settings_config.sftp_private_key_path.clone().is_some()
-                    && settings_config.sftp_private_key_path.clone().unwrap() != "";
+                settings_config.clone().sftp.unwrap().sftp_private_key_path.clone().is_some()
+                    && settings_config.clone().sftp.unwrap().sftp_private_key_path.clone().unwrap() != "";
             // Making relative paths work, because they didn't for some reason
             let binding: PathBuf =
                 dirs::home_dir().context("Could not retrieve user home directory!")?;
@@ -163,7 +172,8 @@ fn authenticate_ssh(username: &str, session: &Session, config: &Config) -> anyho
                 .to_str()
                 .context("Could not convert user home directory path object to str!")?;
             let sftp_public_key_path: String = public_key_path.as_str().replace('~', home_dir);
-            let sftp_private_key_path: String = settings_config
+            let sftp_private_key_path: String = settings_config.clone()
+                .sftp.unwrap()
                 .sftp_private_key_path
                 .unwrap()
                 .as_str()
@@ -172,9 +182,9 @@ fn authenticate_ssh(username: &str, session: &Session, config: &Config) -> anyho
             let success: bool = if private_key_provided {
                 log::debug!("Trying SFTP private key authentication...");
                 let sftp_private_key_password =
-                    match settings_config.sftp_private_key_password.as_deref() {
+                    match &settings_config.clone().sftp.unwrap().sftp_private_key_password.as_deref() {
                         None | Some("") => None,
-                        Some(_) => settings_config.sftp_private_key_password,
+                        Some(_) => settings_config.clone().sftp.unwrap().sftp_private_key_password,
                     };
                 let auth_success: Result<(), Error> = session.userauth_pubkey_file(
                     username,
@@ -195,7 +205,7 @@ fn authenticate_ssh(username: &str, session: &Session, config: &Config) -> anyho
         None => false,
     };
     if !ssh_config_accepted {
-        match settings_config.sftp_password {
+        match &settings_config.clone().sftp.unwrap().sftp_password {
             None => {
                 log::error!("No SFTP authentication provided!");
                 return Err(anyhow!(

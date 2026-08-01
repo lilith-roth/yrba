@@ -16,7 +16,19 @@ pub(crate) struct Config {
     // Amount of backups to keep
     pub(crate) amount_of_backups_to_keep: u16,
 
-    // SFTP Settings
+    // Path to folders to back up
+    pub(crate) folders_to_backup: Array,
+
+    // Path to temporary folder
+    pub(crate) temporary_folder: Option<String>,
+
+    pub(crate) sftp: Option<SftpConfig>,
+
+    pub(crate) smb: Option<SmbConfig>,
+}
+
+#[derive(serde::Deserialize, Clone)]
+pub(crate) struct SftpConfig {
     // SFTP public key path
     pub(crate) sftp_public_key_path: Option<String>,
     pub(crate) sftp_private_key_path: Option<String>,
@@ -27,16 +39,12 @@ pub(crate) struct Config {
     pub(crate) sftp_compression_enabled: Option<bool>,
     // SFTP file buffer size in MiB
     pub(crate) sftp_file_buffer_size: Option<String>,
+}
 
-    // SMB Settings
+#[derive(serde::Deserialize, Clone)]
+pub(crate) struct SmbConfig {
     // SMB password
     pub(crate) smb_password: Option<String>,
-
-    // Path to folders to back up
-    pub(crate) folders_to_backup: Array,
-
-    // Path to temporary folder
-    pub(crate) temporary_folder: Option<String>,
 }
 
 #[cfg(unix)]
