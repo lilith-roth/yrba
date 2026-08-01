@@ -6,18 +6,43 @@ mod config;
 mod intro;
 
 use archive::tar::create_tarball;
+use clap::Parser;
 use config::{Config, load_config};
+use env_logger::WriteStyle;
 use intro::write_welcome_message;
+use std::env;
 use std::path::{Path, PathBuf};
 use upload::upload_handler::{get_upload_mode, upload_file};
 
-use crate::args::{Args, setup_logging};
+use crate::args::Args;
 use crate::upload::upload_handler::UploadMode;
+
+fn setup_logger(args: &Args) {
+    const LOGGING_ENV: &str = "YRBA_LOG";
+
+    let mut builder = env_logger::Builder::new();
+    builder.filter_level(log::LevelFilter::Info);
+
+    if env::var_os("NO_COLOR").is_some() {
+        builder.write_style(WriteStyle::Never);
+    } else {
+        builder.write_style(WriteStyle::Auto);
+    }
+
+    if args.verbose.is_present() {
+        builder.filter_level(args.verbose.log_level_filter());
+    } else {
+        builder.parse_env(LOGGING_ENV);
+    }
+
+    builder.init();
+}
 
 #[tokio::main]
 async fn main() {
     // parse application args
-    let args: Args = setup_logging();
+    let args = Args::parse();
+    setup_logger(&args);
 
     write_welcome_message();
 
