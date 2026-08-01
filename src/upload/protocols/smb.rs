@@ -31,7 +31,7 @@ pub(crate) async fn upload_smb(file_path: &Path, config: &Config) -> anyhow::Res
         .ok_or_else(|| anyhow!("Could not get remote share name!"))?
         .0;
     let username = remote_url.username();
-    let password: &str = &config
+    let password: &str = config
         .smb
         .as_ref()
         .and_then(|smb| smb.password.as_deref())

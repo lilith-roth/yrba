@@ -222,7 +222,7 @@ fn authenticate_ssh(username: &str, session: &Session, config: &Config) -> anyho
         && !password.is_empty()
     {
         if let Err(err) = authenticate_ssh_password(username, password, session) {
-            log::error!("SFTP password authentication failed: {err}")
+            log::error!("SFTP password authentication failed: {err}");
         } else {
             return Ok(());
         }
