@@ -17,10 +17,11 @@ Afterwards, configure the following settings as well in the `config.toml`:
 # SFTP Settings (only used if remote string above is set to sftp protocol)
 # if both public key path & password is defined, first the private key authentication is tried,
 # and if that fails the password is tried next.
-sftp_public_key_path = '~/.ssh/id_ed25519.pub'
-sftp_private_key_path = '~/.ssh/id_ed25519'
-sftp_private_key_password = 'my-super-secure-password'
-sftp_password = 'my-super-secure-password'
+[sftp]
+public_key_path = '~/.ssh/id_ed25519.pub'
+private_key_path = '~/.ssh/id_ed25519'
+private_key_password = 'my-super-secure-password'
+password = 'my-super-secure-password'
 ```
 
 **Note:** Password and private key authentication can both be configured to try
@@ -38,21 +39,6 @@ A complete file copy backup configuration could look like this.
 # SFTP: 'sftp://root@127.0.0.1/path/to/my/backup/storage/directory'
 remote = 'sftp://root@127.0.0.1/path/to/my/backup/storage/directory'
 
-# SFTP Settings (only used if remote string above is set to sftp protocol)
-# if both public key path & password is defined, first the private key authentication is tried,
-# and if that fails the password is tried next.
-sftp_public_key_path = '~/.ssh/id_ed25519.pub'
-sftp_private_key_path = '~/.ssh/id_ed25519'
-sftp_private_key_password = 'my-super-secure-password'
-sftp_password = 'my-super-secure-password'
-
-# Optional: Enable SFTP compression
-# Default: true
-sftp_compression_enabled = true
-# Optional: SFTP file buffer size in MiB
-# Default: 128 MiB
-sftp_file_buffer_size = "128 MiB"
-
 # The amount of backups to keep
 # Set to 0 to never delete old backups
 amount_of_backups_to_keep = 5
@@ -61,4 +47,20 @@ amount_of_backups_to_keep = 5
 folders_to_backup = [
     "/backup"
 ]
+
+# SFTP Settings (only used if remote string above is set to sftp protocol)
+# if both public key path & password is defined, first the private key authentication is tried,
+# and if that fails the password is tried next.
+[sftp]
+public_key_path = '~/.ssh/id_ed25519.pub'
+private_key_path = '~/.ssh/id_ed25519'
+private_key_password = 'my-super-secure-password'
+password = 'my-super-secure-password'
+
+# Optional: Enable SFTP compression
+# Default: true
+compression_enabled = true
+# Optional: SFTP file buffer size in MiB
+# Default: 128 MiB
+file_buffer_size = "128 MiB"
 ```
