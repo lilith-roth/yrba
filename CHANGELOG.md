@@ -7,6 +7,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.0](https://github.com/lilith-roth/yrba/compare/v2.4.0...v3.0.0) - 2026-08-01
+
+### Added
+
+- [**breaking**] config file rework ([#151](https://github.com/lilith-roth/yrba/pull/151))
+- parse YRBA_LOG environment variable ([#152](https://github.com/lilith-roth/yrba/pull/152))
+- nixos module ([#144](https://github.com/lilith-roth/yrba/pull/144))
+- Use ISO 8601 datetime strings in backup names ([#131](https://github.com/lilith-roth/yrba/pull/131))
+
+### Fixed
+
+- change systemd unit type to oneshot ([#147](https://github.com/lilith-roth/yrba/pull/147))
+- fix
+
+### Other
+
+- config file rework
+- config file rework ([#155](https://github.com/lilith-roth/yrba/pull/155))
+- *(deps)* bump docker/login-action from 4.4.0 to 4.5.1 ([#150](https://github.com/lilith-roth/yrba/pull/150))
+- removed Patreon funding
+- dep update ([#146](https://github.com/lilith-roth/yrba/pull/146))
+- *(deps)* bump actions/checkout from 7.0.0 to 7.0.1 ([#145](https://github.com/lilith-roth/yrba/pull/145))
+- *(deps)* bump docker/login-action from 4.2.0 to 4.4.0 ([#143](https://github.com/lilith-roth/yrba/pull/143))
+- *(deps)* bump docker/build-push-action from 7.2.0 to 7.3.0 ([#142](https://github.com/lilith-roth/yrba/pull/142))
+- *(deps)* bump docker/metadata-action from 6.1.0 to 6.2.0 ([#141](https://github.com/lilith-roth/yrba/pull/141))
+- *(deps)* bump actions/checkout from 6.0.3 to 7.0.0 ([#140](https://github.com/lilith-roth/yrba/pull/140))
+- *(deps)* bump actions/checkout from 6.0.2 to 6.0.3 ([#139](https://github.com/lilith-roth/yrba/pull/139))
+- SFTP module ([#136](https://github.com/lilith-roth/yrba/pull/136))
+- fix nix deps ([#137](https://github.com/lilith-roth/yrba/pull/137))
+- *(deps)* bump docker/build-push-action from 7.1.0 to 7.2.0 ([#134](https://github.com/lilith-roth/yrba/pull/134))
+- *(deps)* bump docker/metadata-action from 6.0.0 to 6.1.0 ([#133](https://github.com/lilith-roth/yrba/pull/133))
+- *(deps)* bump docker/login-action from 4.1.0 to 4.2.0 ([#132](https://github.com/lilith-roth/yrba/pull/132))
+- code cleanup ([#129](https://github.com/lilith-roth/yrba/pull/129))
+- dep update
+
 ## [2.4.0](https://github.com/lilith-roth/yrba/compare/v2.3.0...v2.4.0) - 2026-05-07
 
 ### Added
