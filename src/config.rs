@@ -30,21 +30,21 @@ pub(crate) struct Config {
 #[derive(serde::Deserialize, Clone)]
 pub(crate) struct SftpConfig {
     // SFTP public key path
-    pub(crate) sftp_public_key_path: Option<String>,
-    pub(crate) sftp_private_key_path: Option<String>,
-    pub(crate) sftp_private_key_password: Option<String>,
+    pub(crate) public_key_path: Option<String>,
+    pub(crate) private_key_path: Option<String>,
+    pub(crate) private_key_password: Option<String>,
     // SFTP password
-    pub(crate) sftp_password: Option<String>,
+    pub(crate) password: Option<String>,
     // Enable SFTP compression
-    pub(crate) sftp_compression_enabled: Option<bool>,
+    pub(crate) compression_enabled: Option<bool>,
     // SFTP file buffer size in MiB
-    pub(crate) sftp_file_buffer_size: Option<String>,
+    pub(crate) file_buffer_size: Option<String>,
 }
 
 #[derive(serde::Deserialize, Clone)]
 pub(crate) struct SmbConfig {
     // SMB password
-    pub(crate) smb_password: Option<String>,
+    pub(crate) password: Option<String>,
 }
 
 #[cfg(unix)]

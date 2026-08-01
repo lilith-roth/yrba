@@ -32,14 +32,14 @@ pub(crate) fn upload_sftp(file_path: &Path, config: &Config) -> anyhow::Result<(
     let compression_enabled: bool = config
         .sftp
         .as_ref()
-        .and_then(|sftp| sftp.sftp_compression_enabled)
+        .and_then(|sftp| sftp.compression_enabled)
         .unwrap_or(true);
     let upload_buffer_size = usize::try_from(
         size::Size::from_str(
             config
                 .sftp
                 .as_ref()
-                .and_then(|sftp| sftp.sftp_file_buffer_size.as_deref())
+                .and_then(|sftp| sftp.file_buffer_size.as_deref())
                 .unwrap_or("128 MiB"),
         )
         .context("Could not parse buffer size!")?
@@ -197,10 +197,10 @@ fn authenticate_ssh(username: &str, session: &Session, config: &Config) -> anyho
     };
 
     // Try public key auth
-    if let Some(pub_path) = &sftp_cfg.sftp_public_key_path
-        && let Some(priv_path) = &sftp_cfg.sftp_private_key_path
+    if let Some(pub_path) = &sftp_cfg.public_key_path
+        && let Some(priv_path) = &sftp_cfg.private_key_path
     {
-        let mut priv_pwd = sftp_cfg.sftp_private_key_password.as_deref();
+        let mut priv_pwd = sftp_cfg.private_key_password.as_deref();
         if priv_pwd == Some("") {
             priv_pwd = None;
         }
@@ -211,14 +211,14 @@ fn authenticate_ssh(username: &str, session: &Session, config: &Config) -> anyho
         } else {
             return Ok(());
         }
-    } else if sftp_cfg.sftp_public_key_path.is_some() && sftp_cfg.sftp_private_key_path.is_none() {
+    } else if sftp_cfg.public_key_path.is_some() && sftp_cfg.private_key_path.is_none() {
         log::error!("SFTP public key configured, but private key is missing!");
-    } else if sftp_cfg.sftp_public_key_path.is_none() && sftp_cfg.sftp_private_key_path.is_some() {
+    } else if sftp_cfg.public_key_path.is_none() && sftp_cfg.private_key_path.is_some() {
         log::error!("SFTP private key configured, but public key is missing!");
     }
 
     // Try password auth
-    if let Some(password) = sftp_cfg.sftp_password.as_deref()
+    if let Some(password) = sftp_cfg.password.as_deref()
         && !password.is_empty()
     {
         if let Err(err) = authenticate_ssh_password(username, password, session) {

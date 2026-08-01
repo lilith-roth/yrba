@@ -34,7 +34,7 @@ pub(crate) async fn upload_smb(file_path: &Path, config: &Config) -> anyhow::Res
     let password: &str = &config
         .smb
         .as_ref()
-        .and_then(|smb| smb.smb_password.as_deref())
+        .and_then(|smb| smb.password.as_deref())
         .unwrap_or_default();
     let backup_directory_path = remote_url.path()[1..]
         .split_once('/')
