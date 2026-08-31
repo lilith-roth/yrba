@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.1](https://github.com/lilith-roth/yrba/compare/v3.0.0...v3.0.1) - 2026-08-31
+
+### Other
+
+- *(deps)* bump taiki-e/install-action from 2.86.5 to 2.87.0 ([#164](https://github.com/lilith-roth/yrba/pull/164))
+- *(deps)* bump taiki-e/install-action from 2.85.10 to 2.86.5 ([#163](https://github.com/lilith-roth/yrba/pull/163))
+- *(deps)* bump taiki-e/install-action from 2.85.5 to 2.85.10 ([#161](https://github.com/lilith-roth/yrba/pull/161))
+- *(deps)* bump taiki-e/install-action from 2 to 2.85.5 ([#157](https://github.com/lilith-roth/yrba/pull/157))
+- *(deps)* bump docker/login-action from 4.5.1 to 4.6.0 ([#156](https://github.com/lilith-roth/yrba/pull/156))
+
 ## [3.0.0](https://github.com/lilith-roth/yrba/compare/v2.4.0...v3.0.0) - 2026-08-01
 
 ### Added
