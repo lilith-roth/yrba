@@ -18,7 +18,9 @@ in
   options.services.yrba = {
     enable = lib.mkEnableOption "Incremental remote backups made easy!";
 
-    package = lib.mkPackageOption pkgs "yrba" { };
+    package = lib.mkPackageOption pkgs "yrba" { nullable = true; } // {
+      defaultText = "pkgs.yrba or yrba.packages.\${system}.default or null";
+    };
 
     schedule = {
       enable = lib.mkEnableOption "Periodic backups with YRBA";
