@@ -7,6 +7,7 @@ use tar::Builder;
 pub(crate) fn create_tarball(
     path_to_backup: &Path,
     temporary_folder_config: Option<String>,
+    compression_level: Compression,
 ) -> anyhow::Result<PathBuf> {
     let cache_dir: PathBuf =
         if let Some(temporary_folder_configuration_input) = temporary_folder_config {
@@ -29,7 +30,7 @@ pub(crate) fn create_tarball(
     create_dir_all(cache_dir).context("Could not create temporary folder for archives!")?;
     let tar_gz: File = File::create(backup_archive_temp_file_path.clone())
         .context("Could not generate filepath for temporary file!")?;
-    let enc: GzEncoder<File> = GzEncoder::new(tar_gz, Compression::default());
+    let enc: GzEncoder<File> = GzEncoder::new(tar_gz, compression_level);
     let mut tar: Builder<GzEncoder<File>> = Builder::new(enc);
     tar.follow_symlinks(false);
 

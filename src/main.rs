@@ -9,6 +9,7 @@ use archive::tar::create_tarball;
 use clap::Parser;
 use config::{Config, load_config};
 use env_logger::WriteStyle;
+use flate2::Compression;
 use intro::write_welcome_message;
 use std::env;
 use std::path::{Path, PathBuf};
@@ -63,6 +64,16 @@ async fn main() {
         std::process::exit(2)
     });
 
+    let compression_level: flate2::Compression =
+        match &config.compression_level.clone().unwrap_or_default() {
+            config::CompressionLevel::Best => Compression::best(),
+            config::CompressionLevel::Fast => Compression::fast(),
+            config::CompressionLevel::None => Compression::none(),
+            config::CompressionLevel::Default => Compression::default(),
+            config::CompressionLevel::Numeric(x) => Compression::new(*x),
+        };
+    log::debug!("Selected compression level: {:?}", compression_level);
+
     for folder_raw in folders_to_backup {
         log::info!("Backup started for: {folder_raw}");
 
@@ -74,7 +85,7 @@ async fn main() {
                 .expect("`folders_to_backup` is checked during loading of config file"),
         );
         let temp_archive_path: PathBuf =
-            match create_tarball(folder, config.clone().temporary_folder) {
+            match create_tarball(folder, config.clone().temporary_folder, compression_level) {
                 Ok(temp_archive_path) => {
                     log::info!("Created backup archive {}", temp_archive_path.display());
                     temp_archive_path
