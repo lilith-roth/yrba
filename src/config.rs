@@ -1,4 +1,5 @@
 use anyhow::{Context, anyhow};
+use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::PathBuf;
 use toml::value::Array;
@@ -8,7 +9,27 @@ const DEFAULT_CONFIG_FILE_PATH: &str = "~/.config/yrba/config.toml";
 #[cfg(unix)]
 const DEFAULT_ROOT_CONFIG_FILE_PATH: &str = "/etc/yrba.toml";
 
-#[derive(serde::Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone)]
+pub(crate) enum CompressionLevel {
+    #[serde(rename = "best")]
+    Best,
+    #[serde(rename = "fast")]
+    Fast,
+    #[serde(rename = "none")]
+    None,
+    #[serde(rename = "default")]
+    Default,
+    #[serde(untagged)]
+    Numeric(u32),
+}
+
+impl Default for CompressionLevel {
+    fn default() -> Self {
+        CompressionLevel::Default
+    }
+}
+
+#[derive(Deserialize, Clone)]
 pub(crate) struct Config {
     // Remote URL
     pub(crate) remote: String,
@@ -22,12 +43,14 @@ pub(crate) struct Config {
     // Path to temporary folder
     pub(crate) temporary_folder: Option<String>,
 
+    pub(crate) compression_level: Option<CompressionLevel>,
+
     pub(crate) sftp: Option<SftpConfig>,
 
     pub(crate) smb: Option<SmbConfig>,
 }
 
-#[derive(serde::Deserialize, Clone)]
+#[derive(Deserialize, Clone)]
 pub(crate) struct SftpConfig {
     // SFTP public key path
     pub(crate) public_key_path: Option<String>,
@@ -41,7 +64,7 @@ pub(crate) struct SftpConfig {
     pub(crate) file_buffer_size: Option<String>,
 }
 
-#[derive(serde::Deserialize, Clone)]
+#[derive(Deserialize, Clone)]
 pub(crate) struct SmbConfig {
     // SMB password
     pub(crate) password: Option<String>,

@@ -34,6 +34,11 @@ folders_to_backup = [
 # Default: '~/.cache/yrba'
 temporary_folder = '/tmp/yrba'
 
+# Optional: Compression level for the archive
+# Options are: 'best', 'fast', 'none', 'default', 1, 2, 3, 4, 5, 6, 7, 8, 9
+# Default: 6
+compression_level = 'default'
+
 # SFTP Settings (only used if remote string above is set to sftp protocol)
 # if both public key path & password is defined, first the private key authentication is tried,
 # and if that fails the password is tried next.
@@ -48,7 +53,7 @@ password = 'my-super-secure-password'
 compression_enabled = true
 # Optional: SFTP file buffer size in MiB
 # Default: 128 MiB
-file_buffer_size = "128 MiB"
+file_buffer_size = '128 MiB'
 
 # SMB Settings (only used if remote string above is set to smb protocol)
 [smb]
@@ -112,6 +117,25 @@ will use to archive your backups to, define them here.
 
 Example: `temporary_folder = '/tmp/yrba'`
 
+### Optional: `compression_level`
+
+Default: `default` If desired the compression level for the `.tar.gz` archives
+can be configured here. Please note that a higher compression level may increase
+the archiving time by a lot. Essentially it's a tradeoff between disk space and
+CPU usage.
+
+The following values are accepted:
+
+- `'best'`: Sets the compression level to 9 (Optimize for size)
+- `'fast'`: Sets the compression level to 1 (Optimize for speed)
+- `'none'`: Sets the compression level to 0 (Warning: This may actually inflate
+  data slightly!)
+- `'default'`: Sets the compression level to 6 (In between size and speed)
+- `0 .. 9`: If desired a numeric value can be provided ranging from 0 (no
+  compression) to 9 (high compression)
+
+Example: `compression_level = 'default'`
+
 ### SFTP Options [sftp]
 
 #### `public_key_path`
@@ -151,9 +175,9 @@ to reduce upload data size for the cost of CPU processing. Default: true
 #### `file_buffer_size`
 
 Optional: SFTP file buffer size in MiB. Will parse any file size string given as
-input, for example `"64 KB"`. Default: 128 MiB
+input, for example `'64 KB'`. Default: 128 MiB
 
-`file_buffer_size = "128 MiB"`
+`file_buffer_size = '128 MiB'`
 
 ### SMB Options [smb]
 
